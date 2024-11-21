@@ -6,12 +6,15 @@ using {
 
 namespace com.gavdilabs.techtransmgt;
 
+// Types
 type softwareStatus         : String enum { Development; Testing; Released; Archived }
 type softwareDependencyType : String enum { Consuming; Embedding; Associating }
 type technologyType         : String enum { ABAP; ABAP_Cloud; CAP }
 type criticalityLevel       : String enum { Very_High; High; Medium; Low }
 type technologyStatus       : String enum { Stopping; Reducing; Using; Adopting; Observing }
 type deploymentTypes        : String enum { OnPremise; Cloud }
+
+// CodeLists
 entity SAPVersion : sap.common.CodeList {
   code : String(12);
   deployment : deploymentTypes;
@@ -33,22 +36,26 @@ entity BusinessCriticalityLevel : sap.common.CodeList {
   descr : String;
 }
 
+// Entities
 entity User {
     key userName        : String;
     firstName           : String;
     lastName            : String;
     email               : String;
+    imageUrl            : String @Core.IsURL @Core.MediaType: imageType;
+    imageType           : String @Core.IsMediaType;
 }
 
+@cds.search: { name }
 entity SoftwareSolution : cuid, managed {
     name                : String;
     description         : String;
     solutionStatus      : softwareStatus;
     technologyType      : technologyType;
-    packageMamespace    : String;   
+    packageNamespace    : String;   
     repository          : String;
-    sapVersion          : Association to SAPVersion;
     documentationUrl    : String;
+    sapVersion          : Association to SAPVersion;
     businessCriticality : Association to BusinessCriticalityLevel;
     cleanCoreRating     : Association to CleanCoreLevel;
     codeQualityRating   : Association to CodeQualityLevel;
@@ -60,6 +67,7 @@ entity SoftwareSolution : cuid, managed {
     _technologies       : Association to many SoftwareTechnology on _technologies.software = $self;
 }
 
+@cds.search: { teamName }
 entity SoftwareTeam {
     key teamName        : String;
     _teamUsers          : Association to many SoftwareTeamUser on _teamUsers.team = $self;
@@ -81,8 +89,10 @@ entity SoftwareTechnology {
     key technology      : Association to Technology;
 }
 
+@cds.search: { name }
 entity Technology : cuid {
     name                : String;
+    description         : String;
     maturityStatus      : technologyStatus;
     maturityLevel       : Integer @assert.range: [ 1, 5 ];
     _replacements       : Association to many TechnologyReplacement on _replacements.source = ID;
@@ -93,4 +103,11 @@ entity TechnologyReplacement {
     key source          : UUID;
     key target          : UUID;
     _technology         : Association to Technology on _technology.ID = source;
+}
+
+entity CompanyConfiguration : cuid {
+    currentSAPVersion                   : Association to SAPVersion;
+    expectedMinimalCleanCoreValue       : Association to CleanCoreLevel;
+    approvalForNewSolutions             : Boolean;
+    allowDeprecationWithoutReplacement  : Boolean;
 }
