@@ -1,25 +1,25 @@
-# Getting Started
+# Gavdi Labs - Technology Transition Management 
 
-Welcome to your new project.
+This application is meant to help you get an overview of your SAP Technology-focused Software Solutions, including the maturity level and help you control and guide how you manage the cost around software solutions.
 
-It contains these folders and files, following our recommended project layout:
+## Infrastructure Requirements
 
-File or Folder | Purpose
----------|----------
-`app/` | content for UI frontends goes here
-`db/` | your domain models and data go here
-`srv/` | your service models and code go here
-`package.json` | project metadata and configuration
-`readme.md` | this getting started guide
+This solutions runs on SAP Cloud Application Programming (CAP) as a Node.JS-based solution, coupled with OpenUI5 for serving the UIs.
+To deploy the solution you need the following:
 
+Service | Description
+--------------------------------------------|------------------------------------------------------------------------
+SAP BTP - Cloud Foundry                     | SAP Business Technology Platform with a Cloud Foundry Subaccount
+Cloud Foundry Runtime                       | Runtime for the Node.JS application (with Minimum 2 gb of Memory)
+HTML5 Repo & Runtime                        | Service for hosting and running (as Webserver) the Frontend
+PostgreSQL Database                         | Hyper-Scaler supplied Database for hosting the data of the application
+SAP Business Process Automation Services    | For Managing the Workflows and Approvals
 
-## Next Steps
+For detailed information on dependencies, check out the deployment descriptor.
 
-- Open a new terminal and run `cds watch`
-- (in VS Code simply choose _**Terminal** > Run Task > cds watch_)
-- Start adding content, for example, a [db/schema.cds](db/schema.cds).
+## Applications
 
-
-## Learn More
-
-Learn more at https://cap.cloud.sap/docs/get-started/.
+The solution includes 3 applications:
+* Software Solution Cockpit : Allows you to register and manage the state and dependencies of your software solutions
+* Technology Radar : Allows you to manage which Technologies you are currently using and what maturity state they are in
+* Cloud Credit Control : Allows you to manage your spending and approval flows on SAP BTP
