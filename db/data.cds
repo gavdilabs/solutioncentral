@@ -1,6 +1,7 @@
 using {
   cuid,
-  managed
+  managed,
+  sap
 } from '@sap/cds/common';
 
 namespace com.gavdilabs.techtransmgt;
@@ -10,28 +11,27 @@ type softwareDependencyType : String enum { Consuming; Embedding; Associating }
 type technologyType         : String enum { ABAP; ABAP_Cloud; CAP }
 type criticalityLevel       : String enum { Very_High; High; Medium; Low }
 type technologyStatus       : String enum { Stopping; Reducing; Using; Adopting; Observing }
+type deploymentTypes        : String enum { OnPremise; Cloud }
+entity SAPVersion : sap.common.CodeList {
+  code : String(12);
+  deployment : deploymentTypes;
+  descr : String;
+}
 
-/* 
-Clean Core
-1. On-Stack - Modification, Enhancement, Interaction with Un-Released Objects
-2. On-Stack - S/4HANA Ready, Secure, No Modifications, Enhancements or interactions with Un-Released Objects
-3. Tier-2 Extension - Encapsulating S/4HANA Functionality, ABAP Cloud Ready
-4. Fully Tier-1, but depending on Custom Fields/On-Stack Extensions
-5. Only White-Listed APIs, Side-By-Side Extensions, Works on Full Standard
+entity CleanCoreLevel : sap.common.CodeList {
+  code : Integer @assert.range: [ 1, 5 ];
+  descr : String;
+}
 
-Code Quality
-1. Documented, Business Tested and Executes
-2. Seperation of Concerns, Maintainable and Readable
-3. DbC, Logs and Exception Handling
-4. Includes Unit Tests that cover Critical Areas
-5. Includes Automated Testing and good Coverage of Unit Tests (>80%)
+entity CodeQualityLevel : sap.common.CodeList {
+  code : Integer @assert.range: [ 1, 5 ];
+  descr : String;
+}
 
-Business Criticality
-> Very High - Critical Business Operations will stop within hours
-> High - Critical Business Operations will stop within days
-> Medium - Critical Business Operations will be affected to some degree
-> Low - Non-Critical Business Operations will be affected to some degree
-*/
+entity BusinessCriticalityLevel : sap.common.CodeList {
+  code : criticalityLevel;
+  descr : String;
+}
 
 entity User {
     key userName        : String;
@@ -47,11 +47,11 @@ entity SoftwareSolution : cuid, managed {
     technologyType      : technologyType;
     packageMamespace    : String;   
     repository          : String;
-    sapVersion          : String; // Should perhaps be a CodeList?
+    sapVersion          : Association to SAPVersion;
     documentationUrl    : String;
-    businessCriticality : criticalityLevel;
-    cleanCoreRating     : Integer @assert.range: [ 1, 5 ];
-    codeQualityRating   : Integer @assert.range: [ 1, 5 ];
+    businessCriticality : Association to BusinessCriticalityLevel;
+    cleanCoreRating     : Association to CleanCoreLevel;
+    codeQualityRating   : Association to CodeQualityLevel;
     reasonNoCleanCore   : String;
     costCenter          : String;
     owner               : Association to User;

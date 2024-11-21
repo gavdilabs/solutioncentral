@@ -1,0 +1,6 @@
+code;descr
+1;Documented, Business Tested and Executes
+2;Seperation of Concerns, Maintainable and Readable
+3;Design-By-Contract, Logs and Exception Handling
+4;Includes Unit Tests that cover Critical Areas
+5;Includes Automated Testing and good Coverage of Unit Tests (>80%)
