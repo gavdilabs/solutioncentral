@@ -1,29 +1,25 @@
-# README #
+# Getting Started
 
-This README would normally document whatever steps are necessary to get your application up and running.
+Welcome to your new project.
 
-### What is this repository for? ###
+It contains these folders and files, following our recommended project layout:
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+File or Folder | Purpose
+---------|----------
+`app/` | content for UI frontends goes here
+`db/` | your domain models and data go here
+`srv/` | your service models and code go here
+`package.json` | project metadata and configuration
+`readme.md` | this getting started guide
 
-### How do I get set up? ###
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+## Next Steps
 
-### Contribution guidelines ###
+- Open a new terminal and run `cds watch`
+- (in VS Code simply choose _**Terminal** > Run Task > cds watch_)
+- Start adding content, for example, a [db/schema.cds](db/schema.cds).
 
-* Writing tests
-* Code review
-* Other guidelines
 
-### Who do I talk to? ###
+## Learn More
 
-* Repo owner or admin
-* Other community or team contact
+Learn more at https://cap.cloud.sap/docs/get-started/.
