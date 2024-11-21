@@ -20,6 +20,15 @@ For detailed information on dependencies, check out the deployment descriptor.
 ## Applications
 
 The solution includes 3 applications:
+
 * Software Solution Cockpit : Allows you to register and manage the state and dependencies of your software solutions
+
 * Technology Radar : Allows you to manage which Technologies you are currently using and what maturity state they are in
+
 * Cloud Credit Control : Allows you to manage your spending and approval flows on SAP BTP
+
+## License
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0

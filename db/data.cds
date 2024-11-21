@@ -1,9 +1,11 @@
 using {
-  cuid
+  cuid,
+  managed
 } from '@sap/cds/common';
 
 namespace com.gavdilabs.techtransmgt;
 
+type softwareStatus         : String enum { Development; Testing; Released; Archived }
 type softwareDependencyType : String enum { Consuming; Embedding; Associating }
 type technologyType         : String enum { ABAP; ABAP_Cloud; CAP }
 type criticalityLevel       : String enum { Very_High; High; Medium; Low }
@@ -38,9 +40,10 @@ entity User {
     email               : String;
 }
 
-entity SoftwareSolution : cuid {
+entity SoftwareSolution : cuid, managed {
     name                : String;
     description         : String;
+    solutionStatus      : softwareStatus;
     technologyType      : technologyType;
     packageMamespace    : String;   
     repository          : String;
@@ -91,5 +94,3 @@ entity TechnologyReplacement {
     key target          : UUID;
     _technology         : Association to Technology on _technology.ID = source;
 }
-
-// Perhaps an Audit Log Entity for capturing changes?
