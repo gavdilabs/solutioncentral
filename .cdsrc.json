@@ -1,1 +1,16 @@
-{}
+{
+  "requires": {
+    "[development]": {
+      "auth": {
+        "strategy": "mocked",
+        "users": {
+          "dummy": {
+            "id": "dummy",
+            "password": "dummy",
+            "roles": []
+          }
+        }
+      }
+    }
+  }
+}

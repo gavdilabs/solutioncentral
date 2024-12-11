@@ -1,0 +1,11 @@
+meta {
+  name: getActiveUser
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{HOST}}/getActiveUser()
+  body: none
+  auth: inherit
+}

@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "S4 Tech Radar",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
