@@ -39,10 +39,21 @@
     "test:api": "jest --silent test/api",
     "test:unit": "jest --silent test/unit",
     "lint": "eslint",
+    "lint-staged": "lint-staged",
     "format": "prettier --check ./srv",
     "generate:types": "npx @cap-js/cds-typer '*' --outputDirectory @cds-models",
     "generate:types:windows": "npx @cap-js/cds-typer * --outputDirectory @cds-models",
     "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint",
+      "prettier --check ./srv"
+    ],
+    "*.js": [
+      "eslint",
+      "prettier --check ./srv"
+    ]
   },
   "cds": {
     "db": {
