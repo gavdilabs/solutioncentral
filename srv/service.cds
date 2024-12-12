@@ -3,6 +3,7 @@ using {
   com.gavdilabs.techtransmgt.types
 } from '../db';
 
+@requires: 'authenticated-user'
 service RadarService {
 
   /*** ENTITIES ***/
