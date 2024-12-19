@@ -33,14 +33,6 @@ type criticalityLevel       : String enum {
   Low
 }
 
-type technologyStatus       : String enum {
-  Stopping;
-  Reducing;
-  Using;
-  Adopting;
-  Observing
-}
-
 type deploymentTypes        : String enum {
   OnPremise;
   Cloud
@@ -64,6 +56,14 @@ entity CleanCoreLevel : sap.common.CodeList {
 }
 
 entity CodeQualityLevel : sap.common.CodeList {
+  key code  : Integer @assert.range: [
+        1,
+        5
+      ];
+      descr : String;
+}
+
+entity TechnologyStatus : sap.common.CodeList {
   key code  : Integer @assert.range: [
         1,
         5
@@ -135,7 +135,7 @@ entity SoftwareTechnology {
 entity Technology : cuid {
   name           : String;
   description    : String;
-  maturityStatus : technologyStatus;
+  maturityStatus : Association to TechnologyStatus;
   maturityLevel  : Integer @assert.range: [
     1,
     5
