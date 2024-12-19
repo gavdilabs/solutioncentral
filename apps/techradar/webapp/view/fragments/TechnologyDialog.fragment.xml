@@ -1,0 +1,55 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"	
+	xmlns:c="sap.ui.core">
+   <Dialog title="Add new technology" contentWidth="800px">
+		<content>
+			<form:SimpleForm editable="true"
+                layout="ResponsiveGridLayout"
+                labelSpanXL="4"
+                labelSpanL="4"
+                labelSpanM="12"
+                labelSpanS="12"
+                adjustLabelSpan="false"
+                emptySpanXL="0"
+                emptySpanL="0"
+                emptySpanM="0"
+                emptySpanS="0"
+                columnsXL="2"
+                columnsL="2"
+                columnsM="2"
+                singleContainerFullSize="false" >
+                <form:content>
+                    <core:Title text="" />
+                    <Label text="Name" />
+                    <Input value="{name}" />		
+                    <Label text="Maturity status" />
+                    <Select forceSelection="false" selectedKey="{maturityStatus}">
+                        <core:Item key="Stopping" text="Stopping" />
+                        <core:Item key="Reducing" text="Reducing" />
+                        <core:Item key="Using" text="Using" />
+                        <core:Item key="Adopting" text="Adopting" />
+                        <core:Item key="Observing" text="Observing" />
+                    </Select>
+                    <Label text="Maturity level" />
+                    <RatingIndicator iconSize="16px" value="{maturityLevel}"/>
+
+                    <core:Title text="" />                    
+                    <Label text="Description" />
+                    <TextArea rows="3" value="{description}"/>	
+                    <Label text="Alternatives" />
+                    <MultiComboBox items="{
+						    path: '/Technology'						
+					    }">
+					    <core:Item key="{ID}" text="{name}" />                       
+                    </MultiComboBox>							
+                </form:content>
+			</form:SimpleForm>
+		</content>
+		<buttons>
+            <Button text="Cancel" press="cancelTechnology"/>
+			<Button text="Add" press="saveTechnology"/>
+		</buttons>
+	</Dialog>
+</c:FragmentDefinition>
