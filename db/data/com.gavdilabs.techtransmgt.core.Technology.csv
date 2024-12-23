@@ -1,0 +1,5 @@
+ID;name;description;maturityStatus;maturityLevel
+1;ABAP;Good old fashion ABAP;Using;3
+2;SAPUI5;UI5;Using;2
+3;WebDynpro;WDA;Reducing;4
+4;IE;Internet Explorer;Stopping;4
