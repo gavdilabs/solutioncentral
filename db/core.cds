@@ -139,18 +139,10 @@ entity SoftwareTechnology {
 
 @cds.search: {name}
 entity Technology : cuid {
-  name           : String           @mandatory;
+  name           : String  @mandatory;
   description    : String;
-<<<<<<< HEAD
-  maturityStatus : technologyStatus @mandatory;
-  maturityLevel  : Integer          @assert.range: [
-||||||| e11970b
-  maturityStatus : technologyStatus;
+  maturityStatus : Association to TechnologyStatus  @mandatory  @assert.target;
   maturityLevel  : Integer @assert.range: [
-=======
-  maturityStatus : Association to TechnologyStatus;
-  maturityLevel  : Integer @assert.range: [
->>>>>>> d7ef6fe3f3e5bcf295fdf0b42f111206357972d6
     1,
     5
   ];
