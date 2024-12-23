@@ -1,1 +1,40 @@
-{}
+{
+  "xsappname": "techtran-xsuaa",
+  "tenant-mode": "dedicated",
+  "description": "RMX",
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.View",
+      "description": "View Only Role"
+    },
+    {
+      "name": "$XSAPPNAME.Maintainer",
+      "description": "Data maintainer role"
+    },
+    {
+      "name": "$XSAPPNAME.Admin",
+      "description": "Admin"
+    }
+  ],
+  "attributes": [],
+  "role-templates": [
+    {
+      "name": "View",
+      "description": "Technology Transition View Role",
+      "scope-references": ["$XSAPPNAME.View"],
+      "attribute-references": []
+    },
+    {
+      "name": "Maintainer",
+      "description": "Technology Transition Maintainer Role",
+      "scope-references": ["$XSAPPNAME.Maintainer"],
+      "attribute-references": []
+    },
+    {
+      "name": "Admin",
+      "description": "Technology Transition Admin",
+      "scope-references": ["$XSAPPNAME.Admin"],
+      "attribute-references": []
+    }
+  ]
+}

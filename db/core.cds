@@ -79,16 +79,18 @@ entity BusinessCriticalityLevel : sap.common.CodeList {
 // Entities
 entity User {
   key username  : String;
+      email     : String  @mandatory;
       firstName : String;
       lastName  : String;
-      email     : String;
       imageUrl  : String  @Core.IsURL  @Core.MediaType: imageType;
       imageType : String  @Core.IsMediaType;
+      teams     : Association to many SoftwareTeam
+                    on teams._teamUsers.user = $self;
 }
 
 @cds.search: {name}
 entity SoftwareSolution : cuid, managed {
-  name                : String;
+  name                : String @mandatory;
   description         : String;
   solutionStatus      : softwareStatus;
   technologyType      : technologyType;
@@ -103,6 +105,10 @@ entity SoftwareSolution : cuid, managed {
   costCenter          : String;
   owner               : Association to User;
   team                : Association to SoftwareTeam;
+  dependencies        : Association to many SoftwareDependency
+                          on dependencies.source = ID;
+  dependents          : Association to many SoftwareDependency
+                          on dependents.target = ID;
   // Needs Required Services from Cloud Credit Control
   _technologies       : Association to many SoftwareTechnology
                           on _technologies.software = $self;
@@ -123,7 +129,7 @@ entity SoftwareTeamUser {
 entity SoftwareDependency {
   key source       : UUID;
   key target       : UUID;
-      softwareType : softwareDependencyType;
+      softwareType : softwareDependencyType @mandatory;
 }
 
 entity SoftwareTechnology {
@@ -133,10 +139,10 @@ entity SoftwareTechnology {
 
 @cds.search: {name}
 entity Technology : cuid {
-  name           : String;
+  name           : String           @mandatory;
   description    : String;
-  maturityStatus : technologyStatus;
-  maturityLevel  : Integer @assert.range: [
+  maturityStatus : technologyStatus @mandatory;
+  maturityLevel  : Integer          @assert.range: [
     1,
     5
   ];
