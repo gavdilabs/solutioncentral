@@ -23,6 +23,9 @@ service RadarService {
   entity CleanCoreLevel           as projection on core.CleanCoreLevel;
 
   @readonly
+  entity TechnologyStatus         as projection on core.TechnologyStatus;
+
+  @readonly
   entity CodeQualityLevel         as projection on core.CodeQualityLevel;
 
   @readonly

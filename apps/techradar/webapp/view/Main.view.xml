@@ -23,10 +23,26 @@
 				title="ECCO">							
 			</ObjectHeader>	
 			<VBox>
-				<f:GridContainer id="TechGrid" width="100%" class="sapUiTinyMargin">
+				<f:GridContainer id="TechGrid" width="100%" class="sapUiTinyMargin" items="{ path: '/TechnologyStatus', events: { dataReceived: '.onTechnologyStatusReceived' }}">
 					<f:layout>
 						<f:GridContainerSettings rowSize="84px" columnSize="300px" />
 					</f:layout>
+					<f:items> 
+						<List	
+							showNoData="false"
+							headerText="{descr}"										 			
+							items="{ 
+								path: '/Technology', 								
+								suspended: true }">
+							<CustomListItem highlight="Error" class="sapUiTinyMargin">
+								<VBox class="sapUiTinyMargin">
+									<RatingIndicator iconSize="12px" value="{maturityLevel}" editable="false"/>
+									<Title text="{name} {maturityStatus_code}"></Title>
+								</VBox>
+							</CustomListItem>
+						</List>	
+					</f:items>
+					<!--
 					<List	
 						showNoData="false"
 						headerText="Stopping"
@@ -34,7 +50,7 @@
 						items="{ 
 							path: '/Technology',
 							filters : [
-								{ path : 'maturityStatus', operator : 'EQ', value1 : 'Stopping'}
+								{ path : 'maturityStatus_code', operator : 'EQ', value1 : '1'}
 							] }">
 							<CustomListItem highlight="Error" class="sapUiTinyMargin">
 								<VBox class="sapUiTinyMargin">
@@ -50,7 +66,7 @@
 						items="{ 
 							path: '/Technology',
 							filters : [
-								{ path : 'maturityStatus', operator : 'EQ', value1 : 'Reducing'}
+								{ path : 'maturityStatus_code', operator : 'EQ', value1 : '2'}
 							] }">
 							<CustomListItem highlight="Warning" class="sapUiTinyMargin">
 								<VBox class="sapUiTinyMargin">
@@ -66,7 +82,7 @@
 						items="{ 
 							path: '/Technology',
 							filters : [
-								{ path : 'maturityStatus', operator : 'EQ', value1 : 'Using'}
+								{ path : 'maturityStatus_code', operator : 'EQ', value1 : '3'}
 							] }">
 						<CustomListItem highlight="Success" class="sapUiTinyMargin">
 							<VBox class="sapUiTinyMargin">
@@ -82,9 +98,9 @@
 						items="{ 
 							path: '/Technology',
 							filters : [
-								{ path : 'maturityStatus', operator : 'EQ', value1 : 'Adopting'}
+								{ path : 'maturityStatus_code', operator : 'EQ', value1 : '4'}
 							] }">
-						<CustomListItem highlight="Information">
+						<CustomListItem highlight="Information" class="sapUiTinyMargin">
 							<VBox class="sapUiTinyMargin">
 								<RatingIndicator iconSize="12px" value="{maturityLevel}" editable="false"/>
 								<Title text="{name}"></Title>
@@ -98,15 +114,16 @@
 						items="{ 
 							path: '/Technology',
 							filters : [
-								{ path : 'maturityStatus', operator : 'EQ', value1 : 'Observing'}
+								{ path : 'maturityStatus_code', operator : 'EQ', value1 : '5'}
 							] }">
-						<CustomListItem highlight="Information">
+						<CustomListItem highlight="Information" class="sapUiTinyMargin">
 							<VBox class="sapUiTinyMargin">
 								<RatingIndicator iconSize="12px" value="{maturityLevel}" editable="false"/>
 								<Title text="{name}"></Title>
 							</VBox>
 						</CustomListItem>
 					</List>
+					-->
 				</f:GridContainer>
 			</VBox>
 		</content>
