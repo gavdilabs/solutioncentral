@@ -35,6 +35,9 @@ module.exports.SAPVersion_ = csn.SAPVersion
 // CleanCoreLevel
 module.exports.CleanCoreLevel = { is_singular: true, __proto__: csn.CleanCoreLevel }
 module.exports.CleanCoreLevel_ = csn.CleanCoreLevel
+// TechnologyStatus
+module.exports.TechnologyStatu = { is_singular: true, __proto__: csn.TechnologyStatus }
+module.exports.TechnologyStatus = csn.TechnologyStatus
 // CodeQualityLevel
 module.exports.CodeQualityLevel = { is_singular: true, __proto__: csn.CodeQualityLevel }
 module.exports.CodeQualityLevel_ = csn.CodeQualityLevel

@@ -137,7 +137,8 @@ export function _TechnologyAspect<TBase extends new (...args: any[]) => object>(
     declare ID?: __.Key<string>
     declare name?: string | null
     declare description?: string | null
-    declare maturityStatus?: _com_gavdilabs_techtransmgt_core.technologyStatus | null
+    declare maturityStatus?: __.Association.to<TechnologyStatu> | null
+    declare maturityStatus_code?: __.Key<number> | null
     declare maturityLevel?: number | null
     declare _replacements?: __.Association.to.many<TechnologyReplacement_>
     declare _solutions?: __.Association.to.many<_com_gavdilabs_techtransmgt_core.SoftwareTechnology_>
@@ -245,6 +246,28 @@ Object.defineProperty(CleanCoreLevel, 'name', { value: 'RadarService.CleanCoreLe
 Object.defineProperty(CleanCoreLevel, 'is_singular', { value: true })
 export class CleanCoreLevel_ extends Array<CleanCoreLevel> {$count?: number}
 Object.defineProperty(CleanCoreLevel_, 'name', { value: 'RadarService.CleanCoreLevel' })
+
+export function _TechnologyStatuAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
+  return class TechnologyStatu extends Base {
+    declare name?: string | null
+    declare descr?: string | null
+    declare code?: __.Key<number>
+    static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
+    declare static readonly keys: __.KeysOf<TechnologyStatu>;
+    declare static readonly elements: __.ElementsOf<TechnologyStatu>;
+    declare static readonly actions: Record<never, never>;
+  };
+}
+/**
+* Aspect for a code list with name and description
+* 
+* See https://cap.cloud.sap/docs/cds/common#aspect-codelist
+*/
+export class TechnologyStatu extends _TechnologyStatuAspect(__.Entity) {}
+Object.defineProperty(TechnologyStatu, 'name', { value: 'RadarService.TechnologyStatus' })
+Object.defineProperty(TechnologyStatu, 'is_singular', { value: true })
+export class TechnologyStatus extends Array<TechnologyStatu> {$count?: number}
+Object.defineProperty(TechnologyStatus, 'name', { value: 'RadarService.TechnologyStatus' })
 
 export function _CodeQualityLevelAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
   return class CodeQualityLevel extends Base {
