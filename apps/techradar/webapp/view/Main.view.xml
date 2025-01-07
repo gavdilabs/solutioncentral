@@ -5,14 +5,13 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:f="sap.f"
 	xmlns:core="sap.ui.core"
+	xmlns:dnd="sap.ui.core.dnd"
+	xmlns:dnd-grid="sap.f.dnd"
 	core:require="{
 		formatter: 'com/gavdilabs/techradar/model/formatter'
 	}">
 
-	<Page		
-		showHeader="false"
-		id="page">		
-		
+	<Page showHeader="false" id="page">		
 		<content>
 			<ObjectHeader	
 				id="Header"				
@@ -23,107 +22,60 @@
 				title="ECCO">							
 			</ObjectHeader>	
 			<VBox>
-				<f:GridContainer id="TechGrid" width="100%" class="sapUiTinyMargin" items="{ path: '/TechnologyStatus', events: { dataReceived: '.onTechnologyStatusReceived' }}">
+				<f:GridContainer id="TechGrid" width="100%" class="sapUiTinyMargin" items="{ path: '/TechnologyStatus',  events: { dataReceived: '.onTechnologyStatusReceived' }}">
 					<f:layout>
 						<f:GridContainerSettings rowSize="84px" columnSize="300px" />
 					</f:layout>
-					<f:items> 
-						<List	
-							showNoData="false"
-							headerText="{descr}"										 			
+					<!-- <f:dragDropConfig>
+						<dnd:DragInfo sourceAggregation="items" />
+						<dnd-grid:GridDropInfo targetAggregation="items" dropPosition="Between" dropLayout="Horizontal" drop="onDrop" />
+					</f:dragDropConfig> -->
+					<f:items> 	
+						<f:GridList							
+							headerText="{descr}"
 							items="{ 
-								path: '/Technology', 								
-								suspended: true }">
-							<CustomListItem highlight="Error" class="sapUiTinyMargin">
+								path: '/Technology', 
+								templateShareable: false,								
+								suspended: true,
+								parameters: {						
+									$$updateGroupId : 'techUpdateGroup'
+								}
+							}">
+
+							<f:dragDropConfig>
+								<dnd:DragInfo sourceAggregation="items" />
+								<dnd-grid:GridDropInfo targetAggregation="items" dropPosition="OnOrBetween" dropLayout="Horizontal" drop="onDrop" />
+							</f:dragDropConfig>
+
+							<f:GridListItem	type="Active" highlight="{path: 'maturityStatus_code', formatter: 'formatter.formatHighlight'}" press="pressTechnology">
+								<VBox height="100%" class="sapUiSmallMargin">
+									<RatingIndicator iconSize="12px" value="{maturityLevel}" editable="false"/>
+									<Title text="{name}"></Title>
+								</VBox>
+							</f:GridListItem>
+						</f:GridList>	
+
+						<!-- <List	
+							showNoData="true"
+							headerText="{descr}"
+							noDataText="No technologies"										 			
+							items="{ 
+								path: '/Technology', 
+								templateShareable: false,								
+								suspended: true,
+								parameters: {						
+									$$updateGroupId : 'techUpdateGroup'
+								}
+							}">		
+							<CustomListItem type="Active" highlight="{path: 'maturityStatus_code', formatter: 'formatter.formatHighlight'}" class="sapUiTinyMargin" press="pressTechnology">								
 								<VBox class="sapUiTinyMargin">
 									<RatingIndicator iconSize="12px" value="{maturityLevel}" editable="false"/>
-									<Title text="{name} {maturityStatus_code}"></Title>
+									<Title text="{name}"></Title>
 								</VBox>
 							</CustomListItem>
-						</List>	
+						</List>	 -->
+						
 					</f:items>
-					<!--
-					<List	
-						showNoData="false"
-						headerText="Stopping"
-						id="StoppingList"								
-						items="{ 
-							path: '/Technology',
-							filters : [
-								{ path : 'maturityStatus_code', operator : 'EQ', value1 : '1'}
-							] }">
-							<CustomListItem highlight="Error" class="sapUiTinyMargin">
-								<VBox class="sapUiTinyMargin">
-									<RatingIndicator iconSize="12px" value="{maturityLevel}" editable="false"/>
-									<Title text="{name}"></Title>
-								</VBox>
-							</CustomListItem>
-					</List>
-					<List
-						showNoData="false"
-						headerText="Reducing"					
-						id="ReducingList"							
-						items="{ 
-							path: '/Technology',
-							filters : [
-								{ path : 'maturityStatus_code', operator : 'EQ', value1 : '2'}
-							] }">
-							<CustomListItem highlight="Warning" class="sapUiTinyMargin">
-								<VBox class="sapUiTinyMargin">
-									<RatingIndicator iconSize="12px" value="{maturityLevel}" editable="false"/>
-									<Title text="{name}"></Title>
-								</VBox>
-							</CustomListItem>						
-					</List>
-					<List
-						showNoData="false"
-						headerText="Using"
-						id="UsingList"								
-						items="{ 
-							path: '/Technology',
-							filters : [
-								{ path : 'maturityStatus_code', operator : 'EQ', value1 : '3'}
-							] }">
-						<CustomListItem highlight="Success" class="sapUiTinyMargin">
-							<VBox class="sapUiTinyMargin">
-								<RatingIndicator iconSize="12px" value="{maturityLevel}" editable="false"/>
-								<Title text="{name}"></Title>
-							</VBox>
-						</CustomListItem>							
-					</List>
-					<List
-						showNoData="false"
-						headerText="Adopting"
-						id="AdoptingList"								
-						items="{ 
-							path: '/Technology',
-							filters : [
-								{ path : 'maturityStatus_code', operator : 'EQ', value1 : '4'}
-							] }">
-						<CustomListItem highlight="Information" class="sapUiTinyMargin">
-							<VBox class="sapUiTinyMargin">
-								<RatingIndicator iconSize="12px" value="{maturityLevel}" editable="false"/>
-								<Title text="{name}"></Title>
-							</VBox>
-						</CustomListItem>
-					</List>
-					<List	
-						showNoData="false"
-						headerText="Observing"
-						id="ObservingList"								
-						items="{ 
-							path: '/Technology',
-							filters : [
-								{ path : 'maturityStatus_code', operator : 'EQ', value1 : '5'}
-							] }">
-						<CustomListItem highlight="Information" class="sapUiTinyMargin">
-							<VBox class="sapUiTinyMargin">
-								<RatingIndicator iconSize="12px" value="{maturityLevel}" editable="false"/>
-								<Title text="{name}"></Title>
-							</VBox>
-						</CustomListItem>
-					</List>
-					-->
 				</f:GridContainer>
 			</VBox>
 		</content>
