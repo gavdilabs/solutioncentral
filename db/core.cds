@@ -78,14 +78,14 @@ entity BusinessCriticalityLevel : sap.common.CodeList {
 
 // Entities
 entity User {
-  key username  : String;
-      email     : String  @mandatory;
-      firstName : String;
-      lastName  : String;
-      imageUrl  : String  @Core.IsURL  @Core.MediaType: imageType;
-      imageType : String  @Core.IsMediaType;
-      teams     : Association to many SoftwareTeam
-                    on teams._teamUsers.user = $self;
+  key username      : String;
+      email         : String  @mandatory;
+      firstName     : String;
+      lastName      : String;
+      imageUrl      : String  @Core.IsURL  @Core.MediaType: imageType;
+      imageType     : String  @Core.IsMediaType;
+      softwareTeams : Association to many SoftwareTeamUser
+                        on softwareTeams.user = $self;
 }
 
 @cds.search: {name}
