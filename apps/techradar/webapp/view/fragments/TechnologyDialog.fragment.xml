@@ -25,12 +25,10 @@
                     <Label text="Name" />
                     <Input value="{name}" />		
                     <Label text="Maturity status" />
-                    <Select forceSelection="false" selectedKey="{maturityStatus}">
-                        <core:Item key="Stopping" text="Stopping" />
-                        <core:Item key="Reducing" text="Reducing" />
-                        <core:Item key="Using" text="Using" />
-                        <core:Item key="Adopting" text="Adopting" />
-                        <core:Item key="Observing" text="Observing" />
+                    <Select forceSelection="false" selectedKey="{maturityStatus_code}" items="{
+						    path: '/TechnologyStatus'						
+					    }">
+                        <core:Item key="{code}" text="{descr}"/>   
                     </Select>
                     <Label text="Maturity level" />
                     <RatingIndicator iconSize="16px" value="{maturityLevel}"/>
@@ -46,10 +44,28 @@
                     </MultiComboBox>							
                 </form:content>
 			</form:SimpleForm>
+            <List
+                noDataText="No software solution using this technology"
+                items="{
+                    path: '_solutions'
+                }">
+                <headerToolbar>
+                    <OverflowToolbar>
+                        <content>
+                            <Title text="Solutions"/>
+                            <ToolbarSpacer />
+                            <Button text="Add" icon="sap-icon://add" press="addSoftwareSolution"/>
+                        </content>
+                    </OverflowToolbar>
+                </headerToolbar>      
+                <StandardListItem
+                    title="{software/name}"
+                    description="{software/description}"/>                                 
+            </List>
 		</content>
 		<buttons>
             <Button text="Cancel" press="cancelTechnology"/>
-			<Button text="Add" press="saveTechnology"/>
+			<Button text="Save" press="saveTechnology"/>
 		</buttons>
 	</Dialog>
 </c:FragmentDefinition>

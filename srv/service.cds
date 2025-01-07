@@ -102,6 +102,8 @@ service RadarService {
     }
   ])  as projection on core.SoftwareDependency;
 
+  entity TechnologyStatus as projection on core.TechnologyStatus;
+
   entity Technology @(restrict: [
     {
       grant: ['READ'],

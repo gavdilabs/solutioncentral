@@ -10,6 +10,9 @@ module.exports.CleanCoreLevel_ = csn.CleanCoreLevel
 // CodeQualityLevel
 module.exports.CodeQualityLevel = { is_singular: true, __proto__: csn.CodeQualityLevel }
 module.exports.CodeQualityLevel_ = csn.CodeQualityLevel
+// TechnologyStatus
+module.exports.TechnologyStatu = { is_singular: true, __proto__: csn.TechnologyStatus }
+module.exports.TechnologyStatus = csn.TechnologyStatus
 // BusinessCriticalityLevel
 module.exports.BusinessCriticalityLevel = { is_singular: true, __proto__: csn.BusinessCriticalityLevel }
 module.exports.BusinessCriticalityLevel_ = csn.BusinessCriticalityLevel
@@ -47,5 +50,4 @@ module.exports.softwareStatus ??= { Development: "Development", Testing: "Testin
 module.exports.softwareDependencyType ??= { Consuming: "Consuming", Embedding: "Embedding", Associating: "Associating" }
 module.exports.technologyType ??= { ABAP: "ABAP", ABAP_Cloud: "ABAP_Cloud", CAP: "CAP" }
 module.exports.criticalityLevel ??= { Very_High: "Very_High", High: "High", Medium: "Medium", Low: "Low" }
-module.exports.technologyStatus ??= { Stopping: "Stopping", Reducing: "Reducing", Using: "Using", Adopting: "Adopting", Observing: "Observing" }
 module.exports.deploymentTypes ??= { OnPremise: "OnPremise", Cloud: "Cloud" }

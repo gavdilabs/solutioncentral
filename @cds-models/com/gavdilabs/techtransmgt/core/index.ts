@@ -38,16 +38,6 @@ export const criticalityLevel = {
 export type criticalityLevel = "Very_High" | "High" | "Medium" | "Low"
 
 // enum
-export const technologyStatus = {
-  Stopping: "Stopping",
-  Reducing: "Reducing",
-  Using: "Using",
-  Adopting: "Adopting",
-  Observing: "Observing",
-} as const;
-export type technologyStatus = "Stopping" | "Reducing" | "Using" | "Adopting" | "Observing"
-
-// enum
 export const deploymentTypes = {
   OnPremise: "OnPremise",
   Cloud: "Cloud",
@@ -102,6 +92,22 @@ Object.defineProperty(CodeQualityLevel, 'name', { value: 'com.gavdilabs.techtran
 Object.defineProperty(CodeQualityLevel, 'is_singular', { value: true })
 export class CodeQualityLevel_ extends Array<CodeQualityLevel> {$count?: number}
 Object.defineProperty(CodeQualityLevel_, 'name', { value: 'com.gavdilabs.techtransmgt.core.CodeQualityLevel' })
+
+export function _TechnologyStatuAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
+  return class TechnologyStatu extends _sap_common._CodeListAspect(Base) {
+    declare descr?: string | null
+    declare code?: __.Key<number>
+    static override readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
+    declare static readonly keys: __.KeysOf<TechnologyStatu>;
+    declare static readonly elements: __.ElementsOf<TechnologyStatu>;
+    declare static readonly actions: typeof _sap_common.CodeList.actions & Record<never, never>;
+  };
+}
+export class TechnologyStatu extends _TechnologyStatuAspect(__.Entity) {}
+Object.defineProperty(TechnologyStatu, 'name', { value: 'com.gavdilabs.techtransmgt.core.TechnologyStatus' })
+Object.defineProperty(TechnologyStatu, 'is_singular', { value: true })
+export class TechnologyStatus extends Array<TechnologyStatu> {$count?: number}
+Object.defineProperty(TechnologyStatus, 'name', { value: 'com.gavdilabs.techtransmgt.core.TechnologyStatus' })
 
 export function _BusinessCriticalityLevelAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
   return class BusinessCriticalityLevel extends _sap_common._CodeListAspect(Base) {
@@ -248,7 +254,8 @@ export function _TechnologyAspect<TBase extends new (...args: any[]) => object>(
   return class Technology extends _._cuidAspect(Base) {
     declare name?: string | null
     declare description?: string | null
-    declare maturityStatus?: technologyStatus | null
+    declare maturityStatus?: __.Association.to<TechnologyStatu> | null
+    declare maturityStatus_code?: __.Key<number> | null
     declare maturityLevel?: number | null
     declare _replacements?: __.Association.to.many<TechnologyReplacement_>
     declare _solutions?: __.Association.to.many<SoftwareTechnology_>
