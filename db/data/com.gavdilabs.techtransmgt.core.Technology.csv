@@ -1,7 +1,15 @@
 ID;name;description;maturityStatus_code;maturityLevel
+<<<<<<< HEAD
 1c448326-5f44-11ec-bf63-0242ac130002;ABAP;Good old fashion ABAP;3;3
 1c448326-5f44-11ec-bf63-0242ac130003;SAPUI5;UI5;3;2
 1c448326-5f44-11ec-bf63-0242ac130004;WebDynpro;WDA;2;4
 1c448326-5f44-11ec-bf63-0242ac130005;IE;Internet Explorer;1;4
 1c448326-5f44-11ec-bf63-0242ac130006;CAP;CAP;4;1
 1c448326-5f44-11ec-bf63-0242ac130007;AI;AI;5;1
+=======
+1;ABAP;Good old fashion ABAP;3;3
+2;SAPUI5;UI5;3;2
+3;WebDynpro;WDA;2;4
+4;IE;Internet Explorer;1;4
+5;CAP;CAP;4;1
+>>>>>>> master
