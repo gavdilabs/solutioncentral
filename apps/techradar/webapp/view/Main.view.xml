@@ -15,54 +15,46 @@
 		<f:title>
 			<f:DynamicPageTitle>
 				<f:content>
-					
-						<Image src="images/ecco.png" height="50px"/>
-					
+					<Image src="images/ecco.png" height="50px"/>
 				</f:content>
 			</f:DynamicPageTitle>
 		</f:title>
 		<f:header>
-			<f:DynamicPageHeader backgroundDesign="" pinnable="true">
+			<f:DynamicPageHeader pinnable="true">
 				<f:content>
-					<core:Fragment fragmentName="com.gavdilabs.techradar.view.fragments.FilterBar" type="XML"/>
-					<!-- <FlexBox alignItems="Start" justifyContent="SpaceBetween" width="100%">
-						<Image src="images/ecco.png" height="50px"/>
-					</FlexBox>	 -->	
+					<core:Fragment fragmentName="com.gavdilabs.techradar.view.fragments.FilterBar" type="XML"/>					
 				</f:content>
 			</f:DynamicPageHeader>		
 		</f:header>	
-		<f:content>
-			<VBox>
-				
-				<f:GridContainer id="TechGrid" width="100%" class="sapUiTinyMargin" items="{ path: '/TechnologyStatus',  events: { dataReceived: '.onTechnologyStatusReceived' }}">
-					<f:layout>
-						<f:GridContainerSettings rowSize="84px" columnSize="300px" />
-					</f:layout>					
-					<f:items> 	
-						<f:GridList							
-							headerText="{descr}"
-							items="{ 
-								path: '/Technology', 
-								templateShareable: false,								
-								suspended: true,
-								parameters: {						
-									$$updateGroupId : 'techUpdateGroup'
-								}
-							}">
-							<f:dragDropConfig>
-								<dnd:DragInfo sourceAggregation="items" />
-								<dnd-grid:GridDropInfo targetAggregation="items" dropPosition="OnOrBetween" dropLayout="Horizontal" drop="onDrop" />
-							</f:dragDropConfig>
-							<f:GridListItem	type="Active" highlight="{path: 'maturityStatus_code', formatter: 'formatter.formatHighlight'}" press="pressTechnology">
-								<VBox height="100%" class="sapUiSmallMargin">
-									<RatingIndicator iconSize="12px" value="{maturityLevel}" editable="false"/>
-									<Title text="{name}"></Title>
-								</VBox>
-							</f:GridListItem>
-						</f:GridList>	
-					</f:items>
-				</f:GridContainer>
-			</VBox>
+		<f:content>			
+			<f:GridContainer id="TechGrid" width="100%" class="sapUiTinyMargin" items="{ path: '/TechnologyStatus',  events: { dataReceived: '.onTechnologyStatusReceived' }}">
+				<f:layout>
+					<f:GridContainerSettings rowSize="84px" columnSize="300px" />
+				</f:layout>					
+				<f:items> 	
+					<f:GridList							
+						headerText="{descr}"
+						items="{ 
+							path: '/Technology', 
+							templateShareable: false,								
+							suspended: true,
+							parameters: {						
+								$$updateGroupId : 'techUpdateGroup'
+							}
+						}">
+						<f:dragDropConfig>
+							<dnd:DragInfo sourceAggregation="items" />
+							<dnd-grid:GridDropInfo targetAggregation="items" dropPosition="OnOrBetween" dropLayout="Horizontal" drop="onDrop" />
+						</f:dragDropConfig>
+						<f:GridListItem	type="Active" highlight="{path: 'maturityStatus_code', formatter: 'formatter.formatHighlight'}" press="pressTechnology">
+							<VBox height="100%" class="sapUiSmallMargin">
+								<RatingIndicator iconSize="12px" value="{maturityLevel}" editable="false"/>
+								<Title text="{name}"></Title>
+							</VBox>
+						</f:GridListItem>
+					</f:GridList>	
+				</f:items>
+			</f:GridContainer>			
 		</f:content>
 		<f:footer>
 			<OverflowToolbar>
