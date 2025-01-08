@@ -7,7 +7,7 @@
           "dummy": {
             "id": "dummy",
             "password": "dummy",
-            "roles": []
+            "roles": ["Admin"]
           }
         }
       }

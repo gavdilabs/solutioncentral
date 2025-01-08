@@ -12,9 +12,9 @@ export default {
 			case '3':
 				return 'Success';	
 		 	case '4':
-				return 'Information';
-			case '5':
 				return 'None';
+			case '5':				
+				return 'Information';
 			default:
 				return 'Warning';	
 		}

@@ -11,25 +11,33 @@
 		formatter: 'com/gavdilabs/techradar/model/formatter'
 	}">
 
-	<Page showHeader="false" id="page">		
-		<content>
-			<ObjectHeader	
-				id="Header"				
-				icon="sap-icon://product"
-				iconDensityAware="false"				
-				imageShape="Circle"			
-				responsive="true"
-				title="ECCO">							
-			</ObjectHeader>	
+	<f:DynamicPage id="dynamicPageId" showFooter="true">
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:content>
+					
+						<Image src="images/ecco.png" height="50px"/>
+					
+				</f:content>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:header>
+			<f:DynamicPageHeader backgroundDesign="" pinnable="true">
+				<f:content>
+					<core:Fragment fragmentName="com.gavdilabs.techradar.view.fragments.FilterBar" type="XML"/>
+					<!-- <FlexBox alignItems="Start" justifyContent="SpaceBetween" width="100%">
+						<Image src="images/ecco.png" height="50px"/>
+					</FlexBox>	 -->	
+				</f:content>
+			</f:DynamicPageHeader>		
+		</f:header>	
+		<f:content>
 			<VBox>
+				
 				<f:GridContainer id="TechGrid" width="100%" class="sapUiTinyMargin" items="{ path: '/TechnologyStatus',  events: { dataReceived: '.onTechnologyStatusReceived' }}">
 					<f:layout>
 						<f:GridContainerSettings rowSize="84px" columnSize="300px" />
-					</f:layout>
-					<!-- <f:dragDropConfig>
-						<dnd:DragInfo sourceAggregation="items" />
-						<dnd-grid:GridDropInfo targetAggregation="items" dropPosition="Between" dropLayout="Horizontal" drop="onDrop" />
-					</f:dragDropConfig> -->
+					</f:layout>					
 					<f:items> 	
 						<f:GridList							
 							headerText="{descr}"
@@ -41,12 +49,10 @@
 									$$updateGroupId : 'techUpdateGroup'
 								}
 							}">
-
 							<f:dragDropConfig>
 								<dnd:DragInfo sourceAggregation="items" />
 								<dnd-grid:GridDropInfo targetAggregation="items" dropPosition="OnOrBetween" dropLayout="Horizontal" drop="onDrop" />
 							</f:dragDropConfig>
-
 							<f:GridListItem	type="Active" highlight="{path: 'maturityStatus_code', formatter: 'formatter.formatHighlight'}" press="pressTechnology">
 								<VBox height="100%" class="sapUiSmallMargin">
 									<RatingIndicator iconSize="12px" value="{maturityLevel}" editable="false"/>
@@ -54,37 +60,16 @@
 								</VBox>
 							</f:GridListItem>
 						</f:GridList>	
-
-						<!-- <List	
-							showNoData="true"
-							headerText="{descr}"
-							noDataText="No technologies"										 			
-							items="{ 
-								path: '/Technology', 
-								templateShareable: false,								
-								suspended: true,
-								parameters: {						
-									$$updateGroupId : 'techUpdateGroup'
-								}
-							}">		
-							<CustomListItem type="Active" highlight="{path: 'maturityStatus_code', formatter: 'formatter.formatHighlight'}" class="sapUiTinyMargin" press="pressTechnology">								
-								<VBox class="sapUiTinyMargin">
-									<RatingIndicator iconSize="12px" value="{maturityLevel}" editable="false"/>
-									<Title text="{name}"></Title>
-								</VBox>
-							</CustomListItem>
-						</List>	 -->
-						
 					</f:items>
 				</f:GridContainer>
 			</VBox>
-		</content>
-		<footer>
+		</f:content>
+		<f:footer>
 			<OverflowToolbar>
 				<ToolbarSpacer/>
 				<Button text="Add" type="Emphasized" icon="sap-icon://add" press="addTechnology"/>				
 			</OverflowToolbar>
-		</footer>
-	</Page>
+		</f:footer>
+	</f:DynamicPage>
 
 </mvc:View>

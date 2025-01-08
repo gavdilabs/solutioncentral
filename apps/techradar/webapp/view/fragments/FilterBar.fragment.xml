@@ -1,0 +1,35 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">   
+    <Panel>
+        <FlexBox alignItems="Start" justifyContent="SpaceBetween" width="100%" >
+            <HBox>
+                <HBox class="sapUiTinyMargin">
+                    <Label text="Technology:" class="sapUiTinyMarginTop sapUiTinyMarginEnd"/>
+                    <MultiComboBox id="TechnologyFilter" items="{ path: '/Technology' }">
+                        <core:Item key="{ID}" text="{name}" />                       
+                    </MultiComboBox>	
+                </HBox>
+                <HBox class="sapUiTinyMargin">
+                    <Label text="Maturity:" class="sapUiTinyMarginTop sapUiTinyMarginEnd"/>
+                    <Select id="MaturityFilter" forceSelection="false">
+                        <items>
+                            <core:Item key="1" text="1" /> 
+                            <core:Item key="2" text="2" /> 
+                            <core:Item key="3" text="3" /> 
+                            <core:Item key="4" text="4" /> 
+                            <core:Item key="5" text="5" /> 
+                        </items>
+                    </Select>
+                </HBox>
+                <HBox class="sapUiTinyMargin sapUiTinyMarginEnd">
+                    <Button class="sapUiTinyMarginEnd" tooltip="Clear" text="Clear" icon="sap-icon://clear-filter" press="clearTechnologies"/>
+                    <Button tooltip="Filter" text="Filter" icon="sap-icon://filter" press="filterTechnologies"/>
+                </HBox>
+            </HBox>
+            <HBox class="sapUiTinyMarginTop">
+                <Button tooltip="Sort" text="Sort" icon="sap-icon://sort" press="sortTechnologies"/>
+            </HBox>
+        </FlexBox>
+    </Panel>
+</core:FragmentDefinition>

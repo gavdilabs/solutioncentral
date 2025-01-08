@@ -1,8 +1,8 @@
-import List from "sap/m/List";
+//import List from "sap/m/List";
 import BaseController from "./BaseController";
-import DragInfo from "sap/ui/core/dnd/DragInfo";
-import DropInfo, { DropInfo$DragEnterEvent } from "sap/ui/core/dnd/DropInfo";
-import { dnd } from "sap/ui/core/library";
+//import DragInfo from "sap/ui/core/dnd/DragInfo";
+//import DropInfo, { DropInfo$DragEnterEvent } from "sap/ui/core/dnd/DropInfo";
+//import { dnd } from "sap/ui/core/library";
 import Dialog from "sap/m/Dialog";
 import Fragment from "sap/ui/core/Fragment";
 import ODataModel from "sap/ui/model/odata/v4/ODataModel";
@@ -12,13 +12,13 @@ import FilterOperator from "sap/ui/model/FilterOperator";
 import ODataListBinding from "sap/ui/model/odata/v4/ODataListBinding";
 import Context from "sap/ui/model/odata/v4/Context";
 import Control from "sap/ui/core/Control";
-import CustomListItem from "sap/m/CustomListItem";
 import { CustomListItem$DetailClickEvent } from "sap/ui/webc/main/CustomListItem";
 import MultiComboBox from "sap/m/MultiComboBox";
 import { MultiComboBox$ChangeEvent } from "sap/ui/webc/main/MultiComboBox";
 import Item from "sap/ui/core/Item";
 import GridList from "sap/f/GridList";
 import GridListItem from "sap/f/GridListItem";
+import Select from "sap/m/Select";
 
 /**
  * @namespace com.gavdilabs.techradar.controller
@@ -26,7 +26,6 @@ import GridListItem from "sap/f/GridListItem";
 export default class Main extends BaseController {
 	private _TechDialog: Dialog;
 	private aTechAlternatives : Array<Context> = [];
-    private bContentsChanged: boolean = false;
 
 	public onInit(): void {	
 	
@@ -36,24 +35,50 @@ export default class Main extends BaseController {
 		this.filterTechItems();
 	}
 
+	public filterTechnologies() {
+		this.filterTechItems();
+	}
+
+	public clearTechnologies() {
+		(this.getView().byId("MaturityFilter") as Select).setSelectedKey("");
+		(this.getView().byId("TechnologyFilter") as MultiComboBox).setSelectedKeys([]);
+		this.filterTechItems();
+	}
+
 	private filterTechItems(): void {
 		const oGridList = this.getView().byId("TechGrid") as GridContainer;
 		//const aListItems = oGridList.getItems() as List[];
 		const aListItems = oGridList.getItems() as GridList[];
 		for (const oListItem of aListItems) {
+			const aFilters = this.getTechFilters();
 			const iMaturityStatusCode = (oListItem.getBindingContext() as Context).getProperty("code") as number;
-			const oFilter = new Filter("maturityStatus_code", FilterOperator.EQ, iMaturityStatusCode);
+			aFilters.push(new Filter("maturityStatus_code", FilterOperator.EQ, iMaturityStatusCode));
 			const oListBinding = oListItem.getBinding("items") as ODataListBinding;
-			oListBinding.filter(oFilter);
+			oListBinding.filter(aFilters);
 			if (oListBinding.isSuspended()) {
 				oListBinding.resume();				
 			}
-			if(oListItem.getDragDropConfig().length === 0) {
-				//this.attachDragAndDrop(oListItem);
-			}
+			/* if(oListItem.getDragDropConfig().length === 0) {
+				this.attachDragAndDrop(oListItem);
+			} */
 		}
 	}
-	private attachDragAndDrop(oList: List): void {
+
+	private getTechFilters(): Filter[] {
+		const aFilters: Filter[] = [];
+
+		const sMaturity = (this.getView().byId("MaturityFilter") as Select).getSelectedKey();
+		if(sMaturity) 
+			aFilters.push(new Filter("maturityLevel", FilterOperator.EQ, sMaturity));
+		
+		const aTechnologies = (this.getView().byId("TechnologyFilter") as MultiComboBox).getSelectedKeys();
+		aTechnologies.forEach((sTechId) => {
+			aFilters.push(new Filter("ID", FilterOperator.EQ, sTechId));
+		});		
+
+		return aFilters;
+	}
+	/* private attachDragAndDrop(oList: List): void {
 		oList.addDragDropConfig(new DragInfo({ sourceAggregation: "items" }));
         oList.addDragDropConfig(
           new DropInfo({
@@ -62,7 +87,7 @@ export default class Main extends BaseController {
             drop: this.onDrop.bind(this)
           })
         ); 
-	}
+	} */
 
 	public async onDrop(oInfo: DropInfo$DragEnterEvent): void {
 		const oControl = oInfo.getParameter("droppedControl") as Control;
@@ -158,6 +183,7 @@ export default class Main extends BaseController {
 			await oModel.submitBatch("techUpdateGroup");
 			this._TechDialog.setBusy(false);
 			this._TechDialog.close();
+			oModel.refresh();
 		} catch (oError) {
 			this._TechDialog.setBusy(false);	
 		}	
