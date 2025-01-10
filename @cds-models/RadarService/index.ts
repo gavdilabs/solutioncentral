@@ -14,11 +14,12 @@ export default RadarService
 export function _UserAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
   return class User extends Base {
     declare username?: __.Key<string>
+    declare email?: string | null
     declare firstName?: string | null
     declare lastName?: string | null
-    declare email?: string | null
     declare imageUrl?: string | null
     declare imageType?: string | null
+    declare softwareTeams?: __.Association.to.many<SoftwareTeamUser_>
     static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
     declare static readonly keys: __.KeysOf<User>;
     declare static readonly elements: __.ElementsOf<User>;
@@ -63,6 +64,8 @@ export function _SoftwareSolutionAspect<TBase extends new (...args: any[]) => ob
     declare owner_username?: __.Key<string> | null
     declare team?: __.Association.to<SoftwareTeam> | null
     declare team_teamName?: __.Key<string> | null
+    declare dependencies?: __.Association.to.many<SoftwareDependency_>
+    declare dependents?: __.Association.to.many<SoftwareDependency_>
     declare _technologies?: __.Association.to.many<_com_gavdilabs_techtransmgt_core.SoftwareTechnology_>
     static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
     declare static readonly keys: __.KeysOf<SoftwareSolution>;
@@ -70,15 +73,13 @@ export function _SoftwareSolutionAspect<TBase extends new (...args: any[]) => ob
     declare static readonly actions: Record<never, never>;
   };
 }
-/**
-* Aspect to capture changes by user and name
-* 
-* See https://cap.cloud.sap/docs/cds/common#aspect-managed
-*/
-export class SoftwareSolution extends _SoftwareSolutionAspect(__.Entity) {}
+/** Individual field controls */
+export class SoftwareSolution extends _SoftwareSolutionAspect(__.Entity) {static drafts: __.DraftOf<SoftwareSolution>}
 Object.defineProperty(SoftwareSolution, 'name', { value: 'RadarService.SoftwareSolution' })
 Object.defineProperty(SoftwareSolution, 'is_singular', { value: true })
-export class SoftwareSolution_ extends Array<SoftwareSolution> {$count?: number}
+/** Individual field controls */
+export class SoftwareSolution_ extends Array<SoftwareSolution> {static drafts: __.DraftsOf<SoftwareSolution>
+$count?: number}
 Object.defineProperty(SoftwareSolution_, 'name', { value: 'RadarService.SoftwareSolution' })
 
 export function _SoftwareTeamAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
@@ -131,6 +132,28 @@ Object.defineProperty(SoftwareDependency, 'name', { value: 'RadarService.Softwar
 Object.defineProperty(SoftwareDependency, 'is_singular', { value: true })
 export class SoftwareDependency_ extends Array<SoftwareDependency> {$count?: number}
 Object.defineProperty(SoftwareDependency_, 'name', { value: 'RadarService.SoftwareDependency' })
+
+export function _TechnologyStatuAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
+  return class TechnologyStatu extends Base {
+    declare name?: string | null
+    declare descr?: string | null
+    declare code?: __.Key<number>
+    static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
+    declare static readonly keys: __.KeysOf<TechnologyStatu>;
+    declare static readonly elements: __.ElementsOf<TechnologyStatu>;
+    declare static readonly actions: Record<never, never>;
+  };
+}
+/**
+* Aspect for a code list with name and description
+* 
+* See https://cap.cloud.sap/docs/cds/common#aspect-codelist
+*/
+export class TechnologyStatu extends _TechnologyStatuAspect(__.Entity) {}
+Object.defineProperty(TechnologyStatu, 'name', { value: 'RadarService.TechnologyStatus' })
+Object.defineProperty(TechnologyStatu, 'is_singular', { value: true })
+export class TechnologyStatus extends Array<TechnologyStatu> {$count?: number}
+Object.defineProperty(TechnologyStatus, 'name', { value: 'RadarService.TechnologyStatus' })
 
 export function _TechnologyAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
   return class Technology extends Base {
@@ -246,28 +269,6 @@ Object.defineProperty(CleanCoreLevel, 'name', { value: 'RadarService.CleanCoreLe
 Object.defineProperty(CleanCoreLevel, 'is_singular', { value: true })
 export class CleanCoreLevel_ extends Array<CleanCoreLevel> {$count?: number}
 Object.defineProperty(CleanCoreLevel_, 'name', { value: 'RadarService.CleanCoreLevel' })
-
-export function _TechnologyStatuAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
-  return class TechnologyStatu extends Base {
-    declare name?: string | null
-    declare descr?: string | null
-    declare code?: __.Key<number>
-    static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
-    declare static readonly keys: __.KeysOf<TechnologyStatu>;
-    declare static readonly elements: __.ElementsOf<TechnologyStatu>;
-    declare static readonly actions: Record<never, never>;
-  };
-}
-/**
-* Aspect for a code list with name and description
-* 
-* See https://cap.cloud.sap/docs/cds/common#aspect-codelist
-*/
-export class TechnologyStatu extends _TechnologyStatuAspect(__.Entity) {}
-Object.defineProperty(TechnologyStatu, 'name', { value: 'RadarService.TechnologyStatus' })
-Object.defineProperty(TechnologyStatu, 'is_singular', { value: true })
-export class TechnologyStatus extends Array<TechnologyStatu> {$count?: number}
-Object.defineProperty(TechnologyStatus, 'name', { value: 'RadarService.TechnologyStatus' })
 
 export function _CodeQualityLevelAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
   return class CodeQualityLevel extends Base {

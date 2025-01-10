@@ -2,7 +2,7 @@ import type {
   ActionRequest,
   ActionReturn,
 } from "@dxfrontier/cds-ts-dispatcher";
-import { getActiveUser } from "#cds-models/Service";
+import { getActiveUser } from "#cds-models/RadarService";
 import {
   Inject,
   OnFunction,

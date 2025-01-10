@@ -128,11 +128,12 @@ Object.defineProperty(BusinessCriticalityLevel_, 'name', { value: 'com.gavdilabs
 export function _UserAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
   return class User extends Base {
     declare username?: __.Key<string>
+    declare email?: string | null
     declare firstName?: string | null
     declare lastName?: string | null
-    declare email?: string | null
     declare imageUrl?: string | null
     declare imageType?: string | null
+    declare softwareTeams?: __.Association.to.many<SoftwareTeamUser_>
     static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
     declare static readonly keys: __.KeysOf<User>;
     declare static readonly elements: __.ElementsOf<User>;
@@ -168,6 +169,8 @@ export function _SoftwareSolutionAspect<TBase extends new (...args: any[]) => ob
     declare owner_username?: __.Key<string> | null
     declare team?: __.Association.to<SoftwareTeam> | null
     declare team_teamName?: __.Key<string> | null
+    declare dependencies?: __.Association.to.many<SoftwareDependency_>
+    declare dependents?: __.Association.to.many<SoftwareDependency_>
     declare _technologies?: __.Association.to.many<SoftwareTechnology_>
     static override readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
     declare static readonly keys: __.KeysOf<SoftwareSolution> & typeof _.cuid.keys;
