@@ -133,6 +133,28 @@ Object.defineProperty(SoftwareDependency, 'is_singular', { value: true })
 export class SoftwareDependency_ extends Array<SoftwareDependency> {$count?: number}
 Object.defineProperty(SoftwareDependency_, 'name', { value: 'RadarService.SoftwareDependency' })
 
+export function _TechnologyStatuAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
+  return class TechnologyStatu extends Base {
+    declare name?: string | null
+    declare descr?: string | null
+    declare code?: __.Key<number>
+    static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
+    declare static readonly keys: __.KeysOf<TechnologyStatu>;
+    declare static readonly elements: __.ElementsOf<TechnologyStatu>;
+    declare static readonly actions: Record<never, never>;
+  };
+}
+/**
+* Aspect for a code list with name and description
+* 
+* See https://cap.cloud.sap/docs/cds/common#aspect-codelist
+*/
+export class TechnologyStatu extends _TechnologyStatuAspect(__.Entity) {}
+Object.defineProperty(TechnologyStatu, 'name', { value: 'RadarService.TechnologyStatus' })
+Object.defineProperty(TechnologyStatu, 'is_singular', { value: true })
+export class TechnologyStatus extends Array<TechnologyStatu> {$count?: number}
+Object.defineProperty(TechnologyStatus, 'name', { value: 'RadarService.TechnologyStatus' })
+
 export function _TechnologyAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
   return class Technology extends Base {
     declare ID?: __.Key<string>
