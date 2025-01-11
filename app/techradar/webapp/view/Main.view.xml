@@ -14,9 +14,12 @@
 	<f:DynamicPage id="dynamicPageId" showFooter="true">
 		<f:title>
 			<f:DynamicPageTitle>
-				<f:content>
-					<Image src="images/ecco.png" height="50px"/>
-				</f:content>
+				<f:heading>
+					<HBox>
+					<Image src="images/ecco.png" height="40px"/>
+					<Title text="Technology Radar" class="sapUiTinyMarginTop sapUiMediumMarginBegin"/>
+					</HBox>
+				</f:heading>				
 			</f:DynamicPageTitle>
 		</f:title>
 		<f:header>
@@ -36,6 +39,7 @@
 						headerText="{descr}"
 						items="{ 
 							path: '/Technology', 
+							sorter: [{ path: 'name', descending: false }],
 							templateShareable: false,								
 							suspended: true,
 							parameters: {						
@@ -59,7 +63,7 @@
 		<f:footer>
 			<OverflowToolbar>
 				<ToolbarSpacer/>
-				<Button text="Add" type="Emphasized" icon="sap-icon://add" press="addTechnology"/>				
+				<Button text="Add technology" type="Emphasized" icon="sap-icon://add" press="addTechnology"/>				
 			</OverflowToolbar>
 		</f:footer>
 	</f:DynamicPage>

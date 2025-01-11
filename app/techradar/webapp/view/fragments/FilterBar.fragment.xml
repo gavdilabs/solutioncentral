@@ -28,7 +28,7 @@
                 </HBox>
             </HBox>
             <HBox class="sapUiTinyMarginTop">
-                <Button tooltip="Sort" text="Sort" icon="sap-icon://sort" press="sortTechnologies"/>
+                <Button tooltip="Sort" text="Sort" icon="sap-icon://sort" press="openSortDialog"/>
             </HBox>
         </FlexBox>
     </Panel>

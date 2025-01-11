@@ -19,12 +19,14 @@ import Item from "sap/ui/core/Item";
 import GridList from "sap/f/GridList";
 import GridListItem from "sap/f/GridListItem";
 import Select from "sap/m/Select";
+import MessageBox from "sap/m/MessageBox";
 
 /**
  * @namespace com.gavdilabs.techradar.controller
  */
 export default class Main extends BaseController {
 	private _TechDialog: Dialog;
+	private _SortDialog: Dialog;
 	private aTechAlternatives : Array<Context> = [];
 
 	public onInit(): void {	
@@ -33,6 +35,18 @@ export default class Main extends BaseController {
 
 	public onTechnologyStatusReceived(): void {
 		this.filterTechItems();
+	}
+
+	public async openSortDialog(): Promise<void> {
+		if(!this._SortDialog) {
+            this._SortDialog ??= await Fragment.load({ id:"TechnologyDialog", name: 'com.gavdilabs.techradar.view.fragments.Sort', controller: this }) as Dialog;
+            this.getView().addDependent(this._SortDialog);		
+        }		
+		this._SortDialog.open();
+	}
+
+	public async sortTechnologies(): Promise<void> {
+		
 	}
 
 	public filterTechnologies() {
@@ -126,7 +140,6 @@ export default class Main extends BaseController {
 		if(!this._TechDialog) {
             this._TechDialog ??= await Fragment.load({ id:"TechnologyDialog", name: 'com.gavdilabs.techradar.view.fragments.TechnologyDialog', controller: this }) as Dialog;
             this.getView().addDependent(this._TechDialog);		
-			
         }
 		this._TechDialog.setBindingContext(oContext);
 		this._TechDialog.open();
@@ -183,9 +196,11 @@ export default class Main extends BaseController {
 			await oModel.submitBatch("techUpdateGroup");
 			this._TechDialog.setBusy(false);
 			this._TechDialog.close();
+			MessageBox.success("Technology saved");
 			oModel.refresh();
 		} catch (oError) {
 			this._TechDialog.setBusy(false);	
+			MessageBox.error("Technology not saved");
 		}	
 	}
 

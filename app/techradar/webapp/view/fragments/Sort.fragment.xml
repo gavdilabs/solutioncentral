@@ -1,0 +1,10 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core">
+    <ViewSettingsDialog confirm="sortTechnologies">
+		<sortItems>
+			<ViewSettingsItem text="Name" key="1" selected="true" />
+			<ViewSettingsItem text="Maturity" key="2" />			
+		</sortItems>		
+	</ViewSettingsDialog>
+</c:FragmentDefinition>
