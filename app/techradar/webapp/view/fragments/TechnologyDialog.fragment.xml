@@ -3,7 +3,7 @@
     xmlns:form="sap.ui.layout.form"
     xmlns:core="sap.ui.core"	
 	xmlns:c="sap.ui.core">
-   <Dialog title="Add new technology" contentWidth="800px">
+   <Dialog title="Add new technology" contentWidth="1024px">
 		<content>
 			<form:SimpleForm editable="true"
                 layout="ResponsiveGridLayout"
@@ -25,9 +25,10 @@
                     <Label text="Name" />
                     <Input value="{name}" />		
                     <Label text="Maturity status" />
-                    <Select forceSelection="false" selectedKey="{maturityStatus_code}" items="{
-						    path: '/TechnologyStatus'						
-					    }">
+                    <Select forceSelection="false" selectedKey="{maturityStatus_code}" 
+                    items="{
+                        path: '/TechnologyStatus'						
+                    }">
                         <core:Item key="{code}" text="{descr}"/>   
                     </Select>
                     <Label text="Maturity level" />
@@ -37,14 +38,13 @@
                     <Label text="Description" />
                     <TextArea rows="3" value="{description}"/>	
                     <Label text="Alternatives" />
-                    <MultiComboBox items="{
-						    path: '/Technology'						
-					    }">
+                    <MultiComboBox id="TechAlternatives" items="{ path: '/Technology' }" selectionChange="changeTechAlternatives">
 					    <core:Item key="{ID}" text="{name}" />                       
                     </MultiComboBox>							
                 </form:content>
 			</form:SimpleForm>
-            <List
+
+           <!--  <List
                 noDataText="No software solution using this technology"
                 items="{
                     path: '_solutions'
@@ -61,7 +61,7 @@
                 <StandardListItem
                     title="{software/name}"
                     description="{software/description}"/>                                 
-            </List>
+            </List> -->
 		</content>
 		<buttons>
             <Button text="Cancel" press="cancelTechnology"/>

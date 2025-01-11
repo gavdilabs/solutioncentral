@@ -102,8 +102,6 @@ service RadarService {
     }
   ])  as projection on core.SoftwareDependency;
 
-  entity TechnologyStatus as projection on core.TechnologyStatus;
-
   entity Technology @(restrict: [
     {
       grant: ['READ'],
@@ -161,6 +159,9 @@ service RadarService {
     }
   ])  as projection on core.CompanyConfiguration;
 
+  @readonly
+  entity TechnologyStatus as projection on core.TechnologyStatus;
+  
   @readonly
   entity SAPVersion @(restrict: [{
     grant: ['READ'],
