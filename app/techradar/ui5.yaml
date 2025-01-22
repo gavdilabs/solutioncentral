@@ -10,6 +10,7 @@ framework:
     - name: sap.ui.core
     - name: sap.f
     - name: sap.ui.mdc
+    - name: sap.tnt
     - name: themelib_sap_horizon
 builder:
   resources:

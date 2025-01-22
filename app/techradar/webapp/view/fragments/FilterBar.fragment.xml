@@ -22,6 +22,12 @@
                         </items>
                     </Select>
                 </HBox>
+                <HBox class="sapUiTinyMargin">
+                    <Label text="Tag:" class="sapUiTinyMarginTop sapUiTinyMarginEnd"/>
+                    <MultiComboBox id="TechnologyGroupFilter" items="{ path: '/TechnologyGroup' }">
+                        <core:Item key="{code}" text="{name}" />                       
+                    </MultiComboBox>
+                </HBox>
                 <HBox class="sapUiTinyMargin sapUiTinyMarginEnd">
                     <Button class="sapUiTinyMarginEnd" tooltip="Clear" text="Clear" icon="sap-icon://clear-filter" press="clearTechnologies"/>
                     <Button tooltip="Filter" text="Filter" icon="sap-icon://filter" press="filterTechnologies"/>

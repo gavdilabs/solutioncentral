@@ -71,6 +71,14 @@ entity TechnologyStatus : sap.common.CodeList {
       descr : String;
 }
 
+entity TechnologyGroup : sap.common.CodeList {
+  key code  : Integer @assert.range: [
+        1,
+        10
+      ];
+      descr : String;
+}
+
 entity BusinessCriticalityLevel : sap.common.CodeList {
   key code  : criticalityLevel;
       descr : String;
@@ -146,6 +154,7 @@ entity Technology : cuid {
     1,
     5
   ];
+  group          : Association to TechnologyGroup;
   _replacements  : Association to many TechnologyReplacement
                      on _replacements.source = ID;
   _solutions     : Association to many SoftwareTechnology

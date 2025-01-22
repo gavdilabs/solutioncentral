@@ -56,6 +56,7 @@ export default class Main extends BaseController {
 	public clearTechnologies() {
 		(this.getView().byId("MaturityFilter") as Select).setSelectedKey("");
 		(this.getView().byId("TechnologyFilter") as MultiComboBox).setSelectedKeys([]);
+		(this.getView().byId("TechnologyGroupFilter") as MultiComboBox).setSelectedKeys([]);
 		this.filterTechItems();
 	}
 
@@ -88,7 +89,12 @@ export default class Main extends BaseController {
 		const aTechnologies = (this.getView().byId("TechnologyFilter") as MultiComboBox).getSelectedKeys();
 		aTechnologies.forEach((sTechId) => {
 			aFilters.push(new Filter("ID", FilterOperator.EQ, sTechId));
-		});		
+		});
+		
+		const aTechnologyGroups = (this.getView().byId("TechnologyGroupFilter") as MultiComboBox).getSelectedKeys();
+		aTechnologyGroups.forEach((sTechGroupId) => {
+			aFilters.push(new Filter("group_code", FilterOperator.EQ, sTechGroupId));
+		})
 
 		return aFilters;
 	}

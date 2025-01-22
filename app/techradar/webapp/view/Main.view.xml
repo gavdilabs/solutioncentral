@@ -1,4 +1,4 @@
-<mvc:View
+<mvc:View xmlns:tnt="sap.tnt"
 	controllerName="com.gavdilabs.techradar.controller.Main"
 	displayBlock="true"
 	xmlns="sap.m"
@@ -42,7 +42,8 @@
 							sorter: [{ path: 'name', descending: false }],
 							templateShareable: false,								
 							suspended: true,
-							parameters: {						
+							parameters: {
+								expand : 'group',					
 								$$updateGroupId : 'techUpdateGroup'
 							}
 						}">
@@ -52,8 +53,11 @@
 						</f:dragDropConfig>
 						<f:GridListItem	type="Active" highlight="{path: 'maturityStatus_code', formatter: 'formatter.formatHighlight'}" press="pressTechnology">
 							<VBox height="100%" class="sapUiSmallMargin">
+								<HBox justifyContent="SpaceBetween">
+									<Title text="{name}"></Title>
+									<tnt:InfoLabel text="{group/name}" colorScheme="{group_code}" visible="{= ${group_code} > 0}"/>
+								</HBox>
 								<RatingIndicator iconSize="12px" value="{maturityLevel}" editable="false"/>
-								<Title text="{name}"></Title>
 							</VBox>
 						</f:GridListItem>
 					</f:GridList>	
