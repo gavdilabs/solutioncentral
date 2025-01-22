@@ -4,6 +4,7 @@ import * as __ from './../_';
 import * as _ from './..';
 import * as _com_gavdilabs_techtransmgt_core from './../com/gavdilabs/techtransmgt/core';
 import * as _com_gavdilabs_techtransmgt_types from './../com/gavdilabs/techtransmgt/types';
+import * as _sap_common from './../sap/common';
 
 export class RadarService extends cds.Service {
   /** FUNCTION IMPORTS */
@@ -141,6 +142,8 @@ export function _TechnologyAspect<TBase extends new (...args: any[]) => object>(
     declare maturityStatus?: __.Association.to<TechnologyStatu> | null
     declare maturityStatus_code?: __.Key<number> | null
     declare maturityLevel?: number | null
+    declare group?: __.Association.to<TechnologyGroup> | null
+    declare group_code?: __.Key<number> | null
     declare _replacements?: __.Association.to.many<TechnologyReplacement_>
     declare _solutions?: __.Association.to.many<_com_gavdilabs_techtransmgt_core.SoftwareTechnology_>
     static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
@@ -313,6 +316,22 @@ Object.defineProperty(BusinessCriticalityLevel, 'name', { value: 'RadarService.B
 Object.defineProperty(BusinessCriticalityLevel, 'is_singular', { value: true })
 export class BusinessCriticalityLevel_ extends Array<BusinessCriticalityLevel> {$count?: number}
 Object.defineProperty(BusinessCriticalityLevel_, 'name', { value: 'RadarService.BusinessCriticalityLevel' })
+
+export function _TechnologyGroupAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
+  return class TechnologyGroup extends _sap_common._CodeListAspect(Base) {
+    declare descr?: string | null
+    declare code?: __.Key<number>
+    static override readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
+    declare static readonly keys: __.KeysOf<TechnologyGroup>;
+    declare static readonly elements: __.ElementsOf<TechnologyGroup>;
+    declare static readonly actions: typeof _sap_common.CodeList.actions & Record<never, never>;
+  };
+}
+export class TechnologyGroup extends _TechnologyGroupAspect(__.Entity) {}
+Object.defineProperty(TechnologyGroup, 'name', { value: 'com.gavdilabs.techtransmgt.core.TechnologyGroup' })
+Object.defineProperty(TechnologyGroup, 'is_singular', { value: true })
+export class TechnologyGroup_ extends Array<TechnologyGroup> {$count?: number}
+Object.defineProperty(TechnologyGroup_, 'name', { value: 'com.gavdilabs.techtransmgt.core.TechnologyGroup' })
 
 /** FUNCTION IMPORTS */
 export declare const getActiveUser:  {

@@ -40,7 +40,12 @@
                     <Label text="Alternatives" />
                     <MultiComboBox id="TechAlternatives" items="{ path: '/Technology' }" selectionChange="changeTechAlternatives">
 					    <core:Item key="{ID}" text="{name}" />                       
-                    </MultiComboBox>							
+                    </MultiComboBox>
+                    <Label text="Tag"/>
+                    <Select forceSelection="false"  selectedKey="{group_code}"
+                        items="{ path: '/TechnologyGroup' }">
+                        <core:Item key="{code}" text="{name}"/>
+                    </Select>
                 </form:content>
 			</form:SimpleForm>
 

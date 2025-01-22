@@ -109,6 +109,22 @@ Object.defineProperty(TechnologyStatu, 'is_singular', { value: true })
 export class TechnologyStatus extends Array<TechnologyStatu> {$count?: number}
 Object.defineProperty(TechnologyStatus, 'name', { value: 'com.gavdilabs.techtransmgt.core.TechnologyStatus' })
 
+export function _TechnologyGroupAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
+  return class TechnologyGroup extends _sap_common._CodeListAspect(Base) {
+    declare descr?: string | null
+    declare code?: __.Key<number>
+    static override readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
+    declare static readonly keys: __.KeysOf<TechnologyGroup>;
+    declare static readonly elements: __.ElementsOf<TechnologyGroup>;
+    declare static readonly actions: typeof _sap_common.CodeList.actions & Record<never, never>;
+  };
+}
+export class TechnologyGroup extends _TechnologyGroupAspect(__.Entity) {}
+Object.defineProperty(TechnologyGroup, 'name', { value: 'com.gavdilabs.techtransmgt.core.TechnologyGroup' })
+Object.defineProperty(TechnologyGroup, 'is_singular', { value: true })
+export class TechnologyGroup_ extends Array<TechnologyGroup> {$count?: number}
+Object.defineProperty(TechnologyGroup_, 'name', { value: 'com.gavdilabs.techtransmgt.core.TechnologyGroup' })
+
 export function _BusinessCriticalityLevelAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
   return class BusinessCriticalityLevel extends _sap_common._CodeListAspect(Base) {
     declare descr?: string | null
@@ -260,6 +276,8 @@ export function _TechnologyAspect<TBase extends new (...args: any[]) => object>(
     declare maturityStatus?: __.Association.to<TechnologyStatu> | null
     declare maturityStatus_code?: __.Key<number> | null
     declare maturityLevel?: number | null
+    declare group?: __.Association.to<TechnologyGroup> | null
+    declare group_code?: __.Key<number> | null
     declare _replacements?: __.Association.to.many<TechnologyReplacement_>
     declare _solutions?: __.Association.to.many<SoftwareTechnology_>
     static override readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
