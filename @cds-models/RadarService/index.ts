@@ -73,15 +73,13 @@ export function _SoftwareSolutionAspect<TBase extends new (...args: any[]) => ob
     declare static readonly actions: Record<never, never>;
   };
 }
-/**
-* Aspect to capture changes by user and name
-* 
-* See https://cap.cloud.sap/docs/cds/common#aspect-managed
-*/
-export class SoftwareSolution extends _SoftwareSolutionAspect(__.Entity) {}
+/** Individual field controls */
+export class SoftwareSolution extends _SoftwareSolutionAspect(__.Entity) {static drafts: __.DraftOf<SoftwareSolution>}
 Object.defineProperty(SoftwareSolution, 'name', { value: 'RadarService.SoftwareSolution' })
 Object.defineProperty(SoftwareSolution, 'is_singular', { value: true })
-export class SoftwareSolution_ extends Array<SoftwareSolution> {$count?: number}
+/** Individual field controls */
+export class SoftwareSolution_ extends Array<SoftwareSolution> {static drafts: __.DraftsOf<SoftwareSolution>
+$count?: number}
 Object.defineProperty(SoftwareSolution_, 'name', { value: 'RadarService.SoftwareSolution' })
 
 export function _SoftwareTeamAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {

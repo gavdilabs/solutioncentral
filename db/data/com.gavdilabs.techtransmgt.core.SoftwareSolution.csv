@@ -1,0 +1,3 @@
+ID,name,description,solutionStatus,technologyType,packageNamespace,repository,documentationUrl,sapVersion_code,businessCriticality_code,cleanCoreRating_code,codeQualityRating_code,reasonNoCleanCore,costCenter,owner_username,team_teamName,createdAt,createdBy,modifiedAt,modifiedBy
+954ea007-d275-4a11-a5bf-d2398556a075,New Ledger,Report financial statements,Development,ABAP,com.sap,github.com,,F1503,High,2,3,,Finance,dummy,,,,,,
+ce429b97-5d31-4423-ae67-c0ec62dab62c,Manage Products,Mass management of products,Testing,Cloud,com.test,github.com,,S1603,Medium,3,4,,Retail,dummy,,,,,,
