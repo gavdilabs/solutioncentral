@@ -20,9 +20,6 @@ module.exports.SoftwareTeamUser_ = csn.SoftwareTeamUser
 // SoftwareDependency
 module.exports.SoftwareDependency = { is_singular: true, __proto__: csn.SoftwareDependency }
 module.exports.SoftwareDependency_ = csn.SoftwareDependency
-// TechnologyStatus
-module.exports.TechnologyStatu = { is_singular: true, __proto__: csn.TechnologyStatus }
-module.exports.TechnologyStatus = csn.TechnologyStatus
 // Technology
 module.exports.Technology = { is_singular: true, __proto__: csn.Technology }
 module.exports.Technology_ = csn.Technology
