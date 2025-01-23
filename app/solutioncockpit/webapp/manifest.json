@@ -115,9 +115,24 @@
                 "@com.sap.vocabularies.UI.v1.LineItem": {
                   "tableSettings": {
                     "type": "ResponsiveTable"
+                  },
+                  "columns": {
+                    "DataField::description": {
+                      "width": "300px"
+                    },
+                    "DataField::technologyType": {
+                      "width": "100px"
+                    },
+                    "DataFieldForAnnotation::DataPoint::cleanCoreRatingIndicator": {
+                      "width": "150px"
+                    },
+                    "DataFieldForAnnotation::DataPoint::codeQualityRatingIndicator": {
+                      "width": "150px"
+                    }
                   }
                 }
-              }
+              },
+              "initialLoad": "Enabled"
             }
           }
         },
@@ -129,7 +144,8 @@
             "settings": {
               "enhanceI18n": "i18n/customi18n.properties",
               "editableHeaderContent": true,
-              "contextPath": "/SoftwareSolution"
+              "contextPath": "/SoftwareSolution",
+              "showRelatedApps": false
             }
           }
         }

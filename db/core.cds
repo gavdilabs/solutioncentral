@@ -7,13 +7,6 @@ using {
 namespace com.gavdilabs.techtransmgt.core;
 
 // Types
-type softwareStatus         : String enum {
-  Development;
-  Testing;
-  Released;
-  Archived
-}
-
 type softwareDependencyType : String enum {
   Consuming;
   Embedding;
@@ -39,6 +32,14 @@ type deploymentTypes        : String enum {
 }
 
 // CodeLists
+entity SoftwareStatus         : sap.common.CodeList {
+  key code  : Integer @assert.range: [
+        1,
+        5
+      ];
+      descr : String;
+}
+
 entity SAPVersion : sap.common.CodeList {
   key code                : String(12);
       deployment          : deploymentTypes;
@@ -100,7 +101,7 @@ entity User {
 entity SoftwareSolution : cuid, managed {
   name                : String @mandatory;
   description         : String;
-  solutionStatus      : softwareStatus;
+  solutionStatus      : Association to SoftwareStatus;
   technologyType      : technologyType;
   packageNamespace    : String;
   repository          : String;

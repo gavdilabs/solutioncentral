@@ -1,6 +1,9 @@
 // This is an automatically generated file. Please do not change its contents manually!
 const cds = require('@sap/cds')
 const csn = cds.entities('com.gavdilabs.techtransmgt.core')
+// SoftwareStatus
+module.exports.SoftwareStatu = { is_singular: true, __proto__: csn.SoftwareStatus }
+module.exports.SoftwareStatus = csn.SoftwareStatus
 // SAPVersion
 module.exports.SAPVersion = { is_singular: true, __proto__: csn.SAPVersion }
 module.exports.SAPVersion_ = csn.SAPVersion
@@ -49,7 +52,6 @@ module.exports.CompanyConfiguration_ = csn.CompanyConfiguration
 // events
 // actions
 // enums
-module.exports.softwareStatus ??= { Development: "Development", Testing: "Testing", Released: "Released", Archived: "Archived" }
 module.exports.softwareDependencyType ??= { Consuming: "Consuming", Embedding: "Embedding", Associating: "Associating" }
 module.exports.technologyType ??= { ABAP: "ABAP", ABAP_Cloud: "ABAP_Cloud", CAP: "CAP" }
 module.exports.criticalityLevel ??= { Very_High: "Very_High", High: "High", Medium: "Medium", Low: "Low" }

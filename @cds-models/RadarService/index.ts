@@ -46,7 +46,8 @@ export function _SoftwareSolutionAspect<TBase extends new (...args: any[]) => ob
     declare modifiedBy?: _.User | null
     declare name?: string | null
     declare description?: string | null
-    declare solutionStatus?: _com_gavdilabs_techtransmgt_core.softwareStatus | null
+    declare solutionStatus?: __.Association.to<SoftwareStatu> | null
+    declare solutionStatus_code?: __.Key<number> | null
     declare technologyType?: _com_gavdilabs_techtransmgt_core.technologyType | null
     declare packageNamespace?: string | null
     declare repository?: string | null
@@ -316,6 +317,22 @@ Object.defineProperty(BusinessCriticalityLevel, 'name', { value: 'RadarService.B
 Object.defineProperty(BusinessCriticalityLevel, 'is_singular', { value: true })
 export class BusinessCriticalityLevel_ extends Array<BusinessCriticalityLevel> {$count?: number}
 Object.defineProperty(BusinessCriticalityLevel_, 'name', { value: 'RadarService.BusinessCriticalityLevel' })
+
+export function _SoftwareStatuAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
+  return class SoftwareStatu extends _sap_common._CodeListAspect(Base) {
+    declare descr?: string | null
+    declare code?: __.Key<number>
+    static override readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
+    declare static readonly keys: __.KeysOf<SoftwareStatu>;
+    declare static readonly elements: __.ElementsOf<SoftwareStatu>;
+    declare static readonly actions: typeof _sap_common.CodeList.actions & Record<never, never>;
+  };
+}
+export class SoftwareStatu extends _SoftwareStatuAspect(__.Entity) {}
+Object.defineProperty(SoftwareStatu, 'name', { value: 'com.gavdilabs.techtransmgt.core.SoftwareStatus' })
+Object.defineProperty(SoftwareStatu, 'is_singular', { value: true })
+export class SoftwareStatus extends Array<SoftwareStatu> {$count?: number}
+Object.defineProperty(SoftwareStatus, 'name', { value: 'com.gavdilabs.techtransmgt.core.SoftwareStatus' })
 
 export function _TechnologyGroupAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
   return class TechnologyGroup extends _sap_common._CodeListAspect(Base) {

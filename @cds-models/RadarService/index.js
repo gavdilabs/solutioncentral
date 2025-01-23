@@ -44,6 +44,9 @@ module.exports.CodeQualityLevel_ = csn.CodeQualityLevel
 // BusinessCriticalityLevel
 module.exports.BusinessCriticalityLevel = { is_singular: true, __proto__: csn.BusinessCriticalityLevel }
 module.exports.BusinessCriticalityLevel_ = csn.BusinessCriticalityLevel
+// SoftwareStatus
+module.exports.SoftwareStatu = { is_singular: true, __proto__: csn.SoftwareStatus }
+module.exports.SoftwareStatus = csn.SoftwareStatus
 // TechnologyGroup
 module.exports.TechnologyGroup = { is_singular: true, __proto__: csn.TechnologyGroup }
 module.exports.TechnologyGroup_ = csn.TechnologyGroup
