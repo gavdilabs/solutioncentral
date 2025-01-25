@@ -145,7 +145,26 @@
               "enhanceI18n": "i18n/customi18n.properties",
               "editableHeaderContent": true,
               "contextPath": "/SoftwareSolution",
-              "showRelatedApps": false
+              "showRelatedApps": false,
+              "controlConfiguration": {
+                "Technologies/@com.sap.vocabularies.UI.v1.LineItem#Technologies": {
+                  "tableSettings": {
+                    "disableCopyToClipboard": true,
+                    "enableExport": false,
+                    "selectionMode": "Multi",
+                    "type": "ResponsiveTable",
+                    "enablePaste": false
+                  },
+                  "columns": {
+                    "DataField::technology_ID": {
+                      "width": "30%"
+                    },
+                    "DataField::technology::description": {
+                      "width": "70%"
+                    }
+                  }
+                }
+              }
             }
           }
         }
