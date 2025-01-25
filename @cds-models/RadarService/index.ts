@@ -46,7 +46,8 @@ export function _SoftwareSolutionAspect<TBase extends new (...args: any[]) => ob
     declare modifiedBy?: _.User | null
     declare name?: string | null
     declare description?: string | null
-    declare solutionStatus?: _com_gavdilabs_techtransmgt_core.softwareStatus | null
+    declare solutionStatus?: __.Association.to<SoftwareStatu> | null
+    declare solutionStatus_code?: __.Key<number> | null
     declare technologyType?: _com_gavdilabs_techtransmgt_core.technologyType | null
     declare packageNamespace?: string | null
     declare repository?: string | null
@@ -67,7 +68,7 @@ export function _SoftwareSolutionAspect<TBase extends new (...args: any[]) => ob
     declare team_teamName?: __.Key<string> | null
     declare dependencies?: __.Association.to.many<SoftwareDependency_>
     declare dependents?: __.Association.to.many<SoftwareDependency_>
-    declare _technologies?: __.Association.to.many<_com_gavdilabs_techtransmgt_core.SoftwareTechnology_>
+    declare Technologies?: __.Composition.of.many<SoftwareTechnology_>
     static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
     declare static readonly keys: __.KeysOf<SoftwareSolution>;
     declare static readonly elements: __.ElementsOf<SoftwareSolution>;
@@ -145,7 +146,7 @@ export function _TechnologyAspect<TBase extends new (...args: any[]) => object>(
     declare group?: __.Association.to<TechnologyGroup> | null
     declare group_code?: __.Key<number> | null
     declare _replacements?: __.Association.to.many<TechnologyReplacement_>
-    declare _solutions?: __.Association.to.many<_com_gavdilabs_techtransmgt_core.SoftwareTechnology_>
+    declare Solutions?: __.Composition.of.many<SoftwareTechnology_>
     static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
     declare static readonly keys: __.KeysOf<Technology>;
     declare static readonly elements: __.ElementsOf<Technology>;
@@ -316,6 +317,44 @@ Object.defineProperty(BusinessCriticalityLevel, 'name', { value: 'RadarService.B
 Object.defineProperty(BusinessCriticalityLevel, 'is_singular', { value: true })
 export class BusinessCriticalityLevel_ extends Array<BusinessCriticalityLevel> {$count?: number}
 Object.defineProperty(BusinessCriticalityLevel_, 'name', { value: 'RadarService.BusinessCriticalityLevel' })
+
+export function _SoftwareTechnologyAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
+  return class SoftwareTechnology extends Base {
+    declare ID?: __.Key<string>
+    declare software?: __.Association.to<SoftwareSolution> | null
+    declare software_ID?: __.Key<string> | null
+    declare technology?: __.Association.to<Technology> | null
+    declare technology_ID?: __.Key<string> | null
+    static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
+    declare static readonly keys: __.KeysOf<SoftwareTechnology>;
+    declare static readonly elements: __.ElementsOf<SoftwareTechnology>;
+    declare static readonly actions: Record<never, never>;
+  };
+}
+/** Sub table Technologies */
+export class SoftwareTechnology extends _SoftwareTechnologyAspect(__.Entity) {static drafts: __.DraftOf<SoftwareTechnology>}
+Object.defineProperty(SoftwareTechnology, 'name', { value: 'RadarService.SoftwareTechnology' })
+Object.defineProperty(SoftwareTechnology, 'is_singular', { value: true })
+/** Sub table Technologies */
+export class SoftwareTechnology_ extends Array<SoftwareTechnology> {static drafts: __.DraftsOf<SoftwareTechnology>
+$count?: number}
+Object.defineProperty(SoftwareTechnology_, 'name', { value: 'RadarService.SoftwareTechnology' })
+
+export function _SoftwareStatuAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
+  return class SoftwareStatu extends _sap_common._CodeListAspect(Base) {
+    declare descr?: string | null
+    declare code?: __.Key<number>
+    static override readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
+    declare static readonly keys: __.KeysOf<SoftwareStatu>;
+    declare static readonly elements: __.ElementsOf<SoftwareStatu>;
+    declare static readonly actions: typeof _sap_common.CodeList.actions & Record<never, never>;
+  };
+}
+export class SoftwareStatu extends _SoftwareStatuAspect(__.Entity) {}
+Object.defineProperty(SoftwareStatu, 'name', { value: 'com.gavdilabs.techtransmgt.core.SoftwareStatus' })
+Object.defineProperty(SoftwareStatu, 'is_singular', { value: true })
+export class SoftwareStatus extends Array<SoftwareStatu> {$count?: number}
+Object.defineProperty(SoftwareStatus, 'name', { value: 'com.gavdilabs.techtransmgt.core.SoftwareStatus' })
 
 export function _TechnologyGroupAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
   return class TechnologyGroup extends _sap_common._CodeListAspect(Base) {

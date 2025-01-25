@@ -26,7 +26,9 @@ service RadarService {
     }
   ])  as projection on core.User;
 
-  entity SoftwareSolution @(restrict: [
+  entity SoftwareSolution @(
+    odata.draft.enabled,
+    restrict: [
     {
       grant: ['READ'],
       to   : ['View']
@@ -201,6 +203,8 @@ service RadarService {
       'Admin'
     ]
   }]) as projection on core.BusinessCriticalityLevel;
+
+  entity SoftwareTechnology as projection on core.SoftwareTechnology;
 
   /*** FUNCTION IMPORTS ***/
   function getActiveUser() returns types.ActiveUser;

@@ -4,15 +4,6 @@ import * as __ from './../../../../_';
 import * as _ from './../../../..';
 
 // enum
-export const softwareStatus = {
-  Development: "Development",
-  Testing: "Testing",
-  Released: "Released",
-  Archived: "Archived",
-} as const;
-export type softwareStatus = "Development" | "Testing" | "Released" | "Archived"
-
-// enum
 export const softwareDependencyType = {
   Consuming: "Consuming",
   Embedding: "Embedding",
@@ -43,6 +34,22 @@ export const deploymentTypes = {
   Cloud: "Cloud",
 } as const;
 export type deploymentTypes = "OnPremise" | "Cloud"
+
+export function _SoftwareStatuAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
+  return class SoftwareStatu extends _sap_common._CodeListAspect(Base) {
+    declare descr?: string | null
+    declare code?: __.Key<number>
+    static override readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
+    declare static readonly keys: __.KeysOf<SoftwareStatu>;
+    declare static readonly elements: __.ElementsOf<SoftwareStatu>;
+    declare static readonly actions: typeof _sap_common.CodeList.actions & Record<never, never>;
+  };
+}
+export class SoftwareStatu extends _SoftwareStatuAspect(__.Entity) {}
+Object.defineProperty(SoftwareStatu, 'name', { value: 'com.gavdilabs.techtransmgt.core.SoftwareStatus' })
+Object.defineProperty(SoftwareStatu, 'is_singular', { value: true })
+export class SoftwareStatus extends Array<SoftwareStatu> {$count?: number}
+Object.defineProperty(SoftwareStatus, 'name', { value: 'com.gavdilabs.techtransmgt.core.SoftwareStatus' })
 
 export function _SAPVersionAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
   return class SAPVersion extends _sap_common._CodeListAspect(Base) {
@@ -166,7 +173,8 @@ export function _SoftwareSolutionAspect<TBase extends new (...args: any[]) => ob
   return class SoftwareSolution extends _._cuidAspect(_._managedAspect(Base)) {
     declare name?: string | null
     declare description?: string | null
-    declare solutionStatus?: softwareStatus | null
+    declare solutionStatus?: __.Association.to<SoftwareStatu> | null
+    declare solutionStatus_code?: __.Key<number> | null
     declare technologyType?: technologyType | null
     declare packageNamespace?: string | null
     declare repository?: string | null
@@ -187,7 +195,7 @@ export function _SoftwareSolutionAspect<TBase extends new (...args: any[]) => ob
     declare team_teamName?: __.Key<string> | null
     declare dependencies?: __.Association.to.many<SoftwareDependency_>
     declare dependents?: __.Association.to.many<SoftwareDependency_>
-    declare _technologies?: __.Association.to.many<SoftwareTechnology_>
+    declare Technologies?: __.Composition.of.many<SoftwareTechnology_>
     static override readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
     declare static readonly keys: __.KeysOf<SoftwareSolution> & typeof _.cuid.keys;
     declare static readonly elements: __.ElementsOf<SoftwareSolution>;
@@ -252,15 +260,15 @@ export class SoftwareDependency_ extends Array<SoftwareDependency> {$count?: num
 Object.defineProperty(SoftwareDependency_, 'name', { value: 'com.gavdilabs.techtransmgt.core.SoftwareDependency' })
 
 export function _SoftwareTechnologyAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
-  return class SoftwareTechnology extends Base {
-    declare software?: __.Key<__.Association.to<SoftwareSolution>>
-    declare software_ID?: __.Key<string>
-    declare technology?: __.Key<__.Association.to<Technology>>
-    declare technology_ID?: __.Key<string>
-    static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
-    declare static readonly keys: __.KeysOf<SoftwareTechnology>;
+  return class SoftwareTechnology extends _._cuidAspect(Base) {
+    declare software?: __.Association.to<SoftwareSolution> | null
+    declare software_ID?: __.Key<string> | null
+    declare technology?: __.Association.to<Technology> | null
+    declare technology_ID?: __.Key<string> | null
+    static override readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
+    declare static readonly keys: __.KeysOf<SoftwareTechnology> & typeof _.cuid.keys;
     declare static readonly elements: __.ElementsOf<SoftwareTechnology>;
-    declare static readonly actions: Record<never, never>;
+    declare static readonly actions: typeof _.cuid.actions & Record<never, never>;
   };
 }
 export class SoftwareTechnology extends _SoftwareTechnologyAspect(__.Entity) {}
@@ -279,7 +287,7 @@ export function _TechnologyAspect<TBase extends new (...args: any[]) => object>(
     declare group?: __.Association.to<TechnologyGroup> | null
     declare group_code?: __.Key<number> | null
     declare _replacements?: __.Association.to.many<TechnologyReplacement_>
-    declare _solutions?: __.Association.to.many<SoftwareTechnology_>
+    declare Solutions?: __.Composition.of.many<SoftwareTechnology_>
     static override readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
     declare static readonly keys: __.KeysOf<Technology> & typeof _.cuid.keys;
     declare static readonly elements: __.ElementsOf<Technology>;

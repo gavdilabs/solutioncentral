@@ -7,13 +7,6 @@ using {
 namespace com.gavdilabs.techtransmgt.core;
 
 // Types
-type softwareStatus         : String enum {
-  Development;
-  Testing;
-  Released;
-  Archived
-}
-
 type softwareDependencyType : String enum {
   Consuming;
   Embedding;
@@ -39,6 +32,14 @@ type deploymentTypes        : String enum {
 }
 
 // CodeLists
+entity SoftwareStatus         : sap.common.CodeList {
+  key code  : Integer @assert.range: [
+        1,
+        5
+      ];
+      descr : String;
+}
+
 entity SAPVersion : sap.common.CodeList {
   key code                : String(12);
       deployment          : deploymentTypes;
@@ -100,7 +101,7 @@ entity User {
 entity SoftwareSolution : cuid, managed {
   name                : String @mandatory;
   description         : String;
-  solutionStatus      : softwareStatus;
+  solutionStatus      : Association to SoftwareStatus;
   technologyType      : technologyType;
   packageNamespace    : String;
   repository          : String;
@@ -118,8 +119,8 @@ entity SoftwareSolution : cuid, managed {
   dependents          : Association to many SoftwareDependency
                           on dependents.target = ID;
   // Needs Required Services from Cloud Credit Control
-  _technologies       : Association to many SoftwareTechnology
-                          on _technologies.software = $self;
+  Technologies       : Composition of many SoftwareTechnology
+                          on Technologies.software = $self;
 }
 
 @cds.search: {teamName}
@@ -140,9 +141,9 @@ entity SoftwareDependency {
       softwareType : softwareDependencyType @mandatory;
 }
 
-entity SoftwareTechnology {
-  key software   : Association to SoftwareSolution;
-  key technology : Association to Technology;
+entity SoftwareTechnology: cuid {
+   software   : Association to SoftwareSolution;
+   technology : Association to Technology;
 }
 
 @cds.search: {name}
@@ -157,8 +158,8 @@ entity Technology : cuid {
   group          : Association to TechnologyGroup;
   _replacements  : Association to many TechnologyReplacement
                      on _replacements.source = ID;
-  _solutions     : Association to many SoftwareTechnology
-                     on _solutions.technology = $self;
+  Solutions     : Composition of many SoftwareTechnology
+                     on Solutions.technology = $self;
 }
 
 entity TechnologyReplacement {
