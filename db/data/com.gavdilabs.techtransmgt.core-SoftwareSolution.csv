@@ -1,3 +1,3 @@
-ID,name,description,solutionStatus_code,technologyType,packageNamespace,repository,documentationUrl,sapVersion_code,businessCriticality_code,cleanCoreRating_code,codeQualityRating_code,reasonNoCleanCore,costCenter,owner_username,team_teamName,createdAt,createdBy,modifiedAt,modifiedBy
+ID,name,description,solutionStatus_code,platform_code,packageNamespace,repository,documentationUrl,sapVersion_code,businessCriticality_code,cleanCoreRating_code,codeQualityRating_code,reasonNoCleanCore,costCenter,owner_username,team_teamName,createdAt,createdBy,modifiedAt,modifiedBy
 954ea007-d275-4a11-a5bf-d2398556a075,New Ledger,Report financial statements,1,ABAP,com.sap,https://github.com/,https://www.atlassian.com/software/confluence,F1503,High,2,3,,Finance,dummy,,,,,,
-ce429b97-5d31-4423-ae67-c0ec62dab62c,Manage Products,Mass management of products,2,Cloud,com.test,https://bitbucket.org/,,S1603,Medium,3,4,,Retail,dummy,,,,,,
+ce429b97-5d31-4423-ae67-c0ec62dab62c,Manage Products,Mass management of products,2,OnPrem,com.test,https://bitbucket.org/,,S1603,Medium,3,4,,Retail,dummy,,,,,,

@@ -50,6 +50,9 @@ module.exports.SoftwareTechnology_ = csn.SoftwareTechnology
 // SoftwareStatus
 module.exports.SoftwareStatu = { is_singular: true, __proto__: csn.SoftwareStatus }
 module.exports.SoftwareStatus = csn.SoftwareStatus
+// Platform
+module.exports.Platform = { is_singular: true, __proto__: csn.Platform }
+module.exports.Platform_ = csn.Platform
 // TechnologyGroup
 module.exports.TechnologyGroup = { is_singular: true, __proto__: csn.TechnologyGroup }
 module.exports.TechnologyGroup_ = csn.TechnologyGroup

@@ -120,7 +120,7 @@
                     "DataField::description": {
                       "width": "300px"
                     },
-                    "DataField::technologyType": {
+                    "DataField::platform": {
                       "width": "100px"
                     },
                     "DataFieldForAnnotation::DataPoint::cleanCoreRatingIndicator": {

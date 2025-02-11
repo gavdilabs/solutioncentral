@@ -43,10 +43,10 @@ annotate service.SoftwareSolution with @(
         Criticality         : solutionStatus_code,
         ![@Common.QuickInfo]: solutionStatus.descr,
     },
-    UI.DataPoint #technologyTypeInfo        : {
+    UI.DataPoint #platformInfo        : {
         $Type: 'UI.DataPointType',
-        Title: '{i18n>TechnologyType}',
-        Value: technologyType,
+        Title: '{i18n>Platform}',
+        Value: platform_code,
     },
 );
 
@@ -72,7 +72,7 @@ annotate service.SoftwareSolution with @(
         },
         {
             $Type : 'UI.ReferenceFacet',
-            Target: '@UI.DataPoint#technologyTypeInfo',
+            Target: '@UI.DataPoint#platformInfo',
         },
     ],
 );
@@ -209,8 +209,8 @@ annotate service.SoftwareSolution with @(
         },
         {
             $Type            : 'UI.DataField',
-            Label            : '{i18n>TechnologyType}',
-            Value            : technologyType,
+            Label            : '{i18n>Platform}',
+            Value            : platform_code,
             ![@UI.Importance]: #High,
         },
         {
@@ -241,19 +241,27 @@ annotate service.SoftwareSolution with @(
 
 
     ],
-    UI.SelectionFields: [technologyType, ],
+    UI.SelectionFields: [platform_code, ],
 );
 
 /** Individual field controls */
 annotate service.SoftwareSolution with {
     name                @title           : '{i18n>SolutionName}'         @(UI.HiddenFilter, );
-    technologyType      @title           : '{i18n>TechnologyType}';
+    platform      @(
+        title           : '{i18n>Platform}',
+        Common.ValueListWithFixedValues : true,
+        Common.Text : {
+            $value : platform.name,
+            ![@UI.TextArrangement] : #TextOnly
+        },
+    );
     solutionStatus      @(
         title      : '{i18n>SolutionStatus}',
         Common.Text: {
             $value                : solutionStatus.name,
             ![@UI.TextArrangement]: #TextOnly
         },
+        Common.ValueListWithFixedValues : true,
     );
     reasonNoCleanCore   @title           : '{i18n>NotCleanCoreReason}'   @UI.HiddenFilter       @UI.MultiLineText;
     description         @title           : '{i18n>SolutionDescription}'  @UI.HiddenFilter       @UI.MultiLineText;
@@ -312,6 +320,10 @@ annotate service.SoftwareSolution with {
                 },
             ],
         },
+        Common.Text : {
+            $value : businessCriticality.name,
+            ![@UI.TextArrangement] : #TextOnly
+        },
     );
     costCenter          @title           : '{i18n>CostCenter}';
     owner               @title           : '{i18n>Owner}'                @(
@@ -353,7 +365,7 @@ annotate service.SoftwareSolution with {
 };
 
 annotate service.BusinessCriticalityLevel with {
-    code @Common.Text: descr
+    code @Common.Text: name
 };
 
 annotate service.SAPVersion with {
@@ -424,3 +436,17 @@ annotate service.Technology with {
         Common.ValueListWithFixedValues: false
     )
 };
+annotate service.Platform with {
+    code @Common.Text : {
+        $value : name,
+        ![@UI.TextArrangement] : #TextOnly
+    }
+};
+
+annotate service.SoftwareStatus with {
+    code @Common.Text : {
+        $value : name,
+        ![@UI.TextArrangement] : #TextOnly
+    }
+};
+

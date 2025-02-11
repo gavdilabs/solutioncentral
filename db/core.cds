@@ -10,13 +10,14 @@ namespace com.gavdilabs.techtransmgt.core;
 type softwareDependencyType : String enum {
   Consuming;
   Embedding;
-  Associating
+  Associating;
 }
 
-type technologyType         : String enum {
+type platformType           : String enum {
   ABAP;
   ABAP_Cloud;
-  CAP
+  CAP;
+  OnPrem;
 }
 
 type criticalityLevel       : String enum {
@@ -32,7 +33,7 @@ type deploymentTypes        : String enum {
 }
 
 // CodeLists
-entity SoftwareStatus         : sap.common.CodeList {
+entity SoftwareStatus : sap.common.CodeList {
   key code  : Integer @assert.range: [
         1,
         5
@@ -85,6 +86,11 @@ entity BusinessCriticalityLevel : sap.common.CodeList {
       descr : String;
 }
 
+entity Platform : sap.common.CodeList {
+  key code  : platformType;
+      descr : String;
+}
+
 // Entities
 entity User {
   key username      : String;
@@ -102,7 +108,7 @@ entity SoftwareSolution : cuid, managed {
   name                : String @mandatory;
   description         : String;
   solutionStatus      : Association to SoftwareStatus;
-  technologyType      : technologyType;
+  platform            : Association to Platform;
   packageNamespace    : String;
   repository          : String;
   documentationUrl    : String;
@@ -119,7 +125,7 @@ entity SoftwareSolution : cuid, managed {
   dependents          : Association to many SoftwareDependency
                           on dependents.target = ID;
   // Needs Required Services from Cloud Credit Control
-  Technologies       : Composition of many SoftwareTechnology
+  Technologies        : Composition of many SoftwareTechnology
                           on Technologies.software = $self;
 }
 
@@ -141,9 +147,9 @@ entity SoftwareDependency {
       softwareType : softwareDependencyType @mandatory;
 }
 
-entity SoftwareTechnology: cuid {
-   software   : Association to SoftwareSolution;
-   technology : Association to Technology;
+entity SoftwareTechnology : cuid {
+  software   : Association to SoftwareSolution;
+  technology : Association to Technology;
 }
 
 @cds.search: {name}
@@ -158,7 +164,7 @@ entity Technology : cuid {
   group          : Association to TechnologyGroup;
   _replacements  : Association to many TechnologyReplacement
                      on _replacements.source = ID;
-  Solutions     : Composition of many SoftwareTechnology
+  Solutions      : Composition of many SoftwareTechnology
                      on Solutions.technology = $self;
 }
 

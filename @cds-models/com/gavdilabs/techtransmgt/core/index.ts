@@ -12,12 +12,13 @@ export const softwareDependencyType = {
 export type softwareDependencyType = "Consuming" | "Embedding" | "Associating"
 
 // enum
-export const technologyType = {
+export const platformType = {
   ABAP: "ABAP",
   ABAP_Cloud: "ABAP_Cloud",
   CAP: "CAP",
+  OnPrem: "OnPrem",
 } as const;
-export type technologyType = "ABAP" | "ABAP_Cloud" | "CAP"
+export type platformType = "ABAP" | "ABAP_Cloud" | "CAP" | "OnPrem"
 
 // enum
 export const criticalityLevel = {
@@ -148,6 +149,22 @@ Object.defineProperty(BusinessCriticalityLevel, 'is_singular', { value: true })
 export class BusinessCriticalityLevel_ extends Array<BusinessCriticalityLevel> {$count?: number}
 Object.defineProperty(BusinessCriticalityLevel_, 'name', { value: 'com.gavdilabs.techtransmgt.core.BusinessCriticalityLevel' })
 
+export function _PlatformAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
+  return class Platform extends _sap_common._CodeListAspect(Base) {
+    declare descr?: string | null
+    declare code?: __.Key<platformType>
+    static override readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
+    declare static readonly keys: __.KeysOf<Platform>;
+    declare static readonly elements: __.ElementsOf<Platform>;
+    declare static readonly actions: typeof _sap_common.CodeList.actions & Record<never, never>;
+  };
+}
+export class Platform extends _PlatformAspect(__.Entity) {}
+Object.defineProperty(Platform, 'name', { value: 'com.gavdilabs.techtransmgt.core.Platform' })
+Object.defineProperty(Platform, 'is_singular', { value: true })
+export class Platform_ extends Array<Platform> {$count?: number}
+Object.defineProperty(Platform_, 'name', { value: 'com.gavdilabs.techtransmgt.core.Platform' })
+
 export function _UserAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
   return class User extends Base {
     declare username?: __.Key<string>
@@ -175,7 +192,8 @@ export function _SoftwareSolutionAspect<TBase extends new (...args: any[]) => ob
     declare description?: string | null
     declare solutionStatus?: __.Association.to<SoftwareStatu> | null
     declare solutionStatus_code?: __.Key<number> | null
-    declare technologyType?: technologyType | null
+    declare platform?: __.Association.to<Platform> | null
+    declare platform_code?: __.Key<platformType> | null
     declare packageNamespace?: string | null
     declare repository?: string | null
     declare documentationUrl?: string | null
