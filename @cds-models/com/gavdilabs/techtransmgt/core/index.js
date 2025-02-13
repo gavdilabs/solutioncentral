@@ -25,6 +25,9 @@ module.exports.BusinessCriticalityLevel_ = csn.BusinessCriticalityLevel
 // Platform
 module.exports.Platform = { is_singular: true, __proto__: csn.Platform }
 module.exports.Platform_ = csn.Platform
+// DependencyType
+module.exports.DependencyType = { is_singular: true, __proto__: csn.DependencyType }
+module.exports.DependencyType_ = csn.DependencyType
 // User
 module.exports.User = { is_singular: true, __proto__: csn.User }
 module.exports.User_ = csn.User
@@ -37,9 +40,6 @@ module.exports.SoftwareTeam_ = csn.SoftwareTeam
 // SoftwareTeamUser
 module.exports.SoftwareTeamUser = { is_singular: true, __proto__: csn.SoftwareTeamUser }
 module.exports.SoftwareTeamUser_ = csn.SoftwareTeamUser
-// SoftwareDependency
-module.exports.SoftwareDependency = { is_singular: true, __proto__: csn.SoftwareDependency }
-module.exports.SoftwareDependency_ = csn.SoftwareDependency
 // SoftwareTechnology
 module.exports.SoftwareTechnology = { is_singular: true, __proto__: csn.SoftwareTechnology }
 module.exports.SoftwareTechnology_ = csn.SoftwareTechnology

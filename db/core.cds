@@ -91,12 +91,19 @@ entity Platform : sap.common.CodeList {
       descr : String;
 }
 
+entity DependencyType : sap.common.CodeList {
+  key code : softwareDependencyType
+}
+
 // Entities
 entity User {
   key username      : String;
       email         : String  @mandatory;
       firstName     : String;
       lastName      : String;
+      fullName      : String = concat(
+        firstName, ` `, lastName
+      )                       @Core.Computed;
       imageUrl      : String  @Core.IsURL  @Core.MediaType: imageType;
       imageType     : String  @Core.IsMediaType;
       softwareTeams : Association to many SoftwareTeamUser
@@ -120,13 +127,15 @@ entity SoftwareSolution : cuid, managed {
   costCenter          : String;
   owner               : Association to User;
   team                : Association to SoftwareTeam;
-  dependencies        : Association to many SoftwareDependency
-                          on dependencies.source = ID;
-  dependents          : Association to many SoftwareDependency
-                          on dependents.target = ID;
   // Needs Required Services from Cloud Credit Control
   Technologies        : Composition of many SoftwareTechnology
                           on Technologies.software = $self;
+
+  Dependents          : Composition of many {
+                          key ID                        : UUID;
+                              dependentSoftwareSolution : Association to SoftwareSolution @mandatory;
+                              softwareType              : Association to DependencyType   @mandatory;
+                        }
 }
 
 @cds.search: {teamName}
@@ -139,12 +148,6 @@ entity SoftwareTeam {
 entity SoftwareTeamUser {
   key team : Association to SoftwareTeam;
   key user : Association to User;
-}
-
-entity SoftwareDependency {
-  key source       : UUID;
-  key target       : UUID;
-      softwareType : softwareDependencyType @mandatory;
 }
 
 entity SoftwareTechnology : cuid {

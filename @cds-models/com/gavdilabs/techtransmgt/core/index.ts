@@ -165,12 +165,28 @@ Object.defineProperty(Platform, 'is_singular', { value: true })
 export class Platform_ extends Array<Platform> {$count?: number}
 Object.defineProperty(Platform_, 'name', { value: 'com.gavdilabs.techtransmgt.core.Platform' })
 
+export function _DependencyTypeAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
+  return class DependencyType extends _sap_common._CodeListAspect(Base) {
+    declare code?: __.Key<softwareDependencyType>
+    static override readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
+    declare static readonly keys: __.KeysOf<DependencyType>;
+    declare static readonly elements: __.ElementsOf<DependencyType>;
+    declare static readonly actions: typeof _sap_common.CodeList.actions & Record<never, never>;
+  };
+}
+export class DependencyType extends _DependencyTypeAspect(__.Entity) {}
+Object.defineProperty(DependencyType, 'name', { value: 'com.gavdilabs.techtransmgt.core.DependencyType' })
+Object.defineProperty(DependencyType, 'is_singular', { value: true })
+export class DependencyType_ extends Array<DependencyType> {$count?: number}
+Object.defineProperty(DependencyType_, 'name', { value: 'com.gavdilabs.techtransmgt.core.DependencyType' })
+
 export function _UserAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
   return class User extends Base {
     declare username?: __.Key<string>
     declare email?: string | null
     declare firstName?: string | null
     declare lastName?: string | null
+    declare fullName?: string | null
     declare imageUrl?: string | null
     declare imageType?: string | null
     declare softwareTeams?: __.Association.to.many<SoftwareTeamUser_>
@@ -211,9 +227,12 @@ export function _SoftwareSolutionAspect<TBase extends new (...args: any[]) => ob
     declare owner_username?: __.Key<string> | null
     declare team?: __.Association.to<SoftwareTeam> | null
     declare team_teamName?: __.Key<string> | null
-    declare dependencies?: __.Association.to.many<SoftwareDependency_>
-    declare dependents?: __.Association.to.many<SoftwareDependency_>
     declare Technologies?: __.Composition.of.many<SoftwareTechnology_>
+    declare Dependents?: __.Composition.of.many<Array< {
+  ID?: __.Key<string>,
+  dependentSoftwareSolution?: __.Association.to<SoftwareSolution> | null,
+  softwareType?: __.Association.to<DependencyType> | null,
+}>>
     static override readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
     declare static readonly keys: __.KeysOf<SoftwareSolution> & typeof _.cuid.keys;
     declare static readonly elements: __.ElementsOf<SoftwareSolution>;
@@ -259,23 +278,6 @@ Object.defineProperty(SoftwareTeamUser, 'name', { value: 'com.gavdilabs.techtran
 Object.defineProperty(SoftwareTeamUser, 'is_singular', { value: true })
 export class SoftwareTeamUser_ extends Array<SoftwareTeamUser> {$count?: number}
 Object.defineProperty(SoftwareTeamUser_, 'name', { value: 'com.gavdilabs.techtransmgt.core.SoftwareTeamUser' })
-
-export function _SoftwareDependencyAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
-  return class SoftwareDependency extends Base {
-    declare source?: __.Key<string>
-    declare target?: __.Key<string>
-    declare softwareType?: softwareDependencyType | null
-    static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
-    declare static readonly keys: __.KeysOf<SoftwareDependency>;
-    declare static readonly elements: __.ElementsOf<SoftwareDependency>;
-    declare static readonly actions: Record<never, never>;
-  };
-}
-export class SoftwareDependency extends _SoftwareDependencyAspect(__.Entity) {}
-Object.defineProperty(SoftwareDependency, 'name', { value: 'com.gavdilabs.techtransmgt.core.SoftwareDependency' })
-Object.defineProperty(SoftwareDependency, 'is_singular', { value: true })
-export class SoftwareDependency_ extends Array<SoftwareDependency> {$count?: number}
-Object.defineProperty(SoftwareDependency_, 'name', { value: 'com.gavdilabs.techtransmgt.core.SoftwareDependency' })
 
 export function _SoftwareTechnologyAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
   return class SoftwareTechnology extends _._cuidAspect(Base) {

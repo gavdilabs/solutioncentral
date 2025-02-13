@@ -12,12 +12,10 @@ annotate service.SoftwareSolution with @(Capabilities.NavigationRestrictions: {
                 Filterable: false
             }
         },
-
         {
             NavigationProperty: Technologies,
             InsertRestrictions: {Insertable: true}
         }
-
     ]
 });
 
@@ -43,7 +41,7 @@ annotate service.SoftwareSolution with @(
         Criticality         : solutionStatus_code,
         ![@Common.QuickInfo]: solutionStatus.descr,
     },
-    UI.DataPoint #platformInfo        : {
+    UI.DataPoint #platformInfo              : {
         $Type: 'UI.DataPointType',
         Title: '{i18n>Platform}',
         Value: platform_code,
@@ -54,8 +52,8 @@ annotate service.SoftwareSolution with @(
 annotate service.SoftwareSolution with @(
     UI.HeaderInfo  : {
         $Type         : 'UI.HeaderInfoType',
-        TypeName      : 'Solution', //TODO: replace with i18n
-        TypeNamePlural: 'Solutions', //TODO: replace with i18n
+        TypeName      : '{i18n>Solution}',
+        TypeNamePlural: '{i18n>Solutions}',
         Title         : {
             $Type: 'UI.DataField',
             Value: name,
@@ -117,7 +115,7 @@ annotate service.SoftwareSolution with @(
             {
                 $Type: 'UI.DataField',
                 Label: '{i18n>Owner}',
-                Value: owner_username, //TODO: Combine firstName and lastName instead
+                Value: owner_username,
             },
             {
                 $Type: 'UI.DataField',
@@ -151,43 +149,36 @@ annotate service.SoftwareSolution with @(
             },
         ]
     },
-    UI.FieldGroup #OwnerFullNameGroup: {
-        $Type: 'UI.FieldGroupType',
-        Data : [
-            {
-                $Type: 'UI.DataField',
-                Value: owner.firstName,
-            },
-            {
-                $Type: 'UI.DataField',
-                Value: owner.lastName,
-            },
-        ]
-    },
     UI.Facets                        : [
         {
             $Type : 'UI.ReferenceFacet',
             ID    : 'TechnicalInfoFacet',
-            Label : 'Technical Information',
+            Label : '{i18n>TechnicalInformation}',
             Target: '@UI.FieldGroup#TechnicalInfoGroup',
         },
         {
             $Type : 'UI.ReferenceFacet',
             ID    : 'OwnerFacet',
-            Label : 'Owner',
+            Label : '{i18n>Owner}',
             Target: '@UI.FieldGroup#OwnerInfoGroup',
         },
         {
             $Type : 'UI.ReferenceFacet',
             ID    : 'RatingFacet',
-            Label : 'Rating',
+            Label : '{i18n>Rating}',
             Target: '@UI.FieldGroup#RatingInfoGroup',
         },
         {
             $Type : 'UI.ReferenceFacet',
-            Label : 'Technologies',
+            Label : '{i18n>Technologies}',
             ID    : 'Technologies',
             Target: 'Technologies/@UI.LineItem#Technologies',
+        },
+        {
+            $Type : 'UI.ReferenceFacet',
+            Label : '{i18n>DependentSolutions}',
+            ID    : 'DependentSolutions',
+            Target: 'Dependents/@UI.LineItem#DependentSolutions',
         },
     ],
 );
@@ -226,9 +217,9 @@ annotate service.SoftwareSolution with @(
             ![@UI.Importance]: #High,
         },
         {
-            $Type : 'UI.DataFieldForAnnotation',
+            $Type : 'UI.DataField',
             Label : '{i18n>Owner}',
-            Target: '@UI.FieldGroup#OwnerFullNameGroup',
+            Value: owner.fullName
         },
         {
             $Type                    : 'UI.DataField',
@@ -246,22 +237,22 @@ annotate service.SoftwareSolution with @(
 
 /** Individual field controls */
 annotate service.SoftwareSolution with {
-    name                @title           : '{i18n>SolutionName}'         @(UI.HiddenFilter, );
-    platform      @(
-        title           : '{i18n>Platform}',
-        Common.ValueListWithFixedValues : true,
-        Common.Text : {
-            $value : platform.name,
-            ![@UI.TextArrangement] : #TextOnly
+    name                @title           : '{i18n>SolutionName}'         @(UI.HiddenFilter);
+    platform            @(
+        title                          : '{i18n>Platform}',
+        Common.ValueListWithFixedValues: true,
+        Common.Text                    : {
+            $value                : platform.name,
+            ![@UI.TextArrangement]: #TextOnly
         },
     );
     solutionStatus      @(
-        title      : '{i18n>SolutionStatus}',
-        Common.Text: {
+        title                          : '{i18n>SolutionStatus}',
+        Common.Text                    : {
             $value                : solutionStatus.name,
             ![@UI.TextArrangement]: #TextOnly
         },
-        Common.ValueListWithFixedValues : true,
+        Common.ValueListWithFixedValues: true,
     );
     reasonNoCleanCore   @title           : '{i18n>NotCleanCoreReason}'   @UI.HiddenFilter       @UI.MultiLineText;
     description         @title           : '{i18n>SolutionDescription}'  @UI.HiddenFilter       @UI.MultiLineText;
@@ -320,9 +311,9 @@ annotate service.SoftwareSolution with {
                 },
             ],
         },
-        Common.Text : {
-            $value : businessCriticality.name,
-            ![@UI.TextArrangement] : #TextOnly
+        Common.Text                    : {
+            $value                : businessCriticality.name,
+            ![@UI.TextArrangement]: #TextOnly
         },
     );
     costCenter          @title           : '{i18n>CostCenter}';
@@ -352,6 +343,10 @@ annotate service.SoftwareSolution with {
             ],
         },
         Common.ValueListWithFixedValues: false,
+        Common.Text                    : {
+            $value                : owner.fullName,
+            ![@UI.TextArrangement]: #TextOnly
+        },
     );
     team                @Common.ValueList: {
         $Type         : 'Common.ValueListType',
@@ -436,17 +431,81 @@ annotate service.Technology with {
         Common.ValueListWithFixedValues: false
     )
 };
+
 annotate service.Platform with {
-    code @Common.Text : {
-        $value : name,
-        ![@UI.TextArrangement] : #TextOnly
+    code @Common.Text: {
+        $value                : name,
+        ![@UI.TextArrangement]: #TextOnly
     }
 };
 
 annotate service.SoftwareStatus with {
-    code @Common.Text : {
-        $value : name,
-        ![@UI.TextArrangement] : #TextOnly
+    code @Common.Text: {
+        $value                : name,
+        ![@UI.TextArrangement]: #TextOnly
     }
 };
 
+/** Sub table Dependent Solutions */
+annotate service.SoftwareSolution.Dependents with @(UI.LineItem #DependentSolutions: [
+    {
+        $Type: 'UI.DataField',
+        Value: dependentSoftwareSolution_ID,
+        Label: '{i18n>SolutionName}',
+    },
+    {
+        $Type                  : 'UI.DataField',
+        Value                  : dependentSoftwareSolution.description,
+        Label                  : '{i18n>SolutionDescription}',
+        ![@Common.FieldControl]: #ReadOnly,
+    },
+    {
+        $Type: 'UI.DataField',
+        Value: softwareType_code,
+        Label: '{i18n>SoftwareType}',
+    },
+]);
+
+annotate service.SoftwareSolution.Dependents with {
+    dependentSoftwareSolution @(
+        Common.ValueList               : {
+            $Type         : 'Common.ValueListType',
+            CollectionPath: 'SoftwareSolution',
+            Parameters    : [
+                {
+                    $Type            : 'Common.ValueListParameterInOut',
+                    LocalDataProperty: dependentSoftwareSolution_ID,
+                    ValueListProperty: 'ID',
+                },
+                {
+                    $Type            : 'Common.ValueListParameterDisplayOnly',
+                    ValueListProperty: 'name',
+                },
+                {
+                    $Type            : 'Common.ValueListParameterDisplayOnly',
+                    ValueListProperty: 'description',
+                },
+            ],
+        },
+        Common.ValueListWithFixedValues: false,
+        Common.Text                    : {
+            $value                : dependentSoftwareSolution.name,
+            ![@UI.TextArrangement]: #TextOnly
+        }
+    );
+};
+
+annotate service.SoftwareSolution.Dependents with {
+    softwareType @(
+        Common.ValueList               : {
+            $Type         : 'Common.ValueListType',
+            CollectionPath: 'DependencyType',
+            Parameters    : [{
+                $Type            : 'Common.ValueListParameterInOut',
+                LocalDataProperty: softwareType_code,
+                ValueListProperty: 'code',
+            }, ],
+        },
+        Common.ValueListWithFixedValues: true
+    )
+};

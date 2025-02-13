@@ -163,6 +163,26 @@
                       "width": "70%"
                     }
                   }
+                },
+                "Dependents/@com.sap.vocabularies.UI.v1.LineItem#DependentSolutions": {
+                  "tableSettings": {
+                    "disableCopyToClipboard": true,
+                    "enableExport": false,
+                    "enablePaste": false,
+                    "selectionMode": "Multi",
+                    "type": "ResponsiveTable"
+                  },
+                  "columns": {
+                    "DataField::dependentSoftwareSolution_ID": {
+                      "width": "30%"
+                    },
+                    "DataField::dependentSoftwareSolution::description": {
+                      "width": "40%"
+                    },
+                    "DataField::softwareType_code": {
+                      "width": "30%"
+                    }
+                  }
                 }
               }
             }
