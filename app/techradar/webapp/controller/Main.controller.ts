@@ -20,6 +20,11 @@ import GridList from "sap/f/GridList";
 import GridListItem from "sap/f/GridListItem";
 import Select from "sap/m/Select";
 import MessageBox from "sap/m/MessageBox";
+import { FilterBar$ClearEvent } from "sap/ui/comp/filterbar/FilterBar";
+import { List$ItemDeleteEvent } from "sap/ui/webc/main/List";
+import SelectDialog, { SelectDialog$ConfirmEvent } from "sap/m/SelectDialog";
+import List from "sap/m/List";
+import ListItem from "sap/ui/core/ListItem";
 
 /**
  * @namespace com.gavdilabs.techradar.controller
@@ -27,6 +32,7 @@ import MessageBox from "sap/m/MessageBox";
 export default class Main extends BaseController {
 	private _TechDialog: Dialog;
 	private _SortDialog: Dialog;
+	private _SoftwareDialog: SelectDialog;
 	private aTechAlternatives : Array<Context> = [];
 
 	public onInit(): void {	
@@ -52,8 +58,8 @@ export default class Main extends BaseController {
 	public filterTechnologies() {
 		this.filterTechItems();
 	}
-
-	public clearTechnologies() {
+	
+	public clearTechnologies(oEvent: FilterBar$ClearEvent) {
 		(this.getView().byId("MaturityFilter") as Select).setSelectedKey("");
 		(this.getView().byId("TechnologyFilter") as MultiComboBox).setSelectedKeys([]);
 		(this.getView().byId("TechnologyGroupFilter") as MultiComboBox).setSelectedKeys([]);
@@ -140,6 +146,56 @@ export default class Main extends BaseController {
 		const oContext = oListBinding.create();
 
 		await this.openTechnologyDialog(oContext);		
+	}
+	
+	public async deleteSolution(oEvent: List$ItemDeleteEvent) {
+		const oListItem = oEvent.getParameter("listItem") as ListItem;
+		const oContext = oListItem.getBindingContext() as Context;
+		await oContext.delete();
+	}
+
+	public async addSoftwareSolution() {
+		let aFilters: Array<Filter> = [];
+		const sTechnologyID = this._TechDialog.getBindingContext().getProperty("ID") as string;
+		aFilters.push(new Filter("technology_ID", FilterOperator.EQ, sTechnologyID));
+
+		const oModel = this.getView().getModel() as ODataModel;
+		const oSoftwareTechnology = oModel.bindList("/SoftwareTechnology");
+		oSoftwareTechnology.filter(aFilters);
+		const aContexts = await oSoftwareTechnology.requestContexts();
+
+		aFilters = [];
+		aContexts.forEach(function (oContext) {		
+			const sSoftwareID = oContext.getProperty("software_ID") as string;
+			aFilters.push(new Filter("ID", FilterOperator.NE, sSoftwareID));
+		});
+
+		if(!this._SoftwareDialog) {
+            this._SoftwareDialog ??= await Fragment.load({ id:"SoftwareDialog", name: 'com.gavdilabs.techradar.view.fragments.AddSolutionDialog', controller: this }) as SelectDialog;
+            this.getView().addDependent(this._SoftwareDialog);
+        }	
+
+		const oSelectDialog = Fragment.byId("SoftwareDialog","SoftwareSelect") as SelectDialog;
+		const oListBinding = oSelectDialog.getBinding("items") as ODataListBinding;
+		oListBinding.filter(aFilters);	
+		this._SoftwareDialog.open("");
+	}
+
+	public async confirmSolution(oEvent: SelectDialog$ConfirmEvent) {
+		const oItem = oEvent.getParameter("selectedItem");
+		const sId = oItem.getBindingContext().getProperty("ID") as string;
+		const sName = oItem.getBindingContext().getProperty("name") as string;
+		const sDescription = oItem.getBindingContext().getProperty("name") as string;
+
+		const oList = Fragment.byId("TechnologyDialog","TechnologySolutions") as List;
+		const oBinding = oList.getBinding("items") as ODataListBinding;
+		const oContext = oBinding.create();
+		await oContext.setProperty("software_ID", sId);
+		await oContext.setProperty("software/name", sName);	
+		await oContext.setProperty("software/description", sDescription);
+
+		//const sTechnologyID = this._TechDialog.getBindingContext().getProperty("ID") as string;
+		//await oContext.setProperty("technology_ID", sTechnologyID);
 	}
 
 	public async openTechnologyDialog(oContext: Context) : Promise<void> {

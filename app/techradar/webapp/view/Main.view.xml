@@ -14,11 +14,8 @@
 	<f:DynamicPage id="dynamicPageId" showFooter="true">
 		<f:title>
 			<f:DynamicPageTitle>
-				<f:heading>
-					<HBox>
-					<Image src="images/ecco.png" height="40px"/>
-					<Title text="Technology Radar" class="sapUiTinyMarginTop sapUiMediumMarginBegin"/>
-					</HBox>
+				<f:heading>					
+					<Title text="Technology Radar" class="sapUiTinyMarginTop sapUiMediumMarginBegin"/>					
 				</f:heading>				
 			</f:DynamicPageTitle>
 		</f:title>

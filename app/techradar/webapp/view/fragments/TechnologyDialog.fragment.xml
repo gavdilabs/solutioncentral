@@ -1,14 +1,14 @@
-<c:FragmentDefinition
+<core:FragmentDefinition
 	xmlns="sap.m"
     xmlns:form="sap.ui.layout.form"
-    xmlns:core="sap.ui.core"	
-	xmlns:c="sap.ui.core">
+    xmlns:core="sap.ui.core">
    <Dialog title="Add new technology" contentWidth="1024px">
 		<content>
 			<form:SimpleForm editable="true"
                 layout="ResponsiveGridLayout"
                 labelSpanXL="4"
                 labelSpanL="4"
+                title="Details"
                 labelSpanM="12"
                 labelSpanS="12"
                 adjustLabelSpan="false"
@@ -26,9 +26,7 @@
                     <Input value="{name}" />		
                     <Label text="Maturity status" />
                     <Select forceSelection="false" selectedKey="{maturityStatus_code}" 
-                    items="{
-                        path: '/TechnologyStatus'						
-                    }">
+                        items="{ path: '/TechnologyStatus' }">
                         <core:Item key="{code}" text="{descr}"/>   
                     </Select>
                     <Label text="Maturity level" />
@@ -38,21 +36,25 @@
                     <Label text="Description" />
                     <TextArea rows="3" value="{description}"/>	
                     <Label text="Alternatives" />
-                    <MultiComboBox id="TechAlternatives" items="{ path: '/Technology' }" selectionChange="changeTechAlternatives">
+                    <MultiComboBox id="TechAlternatives" selectionChange="changeTechAlternatives"
+                        items="{ path: '/Technology' }" >
 					    <core:Item key="{ID}" text="{name}" />                       
                     </MultiComboBox>
                     <Label text="Tag"/>
-                    <Select forceSelection="false"  selectedKey="{group_code}"
+                    <Select forceSelection="false" selectedKey="{group_code}"
                         items="{ path: '/TechnologyGroup' }">
                         <core:Item key="{code}" text="{name}"/>
                     </Select>
                 </form:content>
 			</form:SimpleForm>
 
-           <!--  <List
+           <List id="TechnologySolutions" 
+                class="sapUiTinyMarginTop"
+                mode="Delete"
+		        delete="deleteSolution"
                 noDataText="No software solution using this technology"
                 items="{
-                    path: '_solutions'
+                    path: 'Solutions'
                 }">
                 <headerToolbar>
                     <OverflowToolbar>
@@ -63,14 +65,12 @@
                         </content>
                     </OverflowToolbar>
                 </headerToolbar>      
-                <StandardListItem
-                    title="{software/name}"
-                    description="{software/description}"/>                                 
-            </List> -->
+                <StandardListItem title="{software/name}" description="{software/description}"/>                                 
+            </List>
 		</content>
 		<buttons>
             <Button text="Cancel" press="cancelTechnology"/>
 			<Button text="Save" press="saveTechnology"/>
 		</buttons>
 	</Dialog>
-</c:FragmentDefinition>
+</core:FragmentDefinition>
