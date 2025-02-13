@@ -22,6 +22,12 @@ module.exports.TechnologyGroup_ = csn.TechnologyGroup
 // BusinessCriticalityLevel
 module.exports.BusinessCriticalityLevel = { is_singular: true, __proto__: csn.BusinessCriticalityLevel }
 module.exports.BusinessCriticalityLevel_ = csn.BusinessCriticalityLevel
+// Platform
+module.exports.Platform = { is_singular: true, __proto__: csn.Platform }
+module.exports.Platform_ = csn.Platform
+// DependencyType
+module.exports.DependencyType = { is_singular: true, __proto__: csn.DependencyType }
+module.exports.DependencyType_ = csn.DependencyType
 // User
 module.exports.User = { is_singular: true, __proto__: csn.User }
 module.exports.User_ = csn.User
@@ -34,9 +40,6 @@ module.exports.SoftwareTeam_ = csn.SoftwareTeam
 // SoftwareTeamUser
 module.exports.SoftwareTeamUser = { is_singular: true, __proto__: csn.SoftwareTeamUser }
 module.exports.SoftwareTeamUser_ = csn.SoftwareTeamUser
-// SoftwareDependency
-module.exports.SoftwareDependency = { is_singular: true, __proto__: csn.SoftwareDependency }
-module.exports.SoftwareDependency_ = csn.SoftwareDependency
 // SoftwareTechnology
 module.exports.SoftwareTechnology = { is_singular: true, __proto__: csn.SoftwareTechnology }
 module.exports.SoftwareTechnology_ = csn.SoftwareTechnology
@@ -53,6 +56,6 @@ module.exports.CompanyConfiguration_ = csn.CompanyConfiguration
 // actions
 // enums
 module.exports.softwareDependencyType ??= { Consuming: "Consuming", Embedding: "Embedding", Associating: "Associating" }
-module.exports.technologyType ??= { ABAP: "ABAP", ABAP_Cloud: "ABAP_Cloud", CAP: "CAP" }
+module.exports.platformType ??= { ABAP: "ABAP", ABAP_Cloud: "ABAP_Cloud", CAP: "CAP", OnPrem: "OnPrem" }
 module.exports.criticalityLevel ??= { Very_High: "Very_High", High: "High", Medium: "Medium", Low: "Low" }
 module.exports.deploymentTypes ??= { OnPremise: "OnPremise", Cloud: "Cloud" }

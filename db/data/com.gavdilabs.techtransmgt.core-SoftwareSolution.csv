@@ -1,3 +1,5 @@
-ID,name,description,solutionStatus_code,technologyType,packageNamespace,repository,documentationUrl,sapVersion_code,businessCriticality_code,cleanCoreRating_code,codeQualityRating_code,reasonNoCleanCore,costCenter,owner_username,team_teamName,createdAt,createdBy,modifiedAt,modifiedBy
+ID,name,description,solutionStatus_code,platform_code,packageNamespace,repository,documentationUrl,sapVersion_code,businessCriticality_code,cleanCoreRating_code,codeQualityRating_code,reasonNoCleanCore,costCenter,owner_username,team_teamName,createdAt,createdBy,modifiedAt,modifiedBy
 954ea007-d275-4a11-a5bf-d2398556a075,New Ledger,Report financial statements,1,ABAP,com.sap,https://github.com/,https://www.atlassian.com/software/confluence,F1503,High,2,3,,Finance,dummy,,,,,,
-ce429b97-5d31-4423-ae67-c0ec62dab62c,Manage Products,Mass management of products,2,Cloud,com.test,https://bitbucket.org/,,S1603,Medium,3,4,,Retail,dummy,,,,,,
+ce429b97-5d31-4423-ae67-c0ec62dab62c,Manage Products,Mass management of products,2,OnPrem,com.test,https://bitbucket.org/,,S1603,Medium,3,4,,Retail,dummy,,,,,,
+04017a3c-25ad-4c44-a0cc-3a383800bf0b,Track Returns,App to track customer returns,3,CAP,com.retail,https://bitbucket.org/,,S1603,Very_High,1,2,no knowledge of clean core,,Retail,jld,,,,,
+8778c5cc-707e-4108-a8c7-2ac5c004073d,CRX,Customer Relationship,4,ABAP_Cloud,com.gavdi,,,S1603,Low,4,5,,Sales,jld,,,,,,

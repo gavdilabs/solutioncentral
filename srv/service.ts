@@ -6,7 +6,6 @@ import CleanCoreLevelHandler from "./api/entities/CleanCoreLevelHandler";
 import CodeQualityLevelHandler from "./api/entities/CodeQualityLevelHandler";
 import CompanyConfigurationHandler from "./api/entities/CompanyConfigurationHandler";
 import SAPVersionHandler from "./api/entities/SAPVersionHandler";
-import SoftwareDependencyHandler from "./api/entities/SoftwareDependencyHandler";
 import SoftwareSolutionHandler from "./api/entities/SoftwareSolutionHandler";
 import SoftwareTeamHandler from "./api/entities/SoftwareTeamHandler";
 import SoftwareTeamUserHandler from "./api/entities/SoftwareTeamUserHandler";
@@ -21,7 +20,6 @@ export default new CDSDispatcher([
   CodeQualityLevelHandler,
   CompanyConfigurationHandler,
   SAPVersionHandler,
-  SoftwareDependencyHandler,
   SoftwareSolutionHandler,
   SoftwareTeamHandler,
   SoftwareTeamUserHandler,

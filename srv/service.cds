@@ -85,25 +85,6 @@ service RadarService {
     }
   ])  as projection on core.SoftwareTeamUser;
 
-  entity SoftwareDependency @(restrict: [
-    {
-      grant: ['READ'],
-      to   : ['View']
-    },
-    {
-      grant: [
-        'READ',
-        'UPDATE',
-        'CREATE'
-      ],
-      to   : ['Maintainer']
-    },
-    {
-      grant: ['*'],
-      to   : ['Admin']
-    }
-  ])  as projection on core.SoftwareDependency;
-
   entity Technology @(restrict: [
     {
       grant: ['READ'],

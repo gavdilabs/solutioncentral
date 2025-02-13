@@ -17,9 +17,6 @@ module.exports.SoftwareTeam_ = csn.SoftwareTeam
 // SoftwareTeamUser
 module.exports.SoftwareTeamUser = { is_singular: true, __proto__: csn.SoftwareTeamUser }
 module.exports.SoftwareTeamUser_ = csn.SoftwareTeamUser
-// SoftwareDependency
-module.exports.SoftwareDependency = { is_singular: true, __proto__: csn.SoftwareDependency }
-module.exports.SoftwareDependency_ = csn.SoftwareDependency
 // Technology
 module.exports.Technology = { is_singular: true, __proto__: csn.Technology }
 module.exports.Technology_ = csn.Technology
@@ -50,9 +47,18 @@ module.exports.SoftwareTechnology_ = csn.SoftwareTechnology
 // SoftwareStatus
 module.exports.SoftwareStatu = { is_singular: true, __proto__: csn.SoftwareStatus }
 module.exports.SoftwareStatus = csn.SoftwareStatus
+// Platform
+module.exports.Platform = { is_singular: true, __proto__: csn.Platform }
+module.exports.Platform_ = csn.Platform
+// SoftwareSolution
+module.exports.Dependent = { is_singular: true, __proto__: csn.SoftwareSolution }
+module.exports.SoftwareSolution = csn.SoftwareSolution
 // TechnologyGroup
 module.exports.TechnologyGroup = { is_singular: true, __proto__: csn.TechnologyGroup }
 module.exports.TechnologyGroup_ = csn.TechnologyGroup
+// DependencyType
+module.exports.DependencyType = { is_singular: true, __proto__: csn.DependencyType }
+module.exports.DependencyType_ = csn.DependencyType
 // events
 // actions
 module.exports.getActiveUser = 'getActiveUser'

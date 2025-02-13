@@ -10,13 +10,14 @@ namespace com.gavdilabs.techtransmgt.core;
 type softwareDependencyType : String enum {
   Consuming;
   Embedding;
-  Associating
+  Associating;
 }
 
-type technologyType         : String enum {
+type platformType           : String enum {
   ABAP;
   ABAP_Cloud;
-  CAP
+  CAP;
+  OnPrem;
 }
 
 type criticalityLevel       : String enum {
@@ -32,7 +33,7 @@ type deploymentTypes        : String enum {
 }
 
 // CodeLists
-entity SoftwareStatus         : sap.common.CodeList {
+entity SoftwareStatus : sap.common.CodeList {
   key code  : Integer @assert.range: [
         1,
         5
@@ -85,12 +86,24 @@ entity BusinessCriticalityLevel : sap.common.CodeList {
       descr : String;
 }
 
+entity Platform : sap.common.CodeList {
+  key code  : platformType;
+      descr : String;
+}
+
+entity DependencyType : sap.common.CodeList {
+  key code : softwareDependencyType
+}
+
 // Entities
 entity User {
   key username      : String;
       email         : String  @mandatory;
       firstName     : String;
       lastName      : String;
+      fullName      : String = concat(
+        firstName, ` `, lastName
+      )                       @Core.Computed;
       imageUrl      : String  @Core.IsURL  @Core.MediaType: imageType;
       imageType     : String  @Core.IsMediaType;
       softwareTeams : Association to many SoftwareTeamUser
@@ -102,7 +115,7 @@ entity SoftwareSolution : cuid, managed {
   name                : String @mandatory;
   description         : String;
   solutionStatus      : Association to SoftwareStatus;
-  technologyType      : technologyType;
+  platform            : Association to Platform;
   packageNamespace    : String;
   repository          : String;
   documentationUrl    : String;
@@ -114,13 +127,15 @@ entity SoftwareSolution : cuid, managed {
   costCenter          : String;
   owner               : Association to User;
   team                : Association to SoftwareTeam;
-  dependencies        : Association to many SoftwareDependency
-                          on dependencies.source = ID;
-  dependents          : Association to many SoftwareDependency
-                          on dependents.target = ID;
   // Needs Required Services from Cloud Credit Control
-  Technologies       : Composition of many SoftwareTechnology
+  Technologies        : Composition of many SoftwareTechnology
                           on Technologies.software = $self;
+
+  Dependents          : Composition of many {
+                          key ID                        : UUID;
+                              dependentSoftwareSolution : Association to SoftwareSolution @mandatory;
+                              softwareType              : Association to DependencyType   @mandatory;
+                        }
 }
 
 @cds.search: {teamName}
@@ -135,15 +150,9 @@ entity SoftwareTeamUser {
   key user : Association to User;
 }
 
-entity SoftwareDependency {
-  key source       : UUID;
-  key target       : UUID;
-      softwareType : softwareDependencyType @mandatory;
-}
-
-entity SoftwareTechnology: cuid {
-   software   : Association to SoftwareSolution;
-   technology : Association to Technology;
+entity SoftwareTechnology : cuid {
+  software   : Association to SoftwareSolution;
+  technology : Association to Technology;
 }
 
 @cds.search: {name}
@@ -158,7 +167,7 @@ entity Technology : cuid {
   group          : Association to TechnologyGroup;
   _replacements  : Association to many TechnologyReplacement
                      on _replacements.source = ID;
-  Solutions     : Composition of many SoftwareTechnology
+  Solutions      : Composition of many SoftwareTechnology
                      on Solutions.technology = $self;
 }
 
