@@ -1,23 +1,50 @@
 using RadarService as service from '../../srv/service';
 
 /** Overall settings and annotations */
-annotate service.SoftwareSolution with @(Capabilities.NavigationRestrictions: {
-    $Type               : 'Capabilities.NavigationRestrictionsType',
-    RestrictedProperties: [
-        {
-            $Type             : 'Capabilities.NavigationPropertyRestriction',
-            NavigationProperty: DraftAdministrativeData,
-            FilterRestrictions: {
-                $Type     : 'Capabilities.FilterRestrictionsType',
-                Filterable: false
+annotate service.SoftwareSolution with @(
+    Capabilities.NavigationRestrictions                         : {
+        $Type               : 'Capabilities.NavigationRestrictionsType',
+        RestrictedProperties: [
+            {
+                $Type             : 'Capabilities.NavigationPropertyRestriction',
+                NavigationProperty: DraftAdministrativeData,
+                FilterRestrictions: {
+                    $Type     : 'Capabilities.FilterRestrictionsType',
+                    Filterable: false
+                }
+            },
+            {
+                NavigationProperty: Technologies,
+                InsertRestrictions: {Insertable: true}
             }
-        },
-        {
-            NavigationProperty: Technologies,
-            InsertRestrictions: {Insertable: true}
-        }
-    ]
-});
+        ]
+    },
+    //Chart Annotations for List Report page
+    UI.Chart #alpChart                                          : {
+        $Type          : 'UI.ChartDefinitionType',
+        ChartType      : #ColumnDual,
+        Dimensions     : [platform_code, ],
+        DynamicMeasures: [
+            '@Analytics.AggregatedProperty#cleanCoreRating_code_average',
+            '@Analytics.AggregatedProperty#codeQualityRating_code_average'
+        ],
+        Title          : '{i18n>CleanCoreAndCodeQualityChart}',
+    },
+    Analytics.AggregatedProperty #codeQualityRating_code_average: {
+        $Type               : 'Analytics.AggregatedPropertyType',
+        Name                : 'codeQualityRating_code_average',
+        AggregatableProperty: codeQualityRating_code,
+        AggregationMethod   : 'average',
+        ![@Common.Label]    : '{i18n>CodeQualityRating}',
+    },
+    Analytics.AggregatedProperty #cleanCoreRating_code_average  : {
+        $Type               : 'Analytics.AggregatedPropertyType',
+        Name                : 'cleanCoreRating_code_average',
+        AggregatableProperty: cleanCoreRating_code,
+        AggregationMethod   : 'average',
+        ![@Common.Label]    : '{i18n>CleanCoreRating}',
+    },
+);
 
 
 /** Defining Data Points */
@@ -217,8 +244,8 @@ annotate service.SoftwareSolution with @(
             ![@UI.Importance]: #High,
         },
         {
-            $Type : 'UI.DataField',
-            Label : '{i18n>Owner}',
+            $Type: 'UI.DataField',
+            Label: '{i18n>Owner}',
             Value: owner.fullName
         },
         {
