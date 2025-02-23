@@ -2,16 +2,17 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"   
     xmlns:fb="sap.ui.comp.filterbar">
-    <fb:FilterBar useToolbar="false" search=".filterTechnologies" showClearOnFB="true" clear=".clearTechnologies">
+
+    <fb:FilterBar useToolbar="false" search=".onFilterTechnologies" showClearOnFB="true" clear=".onClearTechnologies">
         <fb:filterGroupItems>
-            <fb:FilterGroupItem name="technology" label="Technology" groupName="Group1" visibleInFilterBar="true">
+            <fb:FilterGroupItem name="technology" label="{i18n>lblTechnology}" groupName="Group1" visibleInFilterBar="true">
                 <fb:control>
                      <MultiComboBox id="TechnologyFilter" items="{ path: '/Technology' }">
                         <core:Item key="{ID}" text="{name}" />                       
                     </MultiComboBox>
                 </fb:control>
             </fb:FilterGroupItem>
-            <fb:FilterGroupItem name="maturity" label="Maturity" groupName="Group1" visibleInFilterBar="true">
+            <fb:FilterGroupItem name="maturity" label="{i18n>lblMaturity}" groupName="Group1" visibleInFilterBar="true">
                 <fb:control>
                     <Select id="MaturityFilter" forceSelection="false">
                         <items>
@@ -24,7 +25,7 @@
                     </Select>
                 </fb:control>
             </fb:FilterGroupItem>
-            <fb:FilterGroupItem name="tag" label="Tag" groupName="Group1" visibleInFilterBar="true">
+            <fb:FilterGroupItem name="tag" label="{i18n>lblTag}" groupName="Group1" visibleInFilterBar="true">
                 <fb:control>
                     <MultiComboBox id="TechnologyGroupFilter" items="{ path: '/TechnologyGroup' }">
                         <core:Item key="{code}" text="{name}" />                       
@@ -33,7 +34,6 @@
             </fb:FilterGroupItem>
         </fb:filterGroupItems>
     </fb:FilterBar>
-
 
    <!--  <Panel>
         <FlexBox alignItems="Start" justifyContent="SpaceBetween" width="100%" >

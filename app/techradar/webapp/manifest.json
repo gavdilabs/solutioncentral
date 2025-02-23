@@ -74,6 +74,12 @@
 					"groupProperties": {
 						"techUpdateGroup": {
 							"submit": "API"
+						},
+						"techReplacementGroup": {
+							"submit": "API"
+						},
+						"techReplaceGroup": {
+							"submit": "API"
 						}
 					}
 				}
@@ -83,6 +89,12 @@
 				"settings": {
 					"bundleName": "com.gavdilabs.techradar.i18n.i18n"
 				}
+			},
+			"appConfig" : {
+				"type": "sap.ui.model.json.JSONModel",
+                "settings": {},
+                "uri": "model/appConfig.json",
+                "preload": true
 			}
 		},
 

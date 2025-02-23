@@ -1,7 +1,7 @@
-<mvc:View xmlns:tnt="sap.tnt"
-	controllerName="com.gavdilabs.techradar.controller.Main"
+<mvc:View controllerName="com.gavdilabs.techradar.controller.Main"
 	displayBlock="true"
 	xmlns="sap.m"
+	xmlns:tnt="sap.tnt"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:f="sap.f"
 	xmlns:core="sap.ui.core"
@@ -15,7 +15,7 @@
 		<f:title>
 			<f:DynamicPageTitle>
 				<f:heading>					
-					<Title text="Technology Radar" class="sapUiTinyMarginTop sapUiMediumMarginBegin"/>					
+					<Title text="{i18n>appTitle}" class="sapUiTinyMarginTop sapUiMediumMarginBegin"/>					
 				</f:heading>				
 			</f:DynamicPageTitle>
 		</f:title>
@@ -48,11 +48,11 @@
 							<dnd:DragInfo sourceAggregation="items" />
 							<dnd-grid:GridDropInfo targetAggregation="items" dropPosition="OnOrBetween" dropLayout="Horizontal" drop="onDrop" />
 						</f:dragDropConfig>
-						<f:GridListItem	type="Active" highlight="{path: 'maturityStatus_code', formatter: 'formatter.formatHighlight'}" press="pressTechnology">
+						<f:GridListItem	type="Active" highlight="{path: 'maturityStatus_code', formatter: 'formatter.formatHighlight'}" press="onPressTechnology">
 							<VBox height="100%" class="sapUiSmallMargin">
 								<HBox justifyContent="SpaceBetween">
 									<Title text="{name}"></Title>
-									<tnt:InfoLabel text="{group/name}" colorScheme="{group_code}" visible="{= ${group_code} > 0}"/>
+									<tnt:InfoLabel text="{group/name}" colorScheme="{group_code}" visible="{= %{group_code} > 0 ? true : false }"/>
 								</HBox>
 								<RatingIndicator iconSize="12px" value="{maturityLevel}" editable="false"/>
 							</VBox>
@@ -64,7 +64,7 @@
 		<f:footer>
 			<OverflowToolbar>
 				<ToolbarSpacer/>
-				<Button text="Add technology" type="Emphasized" icon="sap-icon://add" press="addTechnology"/>				
+				<Button text="{i18n>btnAddTechnology}" type="Emphasized" icon="sap-icon://add" press="onPressAddTechnology"/>				
 			</OverflowToolbar>
 		</f:footer>
 	</f:DynamicPage>

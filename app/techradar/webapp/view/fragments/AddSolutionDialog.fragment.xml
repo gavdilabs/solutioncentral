@@ -3,10 +3,10 @@
 	xmlns:core="sap.ui.core">
 	<SelectDialog	
 		id="SoftwareSelect"	
-		noDataText="No Solutions Found"
-		title="Select Solution"
-		search=".searchSolutions"
-		confirm=".confirmSolution"		
+		noDataText="{i18n>txtNoSolutions}"
+		title="{i18n>lblSelectSolution}"
+		search=".onSearchSolutions"
+		confirm=".onConfirmSolution"		
 		items="{
 			path: '/SoftwareSolution'
 		}">
