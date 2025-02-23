@@ -18,6 +18,7 @@ export function _UserAspect<TBase extends new (...args: any[]) => object>(Base: 
     declare email?: string | null
     declare firstName?: string | null
     declare lastName?: string | null
+    declare fullName?: string | null
     declare imageUrl?: string | null
     declare imageType?: string | null
     declare softwareTeams?: __.Association.to.many<SoftwareTeamUser_>
@@ -48,7 +49,8 @@ export function _SoftwareSolutionAspect<TBase extends new (...args: any[]) => ob
     declare description?: string | null
     declare solutionStatus?: __.Association.to<SoftwareStatu> | null
     declare solutionStatus_code?: __.Key<number> | null
-    declare technologyType?: _com_gavdilabs_techtransmgt_core.technologyType | null
+    declare platform?: __.Association.to<Platform> | null
+    declare platform_code?: __.Key<_com_gavdilabs_techtransmgt_core.platformType> | null
     declare packageNamespace?: string | null
     declare repository?: string | null
     declare documentationUrl?: string | null
@@ -66,9 +68,8 @@ export function _SoftwareSolutionAspect<TBase extends new (...args: any[]) => ob
     declare owner_username?: __.Key<string> | null
     declare team?: __.Association.to<SoftwareTeam> | null
     declare team_teamName?: __.Key<string> | null
-    declare dependencies?: __.Association.to.many<SoftwareDependency_>
-    declare dependents?: __.Association.to.many<SoftwareDependency_>
     declare Technologies?: __.Composition.of.many<SoftwareTechnology_>
+    declare Dependents?: __.Composition.of.many<__.DeepRequired<RadarService.SoftwareSolution>['Dependents']>
     static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
     declare static readonly keys: __.KeysOf<SoftwareSolution>;
     declare static readonly elements: __.ElementsOf<SoftwareSolution>;
@@ -117,23 +118,6 @@ Object.defineProperty(SoftwareTeamUser, 'name', { value: 'RadarService.SoftwareT
 Object.defineProperty(SoftwareTeamUser, 'is_singular', { value: true })
 export class SoftwareTeamUser_ extends Array<SoftwareTeamUser> {$count?: number}
 Object.defineProperty(SoftwareTeamUser_, 'name', { value: 'RadarService.SoftwareTeamUser' })
-
-export function _SoftwareDependencyAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
-  return class SoftwareDependency extends Base {
-    declare source?: __.Key<string>
-    declare target?: __.Key<string>
-    declare softwareType?: _com_gavdilabs_techtransmgt_core.softwareDependencyType | null
-    static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
-    declare static readonly keys: __.KeysOf<SoftwareDependency>;
-    declare static readonly elements: __.ElementsOf<SoftwareDependency>;
-    declare static readonly actions: Record<never, never>;
-  };
-}
-export class SoftwareDependency extends _SoftwareDependencyAspect(__.Entity) {}
-Object.defineProperty(SoftwareDependency, 'name', { value: 'RadarService.SoftwareDependency' })
-Object.defineProperty(SoftwareDependency, 'is_singular', { value: true })
-export class SoftwareDependency_ extends Array<SoftwareDependency> {$count?: number}
-Object.defineProperty(SoftwareDependency_, 'name', { value: 'RadarService.SoftwareDependency' })
 
 export function _TechnologyAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
   return class Technology extends Base {
@@ -356,6 +340,22 @@ Object.defineProperty(SoftwareStatu, 'is_singular', { value: true })
 export class SoftwareStatus extends Array<SoftwareStatu> {$count?: number}
 Object.defineProperty(SoftwareStatus, 'name', { value: 'com.gavdilabs.techtransmgt.core.SoftwareStatus' })
 
+export function _PlatformAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
+  return class Platform extends _sap_common._CodeListAspect(Base) {
+    declare descr?: string | null
+    declare code?: __.Key<_com_gavdilabs_techtransmgt_core.platformType>
+    static override readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
+    declare static readonly keys: __.KeysOf<Platform>;
+    declare static readonly elements: __.ElementsOf<Platform>;
+    declare static readonly actions: typeof _sap_common.CodeList.actions & Record<never, never>;
+  };
+}
+export class Platform extends _PlatformAspect(__.Entity) {}
+Object.defineProperty(Platform, 'name', { value: 'com.gavdilabs.techtransmgt.core.Platform' })
+Object.defineProperty(Platform, 'is_singular', { value: true })
+export class Platform_ extends Array<Platform> {$count?: number}
+Object.defineProperty(Platform_, 'name', { value: 'com.gavdilabs.techtransmgt.core.Platform' })
+
 export function _TechnologyGroupAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
   return class TechnologyGroup extends _sap_common._CodeListAspect(Base) {
     declare descr?: string | null
@@ -372,6 +372,21 @@ Object.defineProperty(TechnologyGroup, 'is_singular', { value: true })
 export class TechnologyGroup_ extends Array<TechnologyGroup> {$count?: number}
 Object.defineProperty(TechnologyGroup_, 'name', { value: 'com.gavdilabs.techtransmgt.core.TechnologyGroup' })
 
+export function _DependencyTypeAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
+  return class DependencyType extends _sap_common._CodeListAspect(Base) {
+    declare code?: __.Key<_com_gavdilabs_techtransmgt_core.softwareDependencyType>
+    static override readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
+    declare static readonly keys: __.KeysOf<DependencyType>;
+    declare static readonly elements: __.ElementsOf<DependencyType>;
+    declare static readonly actions: typeof _sap_common.CodeList.actions & Record<never, never>;
+  };
+}
+export class DependencyType extends _DependencyTypeAspect(__.Entity) {}
+Object.defineProperty(DependencyType, 'name', { value: 'com.gavdilabs.techtransmgt.core.DependencyType' })
+Object.defineProperty(DependencyType, 'is_singular', { value: true })
+export class DependencyType_ extends Array<DependencyType> {$count?: number}
+Object.defineProperty(DependencyType_, 'name', { value: 'com.gavdilabs.techtransmgt.core.DependencyType' })
+
 /** FUNCTION IMPORTS */
 export declare const getActiveUser:  {
   // positional
@@ -383,4 +398,28 @@ export declare const getActiveUser:  {
   // metadata (do not use)
   __parameters: Record<never, never>, __returns: Promise<_com_gavdilabs_techtransmgt_types.ActiveUser | null> | _com_gavdilabs_techtransmgt_types.ActiveUser | null
   kind: 'function'
+}
+export namespace SoftwareSolution {
+  export function _DependentAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
+    return class Dependent extends Base {
+      declare up_?: __.Key<__.Association.to<_com_gavdilabs_techtransmgt_core.SoftwareSolution>>
+      declare up__ID?: __.Key<string>
+      declare ID?: __.Key<string>
+      declare dependentSoftwareSolution?: __.Association.to<_com_gavdilabs_techtransmgt_core.SoftwareSolution> | null
+      declare dependentSoftwareSolution_ID?: __.Key<string> | null
+      declare softwareType?: __.Association.to<_com_gavdilabs_techtransmgt_core.DependencyType> | null
+      declare softwareType_code?: __.Key<_com_gavdilabs_techtransmgt_core.softwareDependencyType> | null
+      static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
+      declare static readonly keys: __.KeysOf<Dependent>;
+      declare static readonly elements: __.ElementsOf<Dependent>;
+      declare static readonly actions: Record<never, never>;
+    };
+  }
+  export class Dependent extends _DependentAspect(__.Entity) {static drafts: __.DraftOf<Dependent>}
+  Object.defineProperty(Dependent, 'name', { value: 'com.gavdilabs.techtransmgt.core.SoftwareSolution.Dependents' })
+  Object.defineProperty(Dependent, 'is_singular', { value: true })
+  export class SoftwareSolution extends Array<Dependent> {static drafts: __.DraftsOf<Dependent>
+$count?: number}
+  Object.defineProperty(SoftwareSolution, 'name', { value: 'com.gavdilabs.techtransmgt.core.SoftwareSolution.Dependents' })
+  
 }

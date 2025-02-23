@@ -85,25 +85,6 @@ service RadarService {
     }
   ])  as projection on core.SoftwareTeamUser;
 
-  entity SoftwareDependency @(restrict: [
-    {
-      grant: ['READ'],
-      to   : ['View']
-    },
-    {
-      grant: [
-        'READ',
-        'UPDATE',
-        'CREATE'
-      ],
-      to   : ['Maintainer']
-    },
-    {
-      grant: ['*'],
-      to   : ['Admin']
-    }
-  ])  as projection on core.SoftwareDependency;
-
   entity Technology @(restrict: [
     {
       grant: ['READ'],
@@ -216,3 +197,10 @@ service RadarService {
   ]}];
 
 }
+
+//Annotation for chart enablement
+annotate RadarService.SoftwareSolution with @Aggregation.ApplySupported: {
+  Transformations : ['aggregate', 'groupby', 'identity', 'filter'],
+  GroupableProperties : [platform_code, solutionStatus_code],
+  AggregatableProperties: [{Property: cleanCoreRating_code}, {Property: codeQualityRating_code}]
+};
