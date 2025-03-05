@@ -1,0 +1,20 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog	
+		id="SoftwareSelect"	
+		noDataText="{i18n>txtNoSolutions}"
+		title="{i18n>lblSelectSolution}"
+		search=".onSearchSolutions"
+		confirm=".onConfirmSolution"		
+		items="{
+			path: '/SoftwareSolution'
+		}">
+		<StandardListItem
+			title="{name}"
+			description="{description}"			
+			iconDensityAware="false"
+			iconInset="false"
+			type="Active" />
+	</SelectDialog>
+</core:FragmentDefinition>

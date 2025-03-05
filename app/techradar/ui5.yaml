@@ -3,13 +3,13 @@ metadata:
   name: com.gavdilabs.techradar
 type: application
 framework:
-  name: OpenUI5
+  name: SAPUI5
   version: "1.131.1"
   libraries:
     - name: sap.m
     - name: sap.ui.core
-    - name: sap.f
-    - name: sap.ui.mdc
+    - name: sap.f    
+    - name: sap.ui.comp
     - name: sap.tnt
     - name: themelib_sap_horizon
 builder:

@@ -1,8 +1,4 @@
-//import List from "sap/m/List";
 import BaseController from "./BaseController";
-//import DragInfo from "sap/ui/core/dnd/DragInfo";
-//import DropInfo, { DropInfo$DragEnterEvent } from "sap/ui/core/dnd/DropInfo";
-//import { dnd } from "sap/ui/core/library";
 import Dialog from "sap/m/Dialog";
 import Fragment from "sap/ui/core/Fragment";
 import ODataModel from "sap/ui/model/odata/v4/ODataModel";
@@ -20,6 +16,20 @@ import GridList from "sap/f/GridList";
 import GridListItem from "sap/f/GridListItem";
 import Select from "sap/m/Select";
 import MessageBox from "sap/m/MessageBox";
+import { FilterBar$ClearEvent } from "sap/ui/comp/filterbar/FilterBar";
+import { List$ItemDeleteEvent } from "sap/ui/webc/main/List";
+import SelectDialog, { SelectDialog$ConfirmEvent } from "sap/m/SelectDialog";
+import List from "sap/m/List";
+import ListItem from "sap/ui/core/ListItem";
+import JSONModel from "sap/ui/model/json/JSONModel";
+import Input from "sap/m/Input";
+import ComboBox from "sap/m/ComboBox";
+import Messaging from "sap/ui/core/Messaging";
+import { Button$PressEvent } from "sap/m/Button";
+import MessagePopover from "sap/m/MessagePopover";
+import Message from "sap/ui/core/message/Message";
+import MessageType from "sap/ui/core/message/MessageType";
+import { DropInfo$DropEvent } from "sap/ui/core/dnd/DropInfo";
 
 /**
  * @namespace com.gavdilabs.techradar.controller
@@ -27,10 +37,27 @@ import MessageBox from "sap/m/MessageBox";
 export default class Main extends BaseController {
 	private _TechDialog: Dialog;
 	private _SortDialog: Dialog;
+	private _SoftwareDialog: SelectDialog;
+	private _oMessagePopover: MessagePopover;
 	private aTechAlternatives : Array<Context> = [];
 
 	public onInit(): void {	
-	
+		this.registerMessaging();
+	}
+
+	protected registerMessaging() {        
+        this.getView().setModel(Messaging.getMessageModel(), "message");
+		Messaging.registerObject(this.getView(), true);		
+    }
+
+	private hasMessages(sType: MessageType): boolean {
+		const aMessages = Messaging.getMessageModel().getData() as Message[];
+		for (const oMessage of aMessages) {			
+			if(oMessage.getType() === sType) {
+				return true;
+			}
+		};
+		return false;
 	}
 
 	public onTechnologyStatusReceived(): void {
@@ -49,11 +76,20 @@ export default class Main extends BaseController {
 		
 	}
 
-	public filterTechnologies() {
-		this.filterTechItems();
+	public async onMessagePopoverPress(oEvent: Button$PressEvent) {
+		const oButton = oEvent.getSource();
+		if(!this._oMessagePopover) {
+            this._oMessagePopover ??= await Fragment.load({ name: 'com.gavdilabs.techradar.view.fragments.MessagePopover', controller: this }) as MessagePopover;
+            this.getView().addDependent(this._oMessagePopover);		
+        }
+		this._oMessagePopover.openBy(oButton);
 	}
 
-	public clearTechnologies() {
+	public onFilterTechnologies() {
+		this.filterTechItems();
+	}
+	
+	public onClearTechnologies(oEvent: FilterBar$ClearEvent) {
 		(this.getView().byId("MaturityFilter") as Select).setSelectedKey("");
 		(this.getView().byId("TechnologyFilter") as MultiComboBox).setSelectedKeys([]);
 		(this.getView().byId("TechnologyGroupFilter") as MultiComboBox).setSelectedKeys([]);
@@ -61,21 +97,19 @@ export default class Main extends BaseController {
 	}
 
 	private filterTechItems(): void {
-		const oGridList = this.getView().byId("TechGrid") as GridContainer;
-		//const aListItems = oGridList.getItems() as List[];
+		const oGridList = this.getView().byId("TechGrid") as GridContainer;		
 		const aListItems = oGridList.getItems() as GridList[];
+
 		for (const oListItem of aListItems) {
 			const aFilters = this.getTechFilters();
 			const iMaturityStatusCode = (oListItem.getBindingContext() as Context).getProperty("code") as number;
 			aFilters.push(new Filter("maturityStatus_code", FilterOperator.EQ, iMaturityStatusCode));
+			
 			const oListBinding = oListItem.getBinding("items") as ODataListBinding;
 			oListBinding.filter(aFilters);
 			if (oListBinding.isSuspended()) {
 				oListBinding.resume();				
-			}
-			/* if(oListItem.getDragDropConfig().length === 0) {
-				this.attachDragAndDrop(oListItem);
-			} */
+			}			
 		}
 	}
 
@@ -97,19 +131,9 @@ export default class Main extends BaseController {
 		})
 
 		return aFilters;
-	}
-	/* private attachDragAndDrop(oList: List): void {
-		oList.addDragDropConfig(new DragInfo({ sourceAggregation: "items" }));
-        oList.addDragDropConfig(
-          new DropInfo({
-            targetAggregation: "items",
-            dropPosition: dnd.DropPosition.OnOrBetween,
-            drop: this.onDrop.bind(this)
-          })
-        ); 
-	} */
+	}	
 
-	public async onDrop(oInfo: DropInfo$DragEnterEvent): void {
+	public async onDrop(oInfo: DropInfo$DropEvent): Promise<void> {
 		const oControl = oInfo.getParameter("droppedControl") as Control;
 		let iMaturityStatusCode: number;
 		/* if(oControl instanceof CustomListItem) {
@@ -124,22 +148,89 @@ export default class Main extends BaseController {
 		const oDraggedListItem = oInfo.getParameter("draggedControl") as GridListItem;
 		const oContext = oDraggedListItem.getBindingContext() as Context;
 		
-		const oPromise = oContext.setProperty("maturityStatus_code", iMaturityStatusCode);
+		await oContext.setProperty("maturityStatus_code", iMaturityStatusCode);
 		const oModel = this.getView().getModel() as ODataModel;	
 		await oModel.submitBatch("techUpdateGroup"); 
-		oModel.refresh();
+		//oModel.refresh();
 		
 		//const oGridList = this.getView().byId("TechGrid") as GridContainer;
 		//oGridList.getBinding("items").refresh();
 		//(this.getView().getModel() as ODataModel).refresh();
 	}
 	
-	public async addTechnology() : Promise<void> {
+	public async onPressAddTechnology() : Promise<void> {
 		const oModel = this.getView().getModel() as ODataModel;
 		const oListBinding = oModel.bindList("/Technology", undefined, undefined, undefined, { $$updateGroupId: "techUpdateGroup" });
 		const oContext = oListBinding.create();
+		//await oModel.submitBatch("techUpdateGroup"); 
 
 		await this.openTechnologyDialog(oContext);		
+	}
+	
+	public async onDeleteSolution(oEvent: List$ItemDeleteEvent) {
+		const oListItem = oEvent.getParameter("listItem") as ListItem;
+		const oContext = oListItem.getBindingContext() as Context;
+		await oContext.delete();
+	}
+
+	public async onAddSoftwareSolution() {
+		let aFilters: Array<Filter> = [];
+		const sTechnologyID = this._TechDialog.getBindingContext().getProperty("ID") as string;
+		aFilters.push(new Filter("technology_ID", FilterOperator.EQ, sTechnologyID));
+
+		const oModel = this.getView().getModel() as ODataModel;
+		const oSoftwareTechnology = oModel.bindList("/SoftwareTechnology");
+		oSoftwareTechnology.filter(aFilters);
+		const aContexts = await oSoftwareTechnology.requestContexts();
+
+		aFilters = [];
+		aContexts.forEach(function (oContext) {		
+			const sSoftwareID = oContext.getProperty("software_ID") as string;
+			aFilters.push(new Filter("ID", FilterOperator.NE, sSoftwareID));
+		});
+
+		if(!this._SoftwareDialog) {
+            this._SoftwareDialog ??= await Fragment.load({ id:"SoftwareDialog", name: 'com.gavdilabs.techradar.view.fragments.AddSolutionDialog', controller: this }) as SelectDialog;
+            this.getView().addDependent(this._SoftwareDialog);
+        }	
+
+		const oSelectDialog = Fragment.byId("SoftwareDialog","SoftwareSelect") as SelectDialog;
+		const oListBinding = oSelectDialog.getBinding("items") as ODataListBinding;
+		oListBinding.filter(aFilters);	
+		this._SoftwareDialog.open("");
+	}
+
+	public onSearchSolutions() {
+		
+	}
+
+	public async onConfirmSolution(oEvent: SelectDialog$ConfirmEvent) {
+		const oItem = oEvent.getParameter("selectedItem");
+		const sId = oItem.getBindingContext().getProperty("ID") as string;
+		const sName = oItem.getBindingContext().getProperty("name") as string;
+		const sDescription = oItem.getBindingContext().getProperty("name") as string;
+		const sTechnologyID = this._TechDialog.getBindingContext().getProperty("ID") as string;
+       
+		/* const oModel = this.getModel() as ODataModel;
+		let oBinding = oModel.bindList("/SoftwareTechnology", undefined, undefined, undefined, { $$updateGroupId: "techSoftwareGroup" });
+		const oContext = oBinding.create();
+		await oContext.setProperty("software_ID", sId);
+		await oContext.setProperty("technology_ID", sTechnologyID);
+
+		await oModel.submitBatch("techSoftwareGroup");
+		const oList = Fragment.byId("TechnologyDialog","TechnologySolutions") as List;
+		oBinding = oList.getBinding("items") as ODataListBinding;
+		oBinding.refresh(); */
+
+		const oList = Fragment.byId("TechnologyDialog","TechnologySolutions") as List;
+		const oBinding = oList.getBinding("items") as ODataListBinding;
+		const oContext = oBinding.create(); 
+		await oContext.setProperty("software_ID", sId);
+		//await oContext.setProperty("software/name", sName);	
+		//await oContext.setProperty("software/description", sDescription);
+
+		//const sTechnologyID = this._TechDialog.getBindingContext().getProperty("ID") as string;
+		//await oContext.setProperty("technology_ID", sTechnologyID);
 	}
 
 	public async openTechnologyDialog(oContext: Context) : Promise<void> {
@@ -149,9 +240,20 @@ export default class Main extends BaseController {
         }
 		this._TechDialog.setBindingContext(oContext);
 		this._TechDialog.open();
+
+		const oTechAlternative = Fragment.byId("TechnologyDialog","TechAlternatives") as MultiComboBox;
+        oTechAlternative.setSelectedKeys([]);
+
+		const oAppConfig = this.getModel("appConfig") as JSONModel;
+		const oGetResourceBundle = await this.getResourceBundle();
+		if(oContext.isTransient()) {
+			oAppConfig.setProperty("/techDialogTitle", oGetResourceBundle.getText("lblAddNewTechnology"));
+		} else {
+			oAppConfig.setProperty("/techDialogTitle", oGetResourceBundle.getText("lblEditTechnology"));
+		}
 	}
 
-	public async pressTechnology(oEvent: CustomListItem$DetailClickEvent) : Promise<void> {
+	public async onPressTechnology(oEvent: CustomListItem$DetailClickEvent) : Promise<void> {
 		const oContext = oEvent.getSource().getBindingContext() as Context;
 		await this.openTechnologyDialog(oContext);	
 
@@ -182,35 +284,88 @@ export default class Main extends BaseController {
 		if(bSelected === false) {
 			for (const oContext of this.aTechAlternatives) {
 				if(sTarget === oContext.getProperty("target")) {
-					await oContext.delete();
+					await oContext.delete("techReplacementGroup");
 				}  
 			}
 		} else {
 			const oModel = this.getView().getModel() as ODataModel;
-			const oBinding = oModel.bindList("/TechnologyReplacement", null, null, null, { "$$updateGroupId": 'techUpdateGroup' });       
+			const oBinding = oModel.bindList("/TechnologyReplacement", null, null, null, { "$$updateGroupId": 'techReplacementGroup' });       
 			const oContext = oBinding.create();
-			const sSource = this._TechDialog.getBindingContext().getProperty("ID") as number;
-			await oContext.setProperty("source",sSource);
 			await oContext.setProperty("target",sTarget);
+
+			const sSource = this._TechDialog.getBindingContext().getProperty("ID") as number;
+			if(sSource) {
+				await oContext.setProperty("source",sSource);
+			} else {
+				this.aTechAlternatives.push(oContext);
+			}
 		}
 	}
 
-	public async saveTechnology() : Promise<void> {		
-		const oModel = this.getView().getModel() as ODataModel;
-		this._TechDialog.setBusy(true);
-		try {
-			await oModel.submitBatch("techUpdateGroup");
-			this._TechDialog.setBusy(false);
-			this._TechDialog.close();
-			MessageBox.success("Technology saved");
-			oModel.refresh();
-		} catch (oError) {
-			this._TechDialog.setBusy(false);	
-			MessageBox.error("Technology not saved");
-		}	
+	public validateTechnology() {
+		const oControls = this.getView().getControlsByFieldGroupId("TechnologyGroup");
+    	let bValid: boolean = true;
+
+		oControls.forEach((oControl) => {      
+			if (oControl instanceof Input) {
+				if (oControl.getRequired() && oControl.getVisible() && !oControl.getValue()) {
+					oControl.setValueState("Error");
+					bValid = false;
+				} else {
+					oControl.setValueState("None");
+				}
+			} else if (oControl instanceof Select || oControl instanceof ComboBox) {
+				if ( oControl.getRequired() && oControl.getVisible() && !oControl.getSelectedItem()) {
+					oControl.setValueState("Error");
+					bValid = false;
+				} else {
+					oControl.setValueState("None");
+				}
+			} 
+		});
+		return bValid;
 	}
 
-	public cancelTechnology() : void {
+	public async onSaveTechnology() : Promise<void> {				
+		Messaging.removeAllMessages();
+
+		if(this.validateTechnology()) {
+			const oModel = this.getView().getModel() as ODataModel;
+			this._TechDialog.setBusy(true);
+			const oGetResourceBundle = await this.getResourceBundle();
+			try {
+				await oModel.submitBatch("techUpdateGroup");
+				await this.syncSoftwareReplacements();
+				await oModel.submitBatch("techReplacementGroup");
+
+				this._TechDialog.setBusy(false);
+
+				if(!this.hasMessages(MessageType.Error)) {
+					this._TechDialog.close();
+					MessageBox.success(oGetResourceBundle.getText("msgTechSaved"), {
+						onClose: function () {
+							oModel.refresh();
+						},
+					});
+					//oModel.refresh();
+				}
+			} catch (oError) {
+				this._TechDialog.setBusy(false);	
+				MessageBox.error(oGetResourceBundle.getText("msgTechNotSaved"));
+			}	
+		} 
+	}
+
+	private async syncSoftwareReplacements() {
+		const iSource = this._TechDialog.getBindingContext().getProperty("ID") as number;
+		for (const oContext of this.aTechAlternatives) {			
+			if(oContext.getProperty("source") === null) {
+				await oContext.setProperty("source", iSource);
+			}
+		};
+	}
+
+	public onCancelTechnology() : void {
 		this._TechDialog.close();
 
 		const oModel = this.getView().getModel() as ODataModel;

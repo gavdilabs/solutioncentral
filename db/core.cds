@@ -157,9 +157,9 @@ entity SoftwareTechnology : cuid {
 
 @cds.search: {name}
 entity Technology : cuid {
-  name           : String  @mandatory;
+  name           : String;
   description    : String;
-  maturityStatus : Association to TechnologyStatus  @mandatory  @assert.target;
+  maturityStatus : Association to TechnologyStatus @assert.target;
   maturityLevel  : Integer @assert.range: [
     1,
     5
