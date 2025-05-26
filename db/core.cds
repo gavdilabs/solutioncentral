@@ -96,7 +96,7 @@ entity DependencyType : sap.common.CodeList {
 }
 
 // Entities
-entity User {
+entity User : managed {
   key username      : String;
       email         : String  @mandatory;
       firstName     : String;
@@ -110,6 +110,47 @@ entity User {
                         on softwareTeams.user = $self;
 }
 
+type RequestType            : String enum {
+  TECHNOLOGY_NEW;
+  TECHNOLOGY_CHANGE;
+  TECHNOLOGY_SUNSET;
+  SOLUTION_TECHNOLOGY_NEW;
+  SOLUTION_TECHNOLOGY_CHANGE;
+  SOLUTION_TECHNOLOGY_SUNSET;
+  SOLUTION_NEW;
+  SOLUTION_UPGRADE;
+  SOLUTION_SUNSET;
+  SOLUTION_DEPENDENT;
+  REVIEW;
+}
+
+type RequestStatus          : String enum {
+  PENDING;
+  APPROVED;
+  REJECTED;
+}
+
+entity Request : cuid, managed {
+  requestType   : RequestType                 @mandatory;
+  requester     : Association to User  @mandatory  @assert.target;
+  status        : RequestStatus               @mandatory;
+  correlationID : String(255)                 @mandatory;
+  approverTeam  : Association to SoftwareTeam @assert.target;
+  approverUser  : Association to User         @assert.target;
+  description   : String(1000);
+  data          : Map; // Data needed to fulfill the request upon approval
+}
+
+entity SolutionVersion : cuid, managed {
+  key solution     : Association to SoftwareSolution;
+      status       : Association to SoftwareStatus  @mandatory  @assert.target;
+      version      : String(100);
+      releaseNotes : LargeBinary @Core.MediaType: mediaType;
+      mediaType    : String(255) @Core.IsMediaType;
+      releaseDate  : Date default null;
+      sapVersion   : Association to SAPVersion;
+}
+
 @cds.search: {name}
 entity SoftwareSolution : cuid, managed {
   name                : String @mandatory;
@@ -119,14 +160,17 @@ entity SoftwareSolution : cuid, managed {
   packageNamespace    : String;
   repository          : String;
   documentationUrl    : String;
-  sapVersion          : Association to SAPVersion;
   businessCriticality : Association to BusinessCriticalityLevel;
   cleanCoreRating     : Association to CleanCoreLevel;
   codeQualityRating   : Association to CodeQualityLevel;
+  requests            : Association to many Request
+                          on requests.correlationID = $self.ID;
+  versions            : Association to many SolutionVersion
+                          on versions.solution = $self;
   reasonNoCleanCore   : String;
   costCenter          : String;
-  owner               : Association to User;
-  team                : Association to SoftwareTeam;
+  owner               : Association to User          @mandatory  @assert.target;
+  team                : Association to SoftwareTeam  @mandatory  @assert.target;
   // Needs Required Services from Cloud Credit Control
   Technologies        : Composition of many SoftwareTechnology
                           on Technologies.software = $self;
@@ -139,31 +183,45 @@ entity SoftwareSolution : cuid, managed {
 }
 
 @cds.search: {teamName}
-entity SoftwareTeam {
-  key teamName   : String;
-      _teamUsers : Association to many SoftwareTeamUser
-                     on _teamUsers.team = $self;
+entity SoftwareTeam : managed {
+  key teamName     : String;
+      _owner       : Association to User  @mandatory  @assert.target;
+      _maintainers : Association to many SoftwareTeamUser
+                       on  _maintainers.maintainer = true
+                       and _maintainers.team       = $self;
+      _reviewers   : Association to many SoftwareTeamUser
+                       on  _reviewers.team     = $self
+                       and _reviewers.reviewer = true;
+      _teamUsers   : Association to many SoftwareTeamUser
+                       on _teamUsers.team = $self;
 }
 
 entity SoftwareTeamUser {
-  key team : Association to SoftwareTeam;
-  key user : Association to User;
+  key team       : Association to SoftwareTeam;
+  key user       : Association to User;
+      reviewer   : Boolean default false;
+      maintainer : Boolean default false;
 }
 
-entity SoftwareTechnology : cuid {
+entity SoftwareTechnology : cuid, managed {
+  version    : SolutionVersion:version;
   software   : Association to SoftwareSolution;
   technology : Association to Technology;
+  requests   : Association to many Request
+                 on requests.correlationID = $self.ID;
 }
 
 @cds.search: {name}
-entity Technology : cuid {
+entity Technology : cuid, managed {
   name           : String;
   description    : String;
   maturityStatus : Association to TechnologyStatus @assert.target;
-  maturityLevel  : Integer @assert.range: [
+  maturityLevel  : Integer                         @assert.range: [
     1,
     5
   ];
+  requests       : Association to many Request
+                     on requests.correlationID = $self.ID;
   group          : Association to TechnologyGroup;
   _replacements  : Association to many TechnologyReplacement
                      on _replacements.source = ID;

@@ -7,7 +7,32 @@
           "dummy": {
             "id": "dummy",
             "password": "dummy",
+            "roles": []
+          },
+          "admin": {
+            "id": "admin",
+            "password": "admin1234",
             "roles": ["Admin"]
+          },
+          "dev": {
+            "id": "dev",
+            "password": "dev1234",
+            "roles": ["Developer"]
+          },
+          "rev": {
+            "id": "rev",
+            "password": "rev1234",
+            "roles": ["Reviewer"]
+          },
+          "mai": {
+            "id": "mai",
+            "password": "mai1234",
+            "roles": ["Maintainer"]
+          },
+          "vie": {
+            "id": "vie",
+            "password": "vie1234",
+            "roles": ["View"]
           }
         }
       }

@@ -7,200 +7,83 @@ using {
 service RadarService {
 
   /*** ENTITIES ***/
-  entity User @(restrict: [
-    {
-      grant: ['READ'],
-      to   : ['View']
-    },
-    {
-      grant: [
-        'READ',
-        'UPDATE',
-        'CREATE'
-      ],
-      to   : ['Maintainer']
-    },
-    {
-      grant: ['*'],
-      to   : ['Admin']
-    }
-  ])  as projection on core.User;
+  entity User                     as projection on core.User;
+  entity SoftwareSolution         as projection on core.SoftwareSolution;
+  annotate SoftwareSolution with @odata.draft.enabled;
 
-  entity SoftwareSolution @(
-    odata.draft.enabled,
-    restrict: [
-    {
-      grant: ['READ'],
-      to   : ['View']
-    },
-    {
-      grant: [
-        'READ',
-        'UPDATE',
-        'CREATE'
-      ],
-      to   : ['Maintainer']
-    },
-    {
-      grant: ['*'],
-      to   : ['Admin']
-    }
-  ])  as projection on core.SoftwareSolution;
+  extend SoftwareSolution with actions {
+    action requestTechnology(technologyID : String);
+    action requestReview(description : String);
+    action requestSunset(description : String);
+    action requestDependent(dependentID : String, softwareType : String);
+  }
 
-  entity SoftwareTeam @(restrict: [
-    {
-      grant: ['READ'],
-      to   : ['View']
-    },
-    {
-      grant: [
-        'READ',
-        'UPDATE',
-        'CREATE'
-      ],
-      to   : ['Maintainer']
-    },
-    {
-      grant: ['*'],
-      to   : ['Admin']
-    }
-  ])  as projection on core.SoftwareTeam;
+  entity SolutionVersion          as projection on core.SolutionVersion;
 
-  entity SoftwareTeamUser @(restrict: [
-    {
-      grant: ['READ'],
-      to   : ['View']
-    },
-    {
-      grant: [
-        'READ',
-        'UPDATE',
-        'CREATE'
-      ],
-      to   : ['Maintainer']
-    },
-    {
-      grant: ['*'],
-      to   : ['Admin']
-    }
-  ])  as projection on core.SoftwareTeamUser;
+  @cds.redirection.target
+  entity Requests                 as projection on core.Request;
 
-  entity Technology @(restrict: [
-    {
-      grant: ['READ'],
-      to   : ['View']
-    },
-    {
-      grant: [
-        'READ',
-        'UPDATE',
-        'CREATE'
-      ],
-      to   : ['Maintainer']
-    },
-    {
-      grant: ['*'],
-      to   : ['Admin']
-    }
-  ])  as projection on core.Technology;
+  extend Requests with actions {
+    action approve();
+    action reject();
+  }
 
-  entity TechnologyReplacement @(restrict: [
-    {
-      grant: ['READ'],
-      to   : ['View']
-    },
-    {
-      grant: [
-        'READ',
-        'UPDATE',
-        'CREATE'
-      ],
-      to   : ['Maintainer']
-    },
-    {
-      grant: ['*'],
-      to   : ['Admin']
-    }
-  ])  as projection on core.TechnologyReplacement;
+  entity SoftwareTeam             as projection on core.SoftwareTeam;
 
-  entity CompanyConfiguration @(restrict: [
-    {
-      grant: ['READ'],
-      to   : ['View']
-    },
-    {
-      grant: [
-        'READ',
-        'UPDATE',
-        'CREATE'
-      ],
-      to   : ['Maintainer']
-    },
-    {
-      grant: ['*'],
-      to   : ['Admin']
-    }
-  ])  as projection on core.CompanyConfiguration;
+  extend SoftwareTeam with actions {
+    action requestAccess(username : String);
+    action addMember(username : String);
+    action removeMember(username : String);
+  }
+
+  entity SoftwareTeamUser         as projection on core.SoftwareTeamUser;
+  entity Technology               as projection on core.Technology;
+
+  extend Technology with actions {
+    action requestSunset(description : String);
+    action requestChange(description : String);
+  }
+
+  entity TechnologyReplacement    as projection on core.TechnologyReplacement;
+  entity CompanyConfiguration     as projection on core.CompanyConfiguration;
 
   @readonly
-  entity TechnologyStatus as projection on core.TechnologyStatus;
-  
-  @readonly
-  entity SAPVersion @(restrict: [{
-    grant: ['READ'],
-    to   : [
-      'View',
-      'Maintainer',
-      'Admin'
-    ]
-  }]) as projection on core.SAPVersion;
+  entity TechnologyStatus         as projection on core.TechnologyStatus;
 
   @readonly
-  entity CleanCoreLevel @(restrict: [{
-    grant: ['READ'],
-    to   : [
-      'View',
-      'Maintainer',
-      'Admin'
-    ]
-  }]) as projection on core.CleanCoreLevel;
+  entity SAPVersion               as projection on core.SAPVersion;
 
   @readonly
-  entity CodeQualityLevel @(restrict: [{
-    grant: ['READ'],
-    to   : [
-      'View',
-      'Maintainer',
-      'Admin'
-    ]
-  }]) as projection on core.CodeQualityLevel;
+  entity CleanCoreLevel           as projection on core.CleanCoreLevel;
 
   @readonly
-  entity BusinessCriticalityLevel @(restrict: [{
-    grant: ['READ'],
-    to   : [
-      'View',
-      'Maintainer',
-      'Admin'
-    ]
-  }]) as projection on core.BusinessCriticalityLevel;
+  entity CodeQualityLevel         as projection on core.CodeQualityLevel;
 
-  entity SoftwareTechnology as projection on core.SoftwareTechnology;
+  @readonly
+  entity BusinessCriticalityLevel as projection on core.BusinessCriticalityLevel;
 
+  @readonly
+  entity DependencyTypes          as projection on core.DependencyType;
+
+  entity SoftwareTechnology       as projection on core.SoftwareTechnology;
   /*** FUNCTION IMPORTS ***/
   function getActiveUser() returns types.ActiveUser;
 
-  annotate getActiveUser with @restrict: [{to: [
-    'View',
-    'Maintainer',
-    'Admin'
-  ]}];
+  /*** VIEWS ***/
+  view UserRequests as
+    select from core.Request {
+      key ID,
+          requestType,
+          requester,
+          status,
+          correlationID,
+          description,
+          data
+    }
+    where
+         approverUser.username                   = $user.id
+      or approverTeam._reviewers.user.username   = $user.id
+      or approverTeam._maintainers.user.username = $user.id;
 
 }
 
-//Annotation for chart enablement
-annotate RadarService.SoftwareSolution with @Aggregation.ApplySupported: {
-  Transformations : ['aggregate', 'groupby', 'identity', 'filter'],
-  GroupableProperties : [platform_code, solutionStatus_code],
-  AggregatableProperties: [{Property: cleanCoreRating_code}, {Property: codeQualityRating_code}]
-};

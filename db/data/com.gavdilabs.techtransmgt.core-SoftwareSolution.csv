@@ -1,8 +1,8 @@
-ID,name,description,solutionStatus_code,platform_code,packageNamespace,repository,documentationUrl,sapVersion_code,businessCriticality_code,cleanCoreRating_code,codeQualityRating_code,reasonNoCleanCore,costCenter,owner_username,team_teamName,createdAt,createdBy,modifiedAt,modifiedBy
-954ea007-d275-4a11-a5bf-d2398556a075,New Ledger,Report financial statements,1,ABAP,com.sap,https://github.com/,https://www.atlassian.com/software/confluence,F1503,High,2,3,,Finance,dummy,,,,,,
-ce429b97-5d31-4423-ae67-c0ec62dab62c,Manage Products,Mass management of products,2,OnPrem,com.test,https://bitbucket.org/,,S1603,Medium,3,4,,Retail,dummy,,,,,,
-04017a3c-25ad-4c44-a0cc-3a383800bf0b,Track Returns,App to track customer returns,3,CAP,com.retail,https://bitbucket.org/,,S1603,Very_High,1,2,no knowledge of clean core,,Retail,jld,,,,,
-8778c5cc-707e-4108-a8c7-2ac5c004073d,CRX,Customer Relationship,4,ABAP_Cloud,com.gavdi,,,S1603,Low,4,5,,Sales,jld,,,,,,
-6b37ab46-5735-4281-859a-8bc7503338c8,Gavdi Easy Documents,Solution for Document Management,2,CAP,com.gavdi,,,S1603,Low,4,5,,HR,jld,,,,,,
-756a6afd-3a2d-4eee-aae1-85c5557e43e0,My Team,Team Management application,3,CAP,com.gavdi,,,S1603,Low,4,3,,HR,jld,,,,,,
-a56b9846-c4f7-4084-b740-35e0cfb45185,My Timesheet,Time and Absence management,4,CAP,com.gavdi,,,S1603,Low,1,2,,HR,jld,,,,,,
+ID,name,description,solutionStatus_code,platform_code,packageNamespace,repository,documentationUrl,businessCriticality_code,cleanCoreRating_code,codeQualityRating_code,reasonNoCleanCore,costCenter,owner_username,team_teamName,createdAt,createdBy,modifiedAt,modifiedBy
+954ea007-d275-4a11-a5bf-d2398556a075,New Ledger,Report financial statements,1,ABAP,com.sap,https://github.com/,https://www.atlassian.com/software/confluence,High,2,3,,Finance,dummy,,,,,,
+ce429b97-5d31-4423-ae67-c0ec62dab62c,Manage Products,Mass management of products,2,OnPrem,com.test,https://bitbucket.org/,,Medium,3,4,,Retail,dummy,,,,,,
+04017a3c-25ad-4c44-a0cc-3a383800bf0b,Track Returns,App to track customer returns,3,CAP,com.retail,https://bitbucket.org/,,Very_High,1,2,no knowledge of clean core,,Retail,jld,,,,,
+8778c5cc-707e-4108-a8c7-2ac5c004073d,CRX,Customer Relationship,4,ABAP_Cloud,com.gavdi,,,Low,4,5,,Sales,jld,,,,,,
+6b37ab46-5735-4281-859a-8bc7503338c8,Gavdi Easy Documents,Solution for Document Management,2,CAP,com.gavdi,,,Low,4,5,,HR,jld,,,,,,
+756a6afd-3a2d-4eee-aae1-85c5557e43e0,My Team,Team Management application,3,CAP,com.gavdi,,,Low,4,3,,HR,jld,,,,,,
+a56b9846-c4f7-4084-b740-35e0cfb45185,My Timesheet,Time and Absence management,4,CAP,com.gavdi,,,Low,1,2,,HR,jld,,,,,,
