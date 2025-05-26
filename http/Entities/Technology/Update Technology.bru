@@ -1,0 +1,25 @@
+meta {
+  name: Update Technology
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{HOST}}/Technology({{KEY}})
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "Steve's Soup",
+    "description": "No idea what this is doing here",
+    "maturityStatus_code": 3,
+    "maturityLevel": 4,
+    "group_code": 1
+  }
+}
+
+vars:pre-request {
+  KEY: c92b34c8-bc62-4a05-b566-5dea364834a8
+}

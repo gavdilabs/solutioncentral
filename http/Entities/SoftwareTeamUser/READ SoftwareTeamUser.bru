@@ -1,0 +1,16 @@
+meta {
+  name: READ SoftwareTeamUser
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{HOST}}/SoftwareTeamUser(user_username='{{USER_USERNAME}}',team_teamName='{{TEAMNAME}}')
+  body: none
+  auth: inherit
+}
+
+vars:pre-request {
+  USER_USERNAME: dummy
+  TEAMNAME: InternalIT
+}

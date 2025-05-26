@@ -1,0 +1,15 @@
+meta {
+  name: READ Technology
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{HOST}}/Technology({{KEY}})
+  body: none
+  auth: inherit
+}
+
+vars:pre-request {
+  KEY: 1c448326-5f44-11ec-bf63-0242ac130002
+}

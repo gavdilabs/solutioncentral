@@ -1,0 +1,30 @@
+meta {
+  name: Create SoftwareSolution Draft
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{HOST}}/SoftwareSolution
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "Track Returns",
+    "description": "App to track customer returns",
+    "solutionStatus_code": 3,
+    "platform_code": "CAP",
+    "packageNamespace": "com.retail",
+    "repository": "https://bitbucket.org/",
+    "documentationUrl": null,
+    "businessCriticality_code": "Very_High",
+    "cleanCoreRating_code": 1,
+    "codeQualityRating_code": 2,
+    "reasonNoCleanCore": "no knowledge of clean core",
+    "costCenter": null,
+    "owner_username": "jld",
+    "team_teamName": "InternalIT"
+  }
+}

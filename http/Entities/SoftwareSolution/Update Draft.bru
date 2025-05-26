@@ -1,0 +1,34 @@
+meta {
+  name: Update Draft
+  type: http
+  seq: 6
+}
+
+patch {
+  url: {{HOST}}/SoftwareSolution(ID={{KEY}},IsActiveEntity=false)
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "Track Returns",
+    "description": "App to track customer returns",
+    "solutionStatus_code": 3,
+    "platform_code": "CAP",
+    "packageNamespace": "com.retail",
+    "repository": "https://bitbucket.org/",
+    "documentationUrl": null,
+    "businessCriticality_code": "Very_High",
+    "cleanCoreRating_code": 1,
+    "codeQualityRating_code": 2,
+    "reasonNoCleanCore": "no knowledge of clean core",
+    "costCenter": null,
+    "owner_username": "jld",
+    "team_teamName": "InternalIT"
+  }
+}
+
+vars:pre-request {
+  KEY: 7e4c0b06-b305-4ca8-a8f6-2f5b851ee774
+}

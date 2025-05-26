@@ -1,0 +1,21 @@
+meta {
+  name: Action - Request Change
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{HOST}}/Technology({{KEY}})/requestChange
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "description": "Here I describe the change I want to make!"
+  }
+}
+
+vars:pre-request {
+  KEY: 1c448326-5f44-11ec-bf63-0242ac130002
+}

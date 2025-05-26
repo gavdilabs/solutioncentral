@@ -1,0 +1,21 @@
+meta {
+  name: Action - Request Sunset
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{HOST}}/Technology({{KEY}})/requestSunset
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "description": "Here I describe why I want it to sunset!"
+  }
+}
+
+vars:pre-request {
+  KEY: 1c448326-5f44-11ec-bf63-0242ac130002
+}

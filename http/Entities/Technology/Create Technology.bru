@@ -1,0 +1,21 @@
+meta {
+  name: Create Technology
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{HOST}}/Technology
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "Steve's Soup",
+    "description": "No idea what this is doing here",
+    "maturityStatus_code": 3,
+    "maturityLevel": 3,
+    "group_code": 1
+  }
+}

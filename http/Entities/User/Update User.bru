@@ -1,0 +1,23 @@
+meta {
+  name: Update User
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{HOST}}/User('{{KEY}}')
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email": "pro@not-real.not",
+    "firstName": "Per",
+    "lastName": "Roll"
+  }
+}
+
+vars:pre-request {
+  KEY: dummy
+}

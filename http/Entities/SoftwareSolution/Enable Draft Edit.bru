@@ -1,0 +1,15 @@
+meta {
+  name: Enable Draft Edit
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{HOST}}/SoftwareSolution(ID={{KEY}},IsActiveEntity=true)/draftEdit
+  body: none
+  auth: inherit
+}
+
+vars:pre-request {
+  KEY: 7e4c0b06-b305-4ca8-a8f6-2f5b851ee774
+}

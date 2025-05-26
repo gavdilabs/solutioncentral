@@ -1,0 +1,23 @@
+meta {
+  name: Update SoftwareTeamUser
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{HOST}}/SoftwareTeamUser(user_username='{{USER_USERNAME}}',team_teamName='{{TEAMNAME}}')
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "reviewer": false, 
+    "maintainer": false
+  }
+}
+
+vars:pre-request {
+  USER_USERNAME: pro
+  TEAMNAME: InternalIT
+}

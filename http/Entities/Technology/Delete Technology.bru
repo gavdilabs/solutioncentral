@@ -1,0 +1,15 @@
+meta {
+  name: Delete Technology
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{HOST}}/Technology({{KEY}})
+  body: none
+  auth: inherit
+}
+
+vars:pre-request {
+  KEY: c92b34c8-bc62-4a05-b566-5dea364834a8
+}

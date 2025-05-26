@@ -1,0 +1,24 @@
+meta {
+  name: Update CompanyConfiguration
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{HOST}}/CompanyConfiguration({{KEY}})
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "currentSAPVersion_code": "F1503",
+    "expectedMinimalCleanCoreValue_code": 2,
+    "approvalForNewSolutions": true,
+    "allowDeprecationWithoutReplacement": false
+  }
+}
+
+vars:pre-request {
+  KEY: 05d104cf-5b4c-402b-a059-35da0cbc71b9
+}

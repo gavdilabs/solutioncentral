@@ -197,8 +197,8 @@ entity SoftwareTeam : managed {
 }
 
 entity SoftwareTeamUser {
-  key team       : Association to SoftwareTeam;
-  key user       : Association to User;
+  key team       : Association to SoftwareTeam @assert.target;
+  key user       : Association to User         @asser.target;
       reviewer   : Boolean default false;
       maintainer : Boolean default false;
 }
@@ -236,7 +236,7 @@ entity TechnologyReplacement {
                       on _technology.ID = source;
 }
 
-entity CompanyConfiguration : cuid {
+entity CompanyConfiguration : cuid, managed {
   currentSAPVersion                  : Association to SAPVersion;
   expectedMinimalCleanCoreValue      : Association to CleanCoreLevel;
   approvalForNewSolutions            : Boolean;

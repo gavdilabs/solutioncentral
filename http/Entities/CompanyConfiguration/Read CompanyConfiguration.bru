@@ -1,0 +1,15 @@
+meta {
+  name: Read CompanyConfiguration
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{HOST}}/CompanyConfiguration({{KEY}})
+  body: none
+  auth: inherit
+}
+
+vars:pre-request {
+  KEY: 9c230e61-c754-4e7d-a954-64f1af60aa59
+}
