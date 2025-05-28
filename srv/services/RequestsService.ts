@@ -136,7 +136,7 @@ export default class RequestsService {
       solutionName: solutionInfo?.name,
       solutionOwnerEmail: solutionInfo?.owner?.email,
       plannedReleaseDate: "", // Not yet available
-      releaseNotes: "", // Not yet available
+      releaseNotes: "-", // Not yet available
     });
   }
 }
