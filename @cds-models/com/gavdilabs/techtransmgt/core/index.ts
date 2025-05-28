@@ -36,22 +36,6 @@ export const deploymentTypes = {
 } as const;
 export type deploymentTypes = "OnPremise" | "Cloud"
 
-// enum
-export const RequestType = {
-  TECHNOLOGY_NEW: "TECHNOLOGY_NEW",
-  TECHNOLOGY_CHANGE: "TECHNOLOGY_CHANGE",
-  TECHNOLOGY_SUNSET: "TECHNOLOGY_SUNSET",
-  SOLUTION_TECHNOLOGY_NEW: "SOLUTION_TECHNOLOGY_NEW",
-  SOLUTION_TECHNOLOGY_CHANGE: "SOLUTION_TECHNOLOGY_CHANGE",
-  SOLUTION_TECHNOLOGY_SUNSET: "SOLUTION_TECHNOLOGY_SUNSET",
-  SOLUTION_NEW: "SOLUTION_NEW",
-  SOLUTION_UPGRADE: "SOLUTION_UPGRADE",
-  SOLUTION_SUNSET: "SOLUTION_SUNSET",
-  SOLUTION_DEPENDENT: "SOLUTION_DEPENDENT",
-  SOLUTION_REVIEW: "SOLUTION_REVIEW",
-} as const;
-export type RequestType = "TECHNOLOGY_NEW" | "TECHNOLOGY_CHANGE" | "TECHNOLOGY_SUNSET" | "SOLUTION_TECHNOLOGY_NEW" | "SOLUTION_TECHNOLOGY_CHANGE" | "SOLUTION_TECHNOLOGY_SUNSET" | "SOLUTION_NEW" | "SOLUTION_UPGRADE" | "SOLUTION_SUNSET" | "SOLUTION_DEPENDENT" | "SOLUTION_REVIEW"
-
 export function _SoftwareStatuAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
   return class SoftwareStatu extends _sap_common._CodeListAspect(Base) {
     declare code?: __.Key<number>
@@ -305,6 +289,7 @@ export function _UserAspect<TBase extends new (...args: any[]) => object>(Base: 
     declare fullName?: string | null
     declare imageUrl?: string | null
     declare imageType?: string | null
+    declare approver?: boolean | null
     declare softwareTeams?: __.Association.to.many<SoftwareTeamUser_>
     static override readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
     declare static readonly keys: __.KeysOf<User>;
@@ -386,6 +371,7 @@ export function _SoftwareSolutionAspect<TBase extends new (...args: any[]) => ob
     declare owner_username?: string | null
     declare team?: __.Association.to<SoftwareTeam> | null
     declare team_teamName?: string | null
+    declare isApprover?: boolean | null
     declare Technologies?: __.Composition.of.many<SoftwareTechnology_>
     declare Dependents?: __.Composition.of.many<SoftwareSolution.Dependents>
     static override readonly kind: 'entity' | 'type' | 'aspect' = 'entity';

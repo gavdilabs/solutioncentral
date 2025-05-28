@@ -11,10 +11,13 @@ import {
   OnBoundAction,
   Req,
   Result,
+  BeforeRead,
+  AfterRead,
 } from "@dxfrontier/cds-ts-dispatcher";
 import { Logger, LoggerFactory } from "@gavdi/caplog";
 import RequestsService from "../../services/RequestsService";
 import SoftwareSolutionService from "../../services/SoftwareSolutionService";
+import { foreach } from "@sap/cds";
 
 @EntityHandler(SoftwareSolution)
 export default class SoftwareSolutionHandler {
@@ -30,6 +33,27 @@ export default class SoftwareSolutionHandler {
     this.logger = LoggerFactory.createLogger("software-solution-handler");
   }
 
+  @AfterRead()
+  public async afterRead(
+    @Req() req: Request<SoftwareSolution>,
+    @Result() result: SoftwareSolution[],
+  ): Promise<unknown> {
+    try {
+      const isApprover = req.user.is("Approver");
+
+      result.forEach((element: SoftwareSolution) => {
+        element.isApprover = isApprover;
+      });
+
+      return result;
+    } catch (e) {
+      this.logger.error(
+        "Error thrown while post-processing SoftwareSolution read",
+        e,
+      );
+      return req.error(500, "Unexpected error occured while post-processing");
+    }
+  }
   @AfterCreate()
   public async afterCreated(
     @Req() req: Request<SoftwareSolution>,

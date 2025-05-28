@@ -25,6 +25,7 @@ export function _UserAspect<TBase extends new (...args: any[]) => object>(Base: 
     declare fullName?: string | null
     declare imageUrl?: string | null
     declare imageType?: string | null
+    declare approver?: boolean | null
     declare softwareTeams?: __.Association.to.many<SoftwareTeamUser_>
     static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
     declare static readonly keys: __.KeysOf<User>;
@@ -71,6 +72,7 @@ export function _SoftwareSolutionAspect<TBase extends new (...args: any[]) => ob
     declare owner_username?: string | null
     declare team?: __.Association.to<SoftwareTeam> | null
     declare team_teamName?: string | null
+    declare isApprover?: boolean | null
     declare Technologies?: __.Composition.of.many<SoftwareTechnology_>
     declare Dependents?: __.Composition.of.many<SoftwareSolution.Dependents>
     static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
@@ -697,6 +699,8 @@ export declare class newSolution {
   declare approverEmails: Array<string>
   /** Name of the new solution */
   declare solutionName: string | null
+  /** ID of the new solution */
+  declare solutionID: string | null
 }
 // event
 export declare class reviewSolution {
