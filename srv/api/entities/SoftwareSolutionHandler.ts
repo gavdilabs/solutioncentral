@@ -90,7 +90,8 @@ export default class SoftwareSolutionHandler {
     @Req() req: ActionRequest<typeof SoftwareSolution.actions.requestReview>,
   ): ActionReturn<typeof SoftwareSolution.actions.requestReview> {
     try {
-      const solutionID = req.params[0] as string | undefined;
+      const keys = req.params[0] as string | Record<string, string>;
+      const solutionID = typeof keys === "string" ? keys : keys.ID;
       if (!solutionID) {
         this.logger.warn("Invalid request, missing solution ID");
         return req.error(400, "Missing solution ID");
@@ -117,7 +118,8 @@ export default class SoftwareSolutionHandler {
     @Req() req: ActionRequest<typeof SoftwareSolution.actions.requestSunset>,
   ): ActionReturn<typeof SoftwareSolution.actions.requestSunset> {
     try {
-      const solutionID = req.params[0] as string | undefined;
+      const keys = req.params[0] as string | Record<string, string>;
+      const solutionID = typeof keys === "string" ? keys : keys.ID;
       if (!solutionID) {
         this.logger.warn("Invalid request, missing solution ID");
         return req.error(400, "Missing solution ID");

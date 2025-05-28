@@ -94,13 +94,14 @@ export default class SolutionVersionService {
       | typeof SolutionVersion.actions.reject
     >,
   ): Promise<SolutionVersion | undefined> {
-    const solutionVersionID = req.params[0];
-    if (!solutionVersionID || typeof solutionVersionID !== "string") {
+    const keys = req.params[0] as Record<string, string>;
+    const solutionVersionID = keys.ID;
+    if (!solutionVersionID) {
       req.error(400, "Invalid solution version ID");
       return;
     }
 
-    const solutionID = req.params[1];
+    const solutionID = keys.solution_ID;
     if (!solutionID || typeof solutionID !== "string") {
       req.error(400, "Invalid solution ID");
       return;
