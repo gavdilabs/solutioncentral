@@ -91,4 +91,3 @@ module.exports.softwareDependencyType ??= { Consuming: "Consuming", Embedding: "
 module.exports.platformType ??= { ABAP: "ABAP", ABAP_Cloud: "ABAP_Cloud", CAP: "CAP", OnPrem: "OnPrem" }
 module.exports.criticalityLevel ??= { Very_High: "Very_High", High: "High", Medium: "Medium", Low: "Low" }
 module.exports.deploymentTypes ??= { OnPremise: "OnPremise", Cloud: "Cloud" }
-module.exports.RequestType ??= { TECHNOLOGY_NEW: "TECHNOLOGY_NEW", TECHNOLOGY_CHANGE: "TECHNOLOGY_CHANGE", TECHNOLOGY_SUNSET: "TECHNOLOGY_SUNSET", SOLUTION_TECHNOLOGY_NEW: "SOLUTION_TECHNOLOGY_NEW", SOLUTION_TECHNOLOGY_CHANGE: "SOLUTION_TECHNOLOGY_CHANGE", SOLUTION_TECHNOLOGY_SUNSET: "SOLUTION_TECHNOLOGY_SUNSET", SOLUTION_NEW: "SOLUTION_NEW", SOLUTION_UPGRADE: "SOLUTION_UPGRADE", SOLUTION_SUNSET: "SOLUTION_SUNSET", SOLUTION_DEPENDENT: "SOLUTION_DEPENDENT", SOLUTION_REVIEW: "SOLUTION_REVIEW" }

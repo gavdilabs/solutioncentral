@@ -12,10 +12,8 @@ service RadarService {
   annotate SoftwareSolution with @odata.draft.enabled;
 
   extend SoftwareSolution with actions {
-    action requestTechnology(technologyID : String);
     action requestReview(description : String);
-    action requestSunset(description : String);
-    action requestDependent(dependentID : String, softwareType : String, description : String);
+    action requestSunset(description : String, sunsetDate : DateTime);
     action approve();
     action reject();
   }

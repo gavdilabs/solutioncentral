@@ -67,6 +67,10 @@ extend service RadarService with {
      * Date for which the solution will sunset
      */
     sunsetDate         : DateTime;
+    /**
+     * Description of why the solution is being sunset
+     */
+    description        : String;
   };
 
   event upgradeSolution : {
@@ -96,54 +100,30 @@ extend service RadarService with {
     solutionOwnerEmail : String;
   };
 
-  event dependentSolution : {
+  event newSolutionVersion : {
     /**
-     * ID of the solution that is to be added as dependent to the target solution
-     */
-    dependentID           : String;
+    * List of emails for possible approvers
+    */
+    approverEmails     : array of String;
     /**
-     * Name of the solution that is to be added as dependent to the target solution
-     */
-    dependentName         : String;
+    * ID of the solution getting a new version
+    */
+    solutionID         : String;
     /**
-     * Email of the owner of the solution that is to be added as dependent
-     */
-    dependentOwnerEmail   : String;
+    * Name of the solution getting a new version
+    */
+    solutionName       : String;
     /**
-     * List of usernames of the maintainers of the target solution
-     */
-    maintainerUsernames   : array of String;
+    * Email of the owner of the solution getting a new version
+    */
+    solutionOwnerEmail : String;
     /**
-     * Description of why the requester wants a dependent link to target solution
-     */
-    requestDescription    : String;
+    * The ID of the new version
+    */
+    versionID          : String;
     /**
-     * Email of the requesting user
-     */
-    requesterEmail        : String;
-    /**
-     * Full name of the requesting user
-     */
-    requesterName         : String;
-    /**
-     * Username of the requesting user
-     */
-    requesterUsername     : String;
-    /**
-     * ID of the target solution
-     */
-    solutionID            : String;
-    /**
-     * Name of the target solution
-     */
-    solutionName          : String;
-    /**
-     * Email of the owner of the target solution
-     */
-    solutionOwnerEmail    : String;
-    /**
-     * Username of the owner of the target solution
-     */
-    solutionOwnerUsername : String;
-  };
+    * The semantic versioning name given to the new version
+    */
+    versionName        : String;
+  }
 }

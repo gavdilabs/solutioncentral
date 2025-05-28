@@ -1,5 +1,5 @@
 import {
-  dependentSolution,
+  newSolutionVersion,
   newSolution,
   reviewSolution,
   sunsetSolution,
@@ -49,10 +49,10 @@ export default class BPAService {
     await this.startProcess("onUpgradeSoftwareSolution", data);
   }
 
-  public async startDependentSolutionProcess(
-    data: dependentSolution,
+  public async startNewSolutionVersionProcess(
+    data: newSolutionVersion,
   ): Promise<void> {
-    await this.startProcess("onDependentSoftwareSolution", data);
+    await this.startProcess("onNewSolutionVersion", data);
   }
 
   private async startProcess<T extends object>(

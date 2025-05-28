@@ -25,6 +25,7 @@ export function _UserAspect<TBase extends new (...args: any[]) => object>(Base: 
     declare fullName?: string | null
     declare imageUrl?: string | null
     declare imageType?: string | null
+    declare approver?: boolean | null
     declare softwareTeams?: __.Association.to.many<SoftwareTeamUser_>
     static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
     declare static readonly keys: __.KeysOf<User>;
@@ -77,15 +78,6 @@ export function _SoftwareSolutionAspect<TBase extends new (...args: any[]) => ob
     declare static readonly keys: __.KeysOf<SoftwareSolution>;
     declare static readonly elements: __.ElementsOf<SoftwareSolution>;
     declare static readonly actions: {
-      requestTechnology:  {
-        // positional
-        (technologyID: string | null): any
-        // named
-        ({technologyID}: {technologyID?: string | null}): any
-        // metadata (do not use)
-        __parameters: {technologyID?: string | null}, __returns: any
-        kind: 'action'
-      }
       requestReview:  {
         // positional
         (description: string | null): any
@@ -97,20 +89,11 @@ export function _SoftwareSolutionAspect<TBase extends new (...args: any[]) => ob
       }
       requestSunset:  {
         // positional
-        (description: string | null): any
+        (description: string | null, sunsetDate: __.CdsDateTime | null): any
         // named
-        ({description}: {description?: string | null}): any
+        ({description, sunsetDate}: {description?: string | null, sunsetDate?: __.CdsDateTime | null}): any
         // metadata (do not use)
-        __parameters: {description?: string | null}, __returns: any
-        kind: 'action'
-      }
-      requestDependent:  {
-        // positional
-        (dependentID: string | null, softwareType: string | null, description: string | null): any
-        // named
-        ({dependentID, softwareType, description}: {dependentID?: string | null, softwareType?: string | null, description?: string | null}): any
-        // metadata (do not use)
-        __parameters: {dependentID?: string | null, softwareType?: string | null, description?: string | null}, __returns: any
+        __parameters: {description?: string | null, sunsetDate?: __.CdsDateTime | null}, __returns: any
         kind: 'action'
       }
       approve:  {
@@ -697,6 +680,8 @@ export declare class newSolution {
   declare approverEmails: Array<string>
   /** Name of the new solution */
   declare solutionName: string | null
+  /** ID of the new solution */
+  declare solutionID: string | null
 }
 // event
 export declare class reviewSolution {
@@ -725,6 +710,8 @@ export declare class sunsetSolution {
   declare solutionOwnerEmail: string | null
   /** Date for which the solution will sunset */
   declare sunsetDate: __.CdsDateTime | null
+  /** Description of why the solution is being sunset */
+  declare description: string | null
 }
 // event
 export declare class upgradeSolution {
@@ -742,31 +729,19 @@ export declare class upgradeSolution {
   declare solutionOwnerEmail: string | null
 }
 // event
-export declare class dependentSolution {
-  /** ID of the solution that is to be added as dependent to the target solution */
-  declare dependentID: string | null
-  /** Name of the solution that is to be added as dependent to the target solution */
-  declare dependentName: string | null
-  /** Email of the owner of the solution that is to be added as dependent */
-  declare dependentOwnerEmail: string | null
-  /** List of usernames of the maintainers of the target solution */
-  declare maintainerUsernames: Array<string>
-  /** Description of why the requester wants a dependent link to target solution */
-  declare requestDescription: string | null
-  /** Email of the requesting user */
-  declare requesterEmail: string | null
-  /** Full name of the requesting user */
-  declare requesterName: string | null
-  /** Username of the requesting user */
-  declare requesterUsername: string | null
-  /** ID of the target solution */
+export declare class newSolutionVersion {
+  /** List of emails for possible approvers */
+  declare approverEmails: Array<string>
+  /** ID of the solution getting a new version */
   declare solutionID: string | null
-  /** Name of the target solution */
+  /** Name of the solution getting a new version */
   declare solutionName: string | null
-  /** Email of the owner of the target solution */
+  /** Email of the owner of the solution getting a new version */
   declare solutionOwnerEmail: string | null
-  /** Username of the owner of the target solution */
-  declare solutionOwnerUsername: string | null
+  /** The ID of the new version */
+  declare versionID: string | null
+  /** The semantic versioning name given to the new version */
+  declare versionName: string | null
 }
 /** FUNCTION IMPORTS */
 export declare const getActiveUser:  {

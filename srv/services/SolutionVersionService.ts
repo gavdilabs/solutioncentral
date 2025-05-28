@@ -19,6 +19,11 @@ export default class SolutionVersionService {
     this.logger = LoggerFactory.createLogger("solution-version-service");
   }
 
+  public handleDefaults(data: SolutionVersion): SolutionVersion {
+    data.status_code = DefaultSoftwareStatus.AWAITING_APPROVAL;
+    return data;
+  }
+
   public async handleApprovalFlow(
     req: ActionRequest<typeof SolutionVersion.actions.approve>,
   ): Promise<void> {

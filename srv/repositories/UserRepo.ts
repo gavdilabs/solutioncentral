@@ -28,4 +28,12 @@ export default class UserRepo {
     const res: { username: string; email: string }[] = await cds.run(query);
     return new Set<string>(res.map((el) => el.email));
   }
+
+  public async getUsersName(username: string): Promise<string | undefined> {
+    const query = SELECT.from(User.name, { username: username }).columns(
+      "fullName",
+    );
+    const res: User = await cds.run(query);
+    return res.fullName as string;
+  }
 }

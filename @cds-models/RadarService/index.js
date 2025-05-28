@@ -93,7 +93,7 @@ module.exports.newSolution = 'RadarService.newSolution'
 module.exports.reviewSolution = 'RadarService.reviewSolution'
 module.exports.sunsetSolution = 'RadarService.sunsetSolution'
 module.exports.upgradeSolution = 'RadarService.upgradeSolution'
-module.exports.dependentSolution = 'RadarService.dependentSolution'
+module.exports.newSolutionVersion = 'RadarService.newSolutionVersion'
 // actions
 module.exports.getActiveUser = 'getActiveUser'
 // enums

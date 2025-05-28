@@ -61,34 +61,6 @@ export default class SoftwareSolutionHandler {
     }
   }
 
-  @OnBoundAction(SoftwareSolution.actions.requestTechnology)
-  public async onRequestTechnology(
-    @Req()
-    req: ActionRequest<typeof SoftwareSolution.actions.requestTechnology>,
-  ): ActionReturn<typeof SoftwareSolution.actions.requestTechnology> {
-    try {
-      const solutionID = req.params[0] as string | undefined;
-      if (!solutionID) {
-        this.logger.warn("Invalid request, missing solution ID");
-        return req.error(400, "Missing solution ID");
-      }
-
-      if (!req.data.technologyID) {
-        this.logger.warn("Invalid request, missing technology ID");
-        return req.error(400, "Invalid technology ID");
-      }
-
-      // await this.requestsService.handleSolutionTechnologyRequest(
-      //   solutionID,
-      //   req.data.technologyID,
-      //   req.user.id,
-      // );
-    } catch (e) {
-      this.logger.error("Failed to request technology", e);
-      return req.error(500, "Failed to request technology");
-    }
-  }
-
   @OnBoundAction(SoftwareSolution.actions.requestReview)
   public async onRequestReview(
     @Req() req: ActionRequest<typeof SoftwareSolution.actions.requestReview>,
@@ -105,11 +77,11 @@ export default class SoftwareSolutionHandler {
         return req.error(400, "Invalid description provided");
       }
 
-      // await this.requestsService.handleSolutionReviewRequest(
-      //   solutionID,
-      //   req.data.description,
-      //   req.user.id,
-      // );
+      await this.requestsService.handleReviewSolutionRequest(
+        solutionID,
+        req.data.description,
+        req.user.id,
+      );
     } catch (e) {
       this.logger.error("Failed to request review", e);
       return req.error(500, "Failed to request review");
@@ -132,55 +104,19 @@ export default class SoftwareSolutionHandler {
         return req.error(400, "Invalid description provided");
       }
 
-      // await this.requestsService.handleSolutionRequestSunset(
-      //   solutionID,
-      //   req.data.description,
-      //   req.user.id,
-      // );
+      if (!req.data.sunsetDate) {
+        this.logger.warn("Invalid request, missing sunset date");
+        return req.error(400, "Invalid sunset date provided");
+      }
+
+      await this.requestsService.handleSunsetSolutionRequest(
+        solutionID,
+        req.data.sunsetDate,
+        req.data.description,
+      );
     } catch (e) {
       this.logger.error("Failed to request sunset of solution", e);
       return req.error(500, "Failed to request sunset of solution");
-    }
-  }
-
-  @OnBoundAction(SoftwareSolution.actions.requestDependent)
-  public async onRequestDependent(
-    @Req() req: ActionRequest<typeof SoftwareSolution.actions.requestDependent>,
-  ): ActionReturn<typeof SoftwareSolution.actions.requestDependent> {
-    try {
-      const solutionID = req.params[0] as string | undefined;
-      if (!solutionID) {
-        this.logger.warn("Invalid request, missing solution ID");
-        return req.error(400, "Missing solution ID");
-      }
-
-      const { description, dependentID, softwareType } = req.data;
-
-      if (!description) {
-        this.logger.warn("Invalid request, missing description");
-        return req.error(400, "Invalid description provided");
-      }
-
-      if (!dependentID) {
-        this.logger.warn("Invalid request, missing dependent ID");
-        return req.error(400, "Invalid request, missing dependent ID");
-      }
-
-      if (!softwareType) {
-        this.logger.warn("Invalid request, missing software type");
-        return req.error(400, "Invalid request, missing software type");
-      }
-
-      // await this.requestsService.handleSolutionDependentRequest(
-      //   solutionID,
-      //   dependentID,
-      //   softwareType,
-      //   description,
-      //   req.user.id,
-      // );
-    } catch (e) {
-      this.logger.error("Failed to request dependent solution", e);
-      return req.error(500, "Failed to request dependent solution");
     }
   }
 

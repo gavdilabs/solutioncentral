@@ -65,7 +65,7 @@ export interface BPABotExecutionRequest<T extends object> {
  */
 export type DefinedBPATriggerName =
   | "onNewSoftwareSolution"
-  | "onDependentSoftwareSolution"
   | "onReviewSoftwareSolution"
   | "onSoftwareSolutionSunset"
-  | "onUpgradeSoftwareSolution";
+  | "onUpgradeSoftwareSolution"
+  | "onNewSolutionVersion";
