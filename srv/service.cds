@@ -15,15 +15,14 @@ service RadarService {
     action requestTechnology(technologyID : String);
     action requestReview(description : String);
     action requestSunset(description : String);
-    action requestDependent(dependentID : String, softwareType : String);
+    action requestDependent(dependentID : String, softwareType : String, description : String);
+    action approve();
+    action reject();
   }
 
   entity SolutionVersion          as projection on core.SolutionVersion;
 
-  @cds.redirection.target
-  entity Requests                 as projection on core.Request;
-
-  extend Requests with actions {
+  extend SolutionVersion with actions {
     action approve();
     action reject();
   }
@@ -68,22 +67,6 @@ service RadarService {
   entity SoftwareTechnology       as projection on core.SoftwareTechnology;
   /*** FUNCTION IMPORTS ***/
   function getActiveUser() returns types.ActiveUser;
-
-  /*** VIEWS ***/
-  view UserRequests as
-    select from core.Request {
-      key ID,
-          requestType,
-          requester,
-          status,
-          correlationID,
-          description,
-          data
-    }
-    where
-         approverUser.username                   = $user.id
-      or approverTeam._reviewers.user.username   = $user.id
-      or approverTeam._maintainers.user.username = $user.id;
 
 }
 

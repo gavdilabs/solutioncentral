@@ -1,8 +1,7 @@
 // This is an automatically generated file. Please do not change its contents manually!
-const cds = require('@sap/cds')
-const csn = cds.entities('com.gavdilabs.techtransmgt.types')
+const { createEntityProxy } = require('./../../../../_')
 // ActiveUser
-module.exports.ActiveUser = { is_singular: true, __proto__: csn.ActiveUser }
+module.exports.ActiveUser = createEntityProxy(['com.gavdilabs.techtransmgt.types', 'ActiveUser'], { target: { is_singular: true } })
 // events
 // actions
 // enums

@@ -10,7 +10,7 @@ export function _ActiveUserAspect<TBase extends new (...args: any[]) => object>(
     static readonly kind: 'entity' | 'type' | 'aspect' = 'type';
     declare static readonly keys: __.KeysOf<ActiveUser>;
     declare static readonly elements: __.ElementsOf<ActiveUser>;
-    declare static readonly actions: Record<never, never>;
+    declare static readonly actions: globalThis.Record<never, never>;
   };
 }
 export class ActiveUser extends _ActiveUserAspect(__.Entity) {}

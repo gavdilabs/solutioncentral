@@ -12,6 +12,8 @@ import SoftwareTeamUserHandler from "./api/entities/SoftwareTeamUserHandler";
 import TechnologyHandler from "./api/entities/TechnologyHandler";
 import TechnologyReplacementHandler from "./api/entities/TechnologyReplacementHandler";
 import UserHandler from "./api/entities/UserHandler";
+import EventHandler from "./api/events";
+import SolutionVersionHandler from "./api/entities/SolutionVersionHandler";
 
 export default new CDSDispatcher([
   // Entities
@@ -23,10 +25,12 @@ export default new CDSDispatcher([
   SoftwareSolutionHandler,
   SoftwareTeamHandler,
   SoftwareTeamUserHandler,
+  SolutionVersionHandler,
   TechnologyHandler,
   TechnologyReplacementHandler,
   UserHandler,
   // Actions / Functions
   ActionImportHandler,
   FunctionImportHandler,
+  EventHandler,
 ]).initialize();
