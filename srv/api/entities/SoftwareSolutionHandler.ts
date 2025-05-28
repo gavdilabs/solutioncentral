@@ -41,8 +41,8 @@ export default class SoftwareSolutionHandler {
     try {
       const isApprover = req.user.is("Approver");
 
-      result.forEach((element: SoftwareSolution) => {
-        element.isApprover = isApprover;
+      result.forEach((el: SoftwareSolution) => {
+        el.isApprover = isApprover;
       });
 
       return result;

@@ -13,12 +13,10 @@ export default class SoftwareSolutionRepo {
 
   public async byKey(
     id: string,
-    isActive: boolean = true,
     columns?: string[],
   ): Promise<SoftwareSolution | undefined> {
     const query = SELECT.from(SoftwareSolution.name, {
       ID: id,
-      IsActiveEntity: isActive,
     });
 
     if (columns) {
@@ -32,7 +30,6 @@ export default class SoftwareSolutionRepo {
   public async updateStatus(id: string, statusCode: number): Promise<void> {
     const query = UPDATE.entity(SoftwareSolution.name, {
       ID: id,
-      IsActiveEntity: true,
     }).set({
       solutionStatus_code: statusCode,
     });
@@ -46,7 +43,6 @@ export default class SoftwareSolutionRepo {
   ): Promise<Set<string> | undefined> {
     const query = SELECT.from(SoftwareSolution.name, {
       ID: solutionID,
-      IsActiveEntity: true,
     }).columns((el: any) => {
       el.team((t: any) => {
         t._reviewers((r: any) => {
@@ -66,11 +62,9 @@ export default class SoftwareSolutionRepo {
 
   public async getSolutionName(
     solutionID: string,
-    isActiveEntity: boolean = true,
   ): Promise<string | undefined> {
     const query = SELECT.from(SoftwareSolution.name, {
       ID: solutionID,
-      IsActiveEntity: isActiveEntity,
     }).columns("name");
 
     const res: SoftwareSolution = await cds.run(query);
@@ -82,7 +76,6 @@ export default class SoftwareSolutionRepo {
   ): Promise<Set<string> | undefined> {
     const query = SELECT.from(SoftwareSolution.name, {
       ID: solutionID,
-      IsActiveEntity: true,
     }).columns((el: any) => {
       el.Dependents((dep: any) => {
         dep.dependentSoftwareSolution((sol: any) => {

@@ -32,10 +32,7 @@ export default class RequestsService {
   ): Promise<unknown> {
     const [approverEmails, solutionInfo] = await Promise.all([
       this.userRepo.getApproverUserEmails(),
-      this.softwareSolutionRepo.byKey(solutionID, true, [
-        "name",
-        "owner.email",
-      ]),
+      this.softwareSolutionRepo.byKey(solutionID, ["name", "owner.email"]),
     ]);
 
     this.logger.debug("Emitting new solution version event");
@@ -91,10 +88,7 @@ export default class RequestsService {
     description: string,
   ): Promise<unknown> {
     const [solutionInfo, dependentEmails] = await Promise.all([
-      this.softwareSolutionRepo.byKey(solutionID, true, [
-        "name",
-        "owner.email",
-      ]),
+      this.softwareSolutionRepo.byKey(solutionID, ["name", "owner.email"]),
       this.softwareSolutionRepo.getDependentOwnersEmails(solutionID),
     ]);
 
@@ -123,10 +117,7 @@ export default class RequestsService {
   ): Promise<unknown> {
     const [dependentEmails, solutionInfo] = await Promise.all([
       this.softwareSolutionRepo.getDependentOwnersEmails(solutionID),
-      this.softwareSolutionRepo.byKey(solutionID, true, [
-        "name",
-        "owner.email",
-      ]),
+      this.softwareSolutionRepo.byKey(solutionID, ["name", "owner.email"]),
     ]);
 
     this.logger.debug("Emitting solution upgrade event");

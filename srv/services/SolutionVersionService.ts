@@ -113,7 +113,6 @@ export default class SolutionVersionService {
     );
     if (
       !solutionVersion ||
-      !solutionVersion.status_code ||
       solutionVersion.status_code !== DefaultSoftwareStatus.AWAITING_APPROVAL
     ) {
       req.error(404, "No solution version found awaiting approval");
