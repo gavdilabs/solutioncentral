@@ -371,6 +371,7 @@ export function _SoftwareSolutionAspect<TBase extends new (...args: any[]) => ob
     declare owner_username?: string | null
     declare team?: __.Association.to<SoftwareTeam> | null
     declare team_teamName?: string | null
+    declare isApprover?: boolean | null
     declare Technologies?: __.Composition.of.many<SoftwareTechnology_>
     declare Dependents?: __.Composition.of.many<SoftwareSolution.Dependents>
     static override readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
