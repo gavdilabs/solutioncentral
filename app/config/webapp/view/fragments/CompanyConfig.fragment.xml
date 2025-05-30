@@ -1,0 +1,61 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"    
+	xmlns:f="sap.ui.layout.form">
+
+    <List id="idCompanyConfigurationList" items="{ path: '/CompanyConfiguration', parameters: { $count : true, $$updateGroupId : 'configUpdateGroup' } }" 
+        noDataText="{i18n>txtNoConfiguration}" updateFinished="onCompanyConfigurationListUpdateFinished">
+        <headerToolbar >
+			<OverflowToolbar id="idListOverflowToolbar">				
+				<ToolbarSpacer />				
+				<Button icon="sap-icon://add" text="{i18n>btnAddConfig}" visible="{=%{$count} === 0 ? true : false }" press="onButtonAddConfigPress" />
+			</OverflowToolbar>
+		</headerToolbar>
+        <CustomListItem >
+            <f:SimpleForm id="idCompanyConfigSimpleForm"
+                editable="true"                        
+                labelSpanXL="3"
+                labelSpanL="3"
+                labelSpanM="3"        
+                adjustLabelSpan="false"
+                emptySpanXL="4"
+                emptySpanL="4"
+                emptySpanM="4"        
+                columnsXL="1"
+                columnsL="1"        
+                singleContainerFullSize="false" >
+                <f:content>
+                    <Label text="{i18n>lbl_SAPVersion}" required="true"/>
+                    <Select selectedKey="{currentSAPVersion_code}" forceSelection="false" required="true"
+                        items="{ 
+                            path: '/SAPVersion', 
+                            sorter: [{
+                                path: 'name'
+                            }],
+                            templateShareable:true }" >
+                        <items>
+                            <c:Item text="{name}" key="{code}"/>                   
+                        </items>
+                    </Select>
+                    <Label text="{i18n>lbl_CleanCoreLevel}" />
+                    <Select selectedKey="{expectedMinimalCleanCoreValue_code}" forceSelection="false" required="true"
+                        items="{ 
+                            path: '/CleanCoreLevel',  
+                            sorter: [{
+                                path: 'name'
+                            }],
+                            templateShareable:true }" >
+                        <items>
+                            <c:Item text="{descr}" key="{code}"/>                   
+                        </items>
+                    </Select>           
+                    <Label text="{i18n>lbl_ApprovalForNewSol}" />
+                    <CheckBox selected="{approvalForNewSolutions}"/>
+                    <Label text="{i18n>lbl_AllowDeprecationWORep}" />
+                    <CheckBox selected="{allowDeprecationWithoutReplacement}"/>
+                </f:content>
+            </f:SimpleForm>
+        </CustomListItem>
+    </List>
+
+</c:FragmentDefinition>
