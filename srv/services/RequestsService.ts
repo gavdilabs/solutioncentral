@@ -35,6 +35,11 @@ export default class RequestsService {
     versionID: string,
     versionName: string,
   ): Promise<unknown> {
+    const configuration = await this.companyConfigRepo.getConfiguration();
+    if (!configuration || !configuration.bpaEnabled) {
+      return;
+    }
+
     const [approverEmails, solutionInfo] = await Promise.all([
       this.userRepo.getApproverUserEmails(),
       this.softwareSolutionRepo.byKey(solutionID, ["name", "owner.email"]),
@@ -55,6 +60,11 @@ export default class RequestsService {
     solutionID: string,
     solutionName: string,
   ): Promise<unknown> {
+    const configuration = await this.companyConfigRepo.getConfiguration();
+    if (!configuration || !configuration.bpaEnabled) {
+      return;
+    }
+
     const approverEmails = await this.userRepo.getApproverUserEmails();
 
     this.logger.debug("Emitting new solution event");
@@ -70,6 +80,11 @@ export default class RequestsService {
     description: string,
     username: string,
   ): Promise<unknown> {
+    const configuration = await this.companyConfigRepo.getConfiguration();
+    if (!configuration || !configuration.bpaEnabled) {
+      return;
+    }
+
     const [reviewerEmails, solutionName, requesterName] = await Promise.all([
       this.softwareSolutionRepo.getReviewerEmailList(solutionID),
       this.softwareSolutionRepo.getSolutionName(solutionID),
@@ -92,6 +107,11 @@ export default class RequestsService {
     sunsetDate: string,
     description: string,
   ): Promise<unknown> {
+    const configuration = await this.companyConfigRepo.getConfiguration();
+    if (!configuration || !configuration.bpaEnabled) {
+      return;
+    }
+
     const [solutionInfo, dependentEmails] = await Promise.all([
       this.softwareSolutionRepo.byKey(solutionID, ["name", "owner.email"]),
       this.softwareSolutionRepo.getDependentOwnersEmails(solutionID),
@@ -121,10 +141,7 @@ export default class RequestsService {
     solutionID: string,
   ): Promise<unknown> {
     const configuration = await this.companyConfigRepo.getConfiguration();
-    if (
-      !configuration ||
-      configuration.approvalFlow_code === DefaultApprovalFlows.NO_APPROVAL
-    ) {
+    if (!configuration || !configuration.bpaEnabled) {
       return;
     }
 

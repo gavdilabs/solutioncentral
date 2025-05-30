@@ -1,4 +1,4 @@
-import { SoftwareSolution } from "#cds-models/RadarService";
+import { SoftwareSolution, SolutionVersion } from "#cds-models/RadarService";
 import {
   Request,
   ActionRequest,
@@ -7,7 +7,14 @@ import {
 } from "@dxfrontier/cds-ts-dispatcher";
 import { Logger, LoggerFactory } from "@gavdi/caplog";
 import SoftwareSolutionRepo from "../repositories/SoftwareSolutionRepo";
-import { DefaultSoftwareStatus } from "../lib/utils/defaults";
+import {
+  DefaultApprovalFlows,
+  DefaultSoftwareStatus,
+} from "../lib/utils/defaults";
+import CompanyConfigurationRepo from "../repositories/CompanyConfigurationRepo";
+import SolutionVersionRepo from "../repositories/SoftwareVersionRepo";
+import RequestsService from "./RequestsService";
+import cds from "@sap/cds";
 
 @ServiceLogic()
 export default class SoftwareSolutionService {
@@ -16,15 +23,101 @@ export default class SoftwareSolutionService {
   @Inject(SoftwareSolutionRepo)
   private readonly softwareSolutionRepo: SoftwareSolutionRepo;
 
+  @Inject(CompanyConfigurationRepo)
+  private readonly companyConfigRepo: CompanyConfigurationRepo;
+
+  @Inject(SolutionVersionRepo)
+  private readonly solutionVersionRepo: SolutionVersionRepo;
+
+  @Inject(RequestsService)
+  private readonly requestsService: RequestsService;
+
   constructor() {
     this.logger = LoggerFactory.createLogger("soft-solution-srv");
   }
 
-  public handleVirtualProperties(
+  public async checkCompositedValues(
+    req: Request<SoftwareSolution>,
+  ): Promise<Request<SoftwareSolution>> {
+    const companyConfig = await this.companyConfigRepo.getConfiguration();
+    if (
+      !companyConfig ||
+      companyConfig.approvalFlow_code === DefaultApprovalFlows.NO_APPROVAL
+    ) {
+      return req;
+    }
+
+    if (!req.data.versions) {
+      this.logger.debug("No versions found as input, skipping processing");
+      return req;
+    }
+
+    if (!req.data.ID) {
+      this.logger.warn("Cannot perform pre-processing, missing solution ID");
+      return req;
+    }
+
+    // We need to verify the delta of the solution versions
+    const versions = await this.solutionVersionRepo.getSolutionVersions(
+      req.data.ID,
+      ["ID", "solution_ID"],
+    );
+    const versionIDSet = new Set<string>(versions.map((el) => el.ID ?? ""));
+
+    const mappedInputs = new Map<string, SolutionVersion>(
+      req.data.versions.map((el) => [el.ID ?? "", el]),
+    );
+    const filteredInputs = req.data.versions.filter(
+      (el) => !versionIDSet.has(el.ID ?? ""),
+    );
+
+    for (const el of filteredInputs) {
+      el.status_code = DefaultSoftwareStatus.AWAITING_APPROVAL;
+      mappedInputs.set(el.ID ?? "", el);
+
+      cds.spawn({}, async () => {
+        await this.requestsService.handleNewSolutionVersionRequest(
+          req.data.ID ?? "",
+          el.ID ?? "",
+          el.version ?? "",
+        );
+      });
+    }
+
+    req.data.versions = Array.from(mappedInputs.values());
+    return req;
+  }
+
+  public async checkApprovalFlow(
+    req: Request<SoftwareSolution>,
+  ): Promise<Request<SoftwareSolution>> {
+    const companyConfiguration =
+      await this.companyConfigRepo.getConfiguration();
+    if (
+      !companyConfiguration ||
+      companyConfiguration.approvalFlow_code ===
+        DefaultApprovalFlows.NO_APPROVAL
+    ) {
+      req.data.solutionStatus_code ??= DefaultSoftwareStatus.DEVELOP;
+      return req;
+    }
+
+    req.data.solutionStatus_code = DefaultSoftwareStatus.AWAITING_APPROVAL;
+    return req;
+  }
+
+  public async handleVirtualProperties(
     req: Request<SoftwareSolution>,
     result: SoftwareSolution[],
-  ): SoftwareSolution[] {
-    const isApprover = req.user.is("Approver");
+  ): Promise<SoftwareSolution[]> {
+    const companyConfig = await this.companyConfigRepo.getConfiguration();
+    if (
+      !companyConfig ||
+      companyConfig.approvalFlow_code === DefaultApprovalFlows.NO_APPROVAL
+    ) {
+      return result;
+    }
+    const isApprover = req.user.is("Approver") || req.user.is("Admin");
     result.forEach((el) => {
       el.isApprover = isApprover;
     });

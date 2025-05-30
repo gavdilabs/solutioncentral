@@ -12,6 +12,8 @@ import {
   Req,
   Result,
   AfterRead,
+  BeforeCreate,
+  BeforeUpdate,
 } from "@dxfrontier/cds-ts-dispatcher";
 import { Logger, LoggerFactory } from "@gavdi/caplog";
 import RequestsService from "../../services/RequestsService";
@@ -37,7 +39,10 @@ export default class SoftwareSolutionHandler {
     @Result() result: SoftwareSolution[],
   ): Promise<unknown> {
     try {
-      return this.softwareSolutionService.handleVirtualProperties(req, result);
+      return await this.softwareSolutionService.handleVirtualProperties(
+        req,
+        result,
+      );
     } catch (e) {
       this.logger.error(
         "Error thrown while post-processing SoftwareSolution read",
@@ -46,6 +51,34 @@ export default class SoftwareSolutionHandler {
       return req.error(500, "Unexpected error occured while post-processing");
     }
   }
+
+  @BeforeUpdate()
+  public async beforeUpdate(
+    @Req() req: Request<SoftwareSolution>,
+  ): Promise<unknown> {
+    try {
+      return this.softwareSolutionService.checkCompositedValues(req);
+    } catch (e) {
+      this.logger.error("Failed to handle pre-processing of update", e);
+      return req.error(500, "Failed to pre-process request");
+    }
+  }
+
+  @BeforeCreate()
+  public async beforeCreate(
+    @Req() req: Request<SoftwareSolution>,
+  ): Promise<unknown> {
+    try {
+      return await this.softwareSolutionService.checkApprovalFlow(req);
+    } catch (e) {
+      this.logger.error(
+        "Unexpected error occured while pre-processing create",
+        e,
+      );
+      return req.error(500, "Unexpected error occured in pre-processing");
+    }
+  }
+
   @AfterCreate()
   public async afterCreated(
     @Req() req: Request<SoftwareSolution>,

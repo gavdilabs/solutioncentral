@@ -125,7 +125,7 @@ entity User : managed {
 entity SolutionVersion : cuid, managed {
   key solution     : Association to SoftwareSolution;
       status       : Association to SoftwareStatus  @mandatory  @assert.target;
-      version      : String(100);
+      version      : String(100) @mandatory;
       releaseNotes : LargeBinary @Core.MediaType: mediaType;
       mediaType    : String(255) @Core.IsMediaType;
       releaseDate  : Date default null;
@@ -144,7 +144,7 @@ entity SoftwareSolution : cuid, managed {
   businessCriticality : Association to BusinessCriticalityLevel;
   cleanCoreRating     : Association to CleanCoreLevel;
   codeQualityRating   : Association to CodeQualityLevel;
-  versions            : Association to many SolutionVersion
+  versions            : Composition of many SolutionVersion
                           on versions.solution = $self;
   reasonNoCleanCore   : String;
   costCenter          : String;

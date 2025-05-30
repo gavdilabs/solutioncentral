@@ -42,4 +42,19 @@ export default class SolutionVersionRepo {
     this.logger.debug("Performing status update query", query);
     await cds.run(query);
   }
+
+  public async getSolutionVersions(
+    solutionID: string,
+    columns?: string[],
+  ): Promise<SolutionVersion[]> {
+    const query = SELECT.from(SolutionVersion.name).where({
+      solution_ID: solutionID,
+    });
+
+    if (columns) {
+      query.columns(columns);
+    }
+
+    return await cds.run(query);
+  }
 }

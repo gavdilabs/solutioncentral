@@ -16,6 +16,10 @@ annotate service.SoftwareSolution with @(
       {
         NavigationProperty: Technologies,
         InsertRestrictions: {Insertable: true}
+      },
+      {
+        NavigationProperty: versions,
+        InsertRestrictions: {Insertable: true}
       }
     ]
   },
@@ -542,7 +546,7 @@ annotate service.SolutionVersion with @(UI.LineItem #SolutionVersions: [
   },
   {
     $Type      : 'UI.DataField',
-    Value      : status.name,
+    Value      : status_code,
     Label      : '{i18n>VersionStatus}',
     Criticality: status.criticalityLevel
   },
@@ -552,6 +556,17 @@ annotate service.SolutionVersion with @(UI.LineItem #SolutionVersions: [
     Label: '{i18n>ReleaseDate}'
   }
 ]);
+
+annotate service.SolutionVersion with {
+  status @(
+    title                          : '{i18n>VersionStatus}',
+    Common.Text                    : {
+      $value                : status.name,
+      ![@UI.TextArrangement]: #TextOnly
+    },
+    Common.ValueListWithFixedValues: true,
+  )
+}
 
 /** Sub table Dependent Solutions */
 annotate service.SoftwareSolution.Dependents with @(UI.LineItem #DependentSolutions: [

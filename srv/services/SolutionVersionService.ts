@@ -7,7 +7,11 @@ import {
 } from "@dxfrontier/cds-ts-dispatcher";
 import { Logger, LoggerFactory } from "@gavdi/caplog";
 import SolutionVersionRepo from "../repositories/SoftwareVersionRepo";
-import { DefaultSoftwareStatus } from "../lib/utils/defaults";
+import {
+  DefaultApprovalFlows,
+  DefaultSoftwareStatus,
+} from "../lib/utils/defaults";
+import CompanyConfigurationRepo from "../repositories/CompanyConfigurationRepo";
 
 @ServiceLogic()
 export default class SolutionVersionService {
@@ -16,24 +20,46 @@ export default class SolutionVersionService {
   @Inject(SolutionVersionRepo)
   private readonly solutionVersionRepo: SolutionVersionRepo;
 
+  @Inject(CompanyConfigurationRepo)
+  private readonly companyConfigRepo: CompanyConfigurationRepo;
+
   constructor() {
     this.logger = LoggerFactory.createLogger("solution-version-service");
   }
 
-  public handleVirtualProperties(
-    req: Request<SolutionVersion>,
+  public async handleVirtualProperties(
+    req: Request<SolutionVersion | SolutionVersion[]>,
     result: SolutionVersion[],
-  ): SolutionVersion[] {
-    const isApprover = req.user.is("Approver");
+  ): Promise<SolutionVersion[]> {
+    const companyConfig = await this.companyConfigRepo.getConfiguration();
+    if (
+      !companyConfig ||
+      companyConfig.approvalFlow_code === DefaultApprovalFlows.NO_APPROVAL
+    ) {
+      return result;
+    }
+
+    const isApprover = req.user.is("Approver") || req.user.is("Admin");
     result.forEach((el) => {
       el.isApprover = isApprover;
     });
     return result;
   }
 
-  public handleDefaults(data: SolutionVersion): SolutionVersion {
-    data.status_code = DefaultSoftwareStatus.AWAITING_APPROVAL;
-    return data;
+  public async handleDefaults(
+    req: Request<SolutionVersion>,
+  ): Promise<Request<SolutionVersion>> {
+    const companyConfig = await this.companyConfigRepo.getConfiguration();
+    if (
+      !companyConfig ||
+      companyConfig.approvalFlow_code === DefaultApprovalFlows.NO_APPROVAL
+    ) {
+      req.data.status_code = DefaultSoftwareStatus.DEVELOP;
+      return req;
+    }
+
+    req.data.status_code = DefaultSoftwareStatus.AWAITING_APPROVAL;
+    return req;
   }
 
   public async handleApprovalFlow(

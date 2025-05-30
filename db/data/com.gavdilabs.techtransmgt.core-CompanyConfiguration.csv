@@ -1,1 +1,2 @@
-ID,currentSAPVersion_code,expectedMinimalCleanCoreValue_code,approvalForNewSolutions,allowDeprecationWithoutReplacement
+ID,currentSAPVersion_code,expectedMinimalCleanCoreValue_code,approvalFlow_code,allowDeprecationWithoutReplacement,bpaEnabled
+5365e2b4-7d0f-4300-a555-525b313e192b,,,1,,0

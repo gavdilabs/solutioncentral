@@ -39,7 +39,10 @@ export default class SolutionVersionHandler {
     @Result() result: SolutionVersion[],
   ): Promise<unknown> {
     try {
-      return this.solutionVersionService.handleVirtualProperties(req, result);
+      return await this.solutionVersionService.handleVirtualProperties(
+        req,
+        result,
+      );
     } catch (e) {
       this.logger.error(
         "Unexpected error occured while post-processing read data",
@@ -54,7 +57,7 @@ export default class SolutionVersionHandler {
     @Req() req: Request<SolutionVersion>,
   ): Promise<unknown> {
     try {
-      return this.solutionVersionService.handleDefaults(req.data);
+      return await this.solutionVersionService.handleDefaults(req);
     } catch (e) {
       this.logger.error(
         "Unexpected error occured in pre-processing SolutionVersion create",
