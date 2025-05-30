@@ -1,6 +1,0 @@
-# TODO: Create a custom image for the CI step, that includes most tools up front for testing
-# TODO: Create a custom image up front for the build step that includes the necessary tools for building the solution
-# TODO: Create a custom image for the deployment step that includes the CF CLI + MTA Plugin
-# TODO: Pull request pipeline (Linting, formatting, automated tests) (Only run on changed files)
-# TODO: Build Pipeline (Conditional on the files changed, e.g. so a branching pipeline based on apps changed)
-# TODO: Release Pipeline
