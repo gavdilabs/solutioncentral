@@ -216,4 +216,5 @@ entity CompanyConfiguration : cuid, managed {
   expectedMinimalCleanCoreValue      : Association to CleanCoreLevel;
   approvalFlow                       : Association to ApprovalFlow;
   allowDeprecationWithoutReplacement : Boolean;
+  bpaEnabled                         : Boolean;
 }

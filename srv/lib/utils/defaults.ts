@@ -11,3 +11,9 @@ export enum DefaultSoftwareStatus {
   RELEASED = 5,
   ARCHIVED = 6,
 }
+
+export enum DefaultApprovalFlows {
+  NO_APPROVAL = 0,
+  APPROVAL = 1,
+  BPA_APPROVAL = 2,
+}

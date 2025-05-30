@@ -7,6 +7,8 @@ import {
 import { Logger, LoggerFactory } from "@gavdi/caplog";
 import UserRepo from "../repositories/UserRepo";
 import SoftwareSolutionRepo from "../repositories/SoftwareSolutionRepo";
+import CompanyConfigurationRepo from "../repositories/CompanyConfigurationRepo";
+import { DefaultApprovalFlows } from "../lib/utils/defaults";
 
 @ServiceLogic()
 export default class RequestsService {
@@ -20,6 +22,9 @@ export default class RequestsService {
 
   @Inject(SoftwareSolutionRepo)
   private readonly softwareSolutionRepo: SoftwareSolutionRepo;
+
+  @Inject(CompanyConfigurationRepo)
+  private readonly companyConfigRepo: CompanyConfigurationRepo;
 
   constructor() {
     this.logger = LoggerFactory.createLogger("requests-service");
@@ -115,6 +120,14 @@ export default class RequestsService {
     version: string,
     solutionID: string,
   ): Promise<unknown> {
+    const configuration = await this.companyConfigRepo.getConfiguration();
+    if (
+      !configuration ||
+      configuration.approvalFlow_code === DefaultApprovalFlows.NO_APPROVAL
+    ) {
+      return;
+    }
+
     const [dependentEmails, solutionInfo] = await Promise.all([
       this.softwareSolutionRepo.getDependentOwnersEmails(solutionID),
       this.softwareSolutionRepo.byKey(solutionID, ["name", "owner.email"]),

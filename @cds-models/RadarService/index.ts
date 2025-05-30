@@ -356,6 +356,7 @@ export function _CompanyConfigurationAspect<TBase extends new (...args: any[]) =
     declare approvalFlow?: __.Association.to<ApprovalFlow> | null
     declare approvalFlow_code?: number | null
     declare allowDeprecationWithoutReplacement?: boolean | null
+    declare bpaEnabled?: boolean | null
     static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
     declare static readonly keys: __.KeysOf<CompanyConfiguration>;
     declare static readonly elements: __.ElementsOf<CompanyConfiguration>;
