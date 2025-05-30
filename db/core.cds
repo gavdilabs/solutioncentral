@@ -118,7 +118,7 @@ entity User : managed {
       imageUrl      : String  @Core.IsURL  @Core.MediaType: imageType;
       imageType     : String  @Core.IsMediaType;
       approver      : Boolean; // In the future this should be fetched from BTP in a smart way
-      softwareTeams : Association to many SoftwareTeamUser
+      softwareTeams : Composition of many SoftwareTeamUser
                         on softwareTeams.user = $self;
 }
 
