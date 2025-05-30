@@ -73,7 +73,7 @@ This is a missed opportunity to decrease the TCO of the system and to enable fut
 
 To support the SAP eco-system in taking back control of their extensions made either on the ABAP/NetWeaver Platform as On-Stack Extensions or the SAP Business Technology Platform (BTP) as Side-By-Side Extensions Solution Central is introduced.
 It allows you to capture everything around a new solution and control the process around approving, tracking and reviewing new extensions in a proper way - preventing the system from sanding up and ending up in another Custom Code Migration a few years down the line.
-Capturing everything from the version to the dependencies allows you to document ownership - from both the technical and the business side. 
+Capturing everything from the version to the dependencies allows you to document ownership - from both the technical and the business side.
 
 Want to know the actual state - both in terms of Code Quality and Clean Core level? Check in Solution Central...
 Want to know who can validate the system? Check in Solution Central...
@@ -143,3 +143,5 @@ All Communication and coordination is done via Discord on https://discord.com/ch
 ## License
 
 Distributed under the Apache-2 License
+
+Copyright 2025 Gavdi A/S
