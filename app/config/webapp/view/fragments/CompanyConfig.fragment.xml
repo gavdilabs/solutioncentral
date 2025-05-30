@@ -50,9 +50,24 @@
                         </items>
                     </Select>           
                     <Label text="{i18n>lbl_ApprovalForNewSol}" />
-                    <CheckBox selected="{approvalForNewSolutions}"/>
+                    <Select selectedKey="{approvalFlow_code}" forceSelection="false" required="true"
+                        items="{ 
+                            path: '/ApprovalFlow',  
+                            sorter: [{
+                                path: 'descr'
+                            }],
+                            templateShareable:true }" >
+                        <items>
+                            <c:Item text="{descr}" key="{code}"/>                   
+                        </items>
+                    </Select>  
+                    
                     <Label text="{i18n>lbl_AllowDeprecationWORep}" />
                     <CheckBox selected="{allowDeprecationWithoutReplacement}"/>
+
+                    <Label text="{i18n>lbl_BPAEnabled}" />
+                    <CheckBox selected="{bpaEnabled}"/>
+                    
                 </f:content>
             </f:SimpleForm>
         </CustomListItem>

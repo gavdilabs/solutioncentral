@@ -35,7 +35,7 @@ export default class Main extends BaseController {
 		(oList.getBinding("items") as ODataListBinding).create();
 	}
 	
-	public async onSaveConfiguration() {
+	public async onSaveButtonPress() {
 		const oModel = this.getView().getModel() as ODataModel;
 		this.getView().setBusy(true);
 		try {
