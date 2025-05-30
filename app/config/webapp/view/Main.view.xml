@@ -1,0 +1,54 @@
+<mvc:View
+	controllerName="com.gavdilabs.config.controller.Main"
+	displayBlock="true"
+	xmlns="sap.m"
+	xmlns:f="sap.f"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	core:require="{
+		formatter: 'com/gavdilabs/config/model/formatter'
+	}">
+
+	<f:DynamicPage id="idConfigDynamicPage" showFooter="true">
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading>					
+					<Title text="{i18n>appTitle}" class="sapUiTinyMarginTop sapUiMediumMarginBegin"/>					
+				</f:heading>				
+			</f:DynamicPageTitle>
+		</f:title>		
+		<f:content>			
+		
+			<IconTabBar headerMode="Inline"
+				expanded="{device>/isNoPhone}"		
+				selectedKey="{appModel>/selectedTab}"		
+				class="sapUiSmallMargin">
+				<items>
+					<IconTabFilter key="CompanyTab"
+						icon="sap-icon://building"
+						text="{i18n>lblCompany}">
+						<content>
+							<core:Fragment fragmentName="com.gavdilabs.config.view.fragments.CompanyConfig" type="XML"/>
+						</content>
+					</IconTabFilter>
+					<IconTabSeparator />
+					<IconTabFilter key="UsersTab"
+						icon="sap-icon://group"
+						text="{i18n>lbl_teamUsers}">
+						<content>
+							<core:Fragment fragmentName="com.gavdilabs.config.view.fragments.UserConfig" type="XML"/>
+						</content>
+					</IconTabFilter>					
+				</items>
+			</IconTabBar>		
+		</f:content>
+		<f:footer>
+			<OverflowToolbar>
+				<ToolbarSpacer/>		
+				<Button icon="" text="Save" press="onSaveConfigButtonPress" visible="{=%{appModel>/selectedTab} === 'CompanyTab' ? true : false }"/>	
+				<Button icon="" text="Save" press="onSaveTeamsButtonPress" visible="{=%{appModel>/selectedTab} === 'UsersTab' ? true : false }"/>	
+			</OverflowToolbar>
+		</f:footer>
+	</f:DynamicPage>
+
+</mvc:View>

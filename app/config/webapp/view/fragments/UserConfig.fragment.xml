@@ -1,0 +1,123 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core">
+
+	<Table	
+		id="idSoftwareTeamTable"
+		class="sapUiSmallMarginBottom"	
+		items="{
+			path:'/SoftwareTeam',
+			parameters: { $$updateGroupId : 'userUpdateGroup' },
+			sorter: {
+				path: 'teamName',
+				descending: false
+			}
+		}" >
+		<headerToolbar>
+            <OverflowToolbar>
+				<Title text="{i18n>lbl_Teams}"/>
+                <ToolbarSpacer/>               
+                <Button text="{i18n>btnAddTeam}" press="onButtonAddTeamPress"/>
+            </OverflowToolbar>
+        </headerToolbar>
+		<columns>
+			<Column>
+				<header>
+					<Text text="{i18n>lbl_Team}" />
+				</header>
+			</Column>
+			<Column>
+				<header>
+					<Text text="{i18n>lbl_Owner}" />
+				</header>
+			</Column>
+		</columns>
+		<ColumnListItem vAlign="Middle" >
+			<cells>
+			    <HBox>
+					<Text text="{teamName}" visible="{=%{createdAt} === null ? false : true }" />
+					<Input value="{teamName}" visible="{=%{createdAt} === null ? true : false }"/>					
+				</HBox>
+				<HBox>
+					<HBox visible="{=%{createdAt} === null ? false : true }" >
+						<Avatar src="{_owner/imageUrl}" enabled="{=%{createdAt} === null ? false : true }"/>	
+						<VBox class="sapUiSmallMarginBegin sapUiTinyMarginTop">	
+							<Text text="{_owner/fullName}" />
+							<Text text="{_owner/email}"/>
+						</VBox>								
+					</HBox>
+					<Select selectedKey="{_owner/username}" forceSelection="false" visible="{=%{createdAt} === null ? true : false }"
+						items="{ 
+							path: '/User',                             
+							templateShareable:true }" >
+						<items>
+							<c:Item text="{fullName}" key="{username}"/>                   
+						</items>
+					</Select>	
+				</HBox>
+			</cells>		
+		</ColumnListItem>		
+	</Table>
+
+    <Table		
+		id="idSoftwareTeamUserTable"
+		items="{
+			path:'/SoftwareTeamUser',
+			parameters: { $$updateGroupId : 'userUpdateGroup' },
+			sorter: {
+				path: 'team/teamName',
+				descending: false
+			}
+		}" >
+		<headerToolbar>
+            <OverflowToolbar>
+				<Title text="{i18n>lbl_Users}"/>
+                <ToolbarSpacer/>               
+                <Button text="{i18n>btnAddUser}" press="onButtonAddUserPress"/>
+            </OverflowToolbar>
+        </headerToolbar>
+		<columns>
+			<Column mergeDuplicates="true">
+				<header>
+					<Text text="{i18n>lbl_Team}" />
+				</header>
+			</Column>
+			<Column>
+				<Text text="{i18n>lbl_User}" />				
+			</Column>
+			<Column
+				minScreenWidth="Tablet"
+				demandPopin="true"
+				hAlign="Center" >
+				<Text text="{i18n>lbl_Reviewer}" />				
+			</Column>
+			<Column
+				minScreenWidth="Tablet"
+				demandPopin="true"
+				hAlign="Center" >				
+				<Text text="{i18n>lbl_Maintainer}" />				
+			</Column>	
+			<Column
+				hAlign="End">
+			</Column> 		
+		</columns>
+		<ColumnListItem vAlign="Middle">
+			<cells>
+				<Text text="{team/teamName}" />
+				<HBox>
+					<Avatar src="{user/imageUrl}"/>		
+					<VBox class="sapUiSmallMarginBegin sapUiTinyMarginTop">	
+						<Text text="{user/fullName}" />
+						<Text text="{user/email}"/>
+					</VBox>
+				</HBox>
+				<CheckBox selected="{reviewer}" editable="false"/>
+				<CheckBox selected="{maintainer}" editable="false"/>
+				<HBox>
+					<c:Icon src="sap-icon://edit" press="onIconEditUserPress"/>
+				</HBox>
+			</cells>
+		</ColumnListItem>
+	</Table>
+	 
+</c:FragmentDefinition>

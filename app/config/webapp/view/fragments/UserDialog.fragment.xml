@@ -1,0 +1,94 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+    xmlns:f="sap.ui.layout.form">
+
+    <Dialog title="User" contentWidth="800px">
+        <content>
+            <f:SimpleForm id="idUserSimpleForm"
+                editable="true"                        
+                labelSpanXL="3"
+                labelSpanL="3"
+                labelSpanM="3"        
+                adjustLabelSpan="false"
+                emptySpanXL="4"
+                emptySpanL="4"
+                emptySpanM="4"        
+                columnsXL="1"
+                columnsL="1"        
+                singleContainerFullSize="false" >
+                <f:content>
+                    <Label text="{i18n>lblUsername}" required="true"/>
+                    <Input value="{username}" required="true"/> 
+                    <Label text="{i18n>lblEmail}" required="true"/>
+                    <Input value="{email}" required="true"/> 
+                    <Label text="{i18n>lblFirstname}" required="true"/>
+                    <Input value="{firstName}" required="true"/> 
+                    <Label text="{i18n>lblLastname}" required="true"/>
+                    <Input value="{lastName}" required="true"/> 
+                    <Label text="{i18n>lblApprover}"/>
+                    <CheckBox selected="{approver}"/>                   
+                </f:content>
+            </f:SimpleForm>
+
+            <Table		
+                id="idSoftwareTeamsTable"
+                items="{
+                    path: 'softwareTeams', 
+                    sorter: [{
+                        path: 'team_teamName'
+                    }]
+                }" >
+                <headerToolbar>
+                    <OverflowToolbar>
+                        <Title text="{i18n>lbl_Teams}" level="H2" />
+                        <ToolbarSpacer />
+                        <Button text="{i18n>btnAssignTeam}" press="onAssignTeamButtonPress"/>
+                    </OverflowToolbar>
+                </headerToolbar>
+                <columns>
+                    <Column mergeDuplicates="true">
+                        <header>
+                            <Text text="{i18n>lbl_Team}" />
+                        </header>
+                    </Column>			
+                    <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                        hAlign="End" >
+                        <header>
+                            <Text text="{i18n>lbl_Reviewer}" />
+                        </header>
+                    </Column>
+                    <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                        hAlign="Center" >
+                        <header>
+                            <Text text="{i18n>lbl_Maintainer}" />
+                        </header>
+                    </Column>                                       			
+                </columns>
+                <ColumnListItem vAlign="Middle">
+                    <Select selectedKey="{team_teamName}" forceSelection="false" required="false"
+                        items="{ 
+                            path: '/SoftwareTeam',                             
+                            templateShareable:true }" >
+                        <items>
+                            <c:Item text="{teamName}" key="{teamName}"/>                   
+                        </items>
+                    </Select>
+                    <CheckBox selected="{reviewer}"/>
+                    <CheckBox selected="{maintainer}"/>                   
+                </ColumnListItem>
+            </Table>
+        </content>
+        <footer>
+            <Toolbar >
+                <ToolbarSpacer/>
+                <Button text="{i18n>btnCancel}" press="onCancelButtonUserPress"></Button>
+                <Button text="{i18n>btnSave}" press="onSaveButtonUserPress"></Button>
+            </Toolbar>
+        </footer>
+    </Dialog>
+</c:FragmentDefinition>
