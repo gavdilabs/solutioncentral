@@ -14,8 +14,8 @@ service RadarService {
   extend SoftwareSolution with actions {
     action requestReview(description : String);
     action requestSunset(description : String, sunsetDate : DateTime);
-    action approve();
-    action reject();
+    action approveSolution();
+    action rejectSolution();
   }
 
   extend projection SoftwareSolution with {
@@ -29,8 +29,8 @@ service RadarService {
   }
 
   extend SolutionVersion with actions {
-    action approve();
-    action reject();
+    action approveVersion();
+    action rejectVersion();
   }
 
   entity SoftwareTeam             as projection on core.SoftwareTeam;

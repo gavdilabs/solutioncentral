@@ -97,7 +97,7 @@ export function _SoftwareSolutionAspect<TBase extends new (...args: any[]) => ob
         __parameters: {description?: string | null, sunsetDate?: __.CdsDateTime | null}, __returns: any
         kind: 'action'
       }
-      approve:  {
+      approveSolution:  {
         // positional
         (): any
         // named
@@ -106,7 +106,7 @@ export function _SoftwareSolutionAspect<TBase extends new (...args: any[]) => ob
         __parameters: globalThis.Record<never, never>, __returns: any
         kind: 'action'
       }
-      reject:  {
+      rejectSolution:  {
         // positional
         (): any
         // named
@@ -151,7 +151,7 @@ export function _SolutionVersionAspect<TBase extends new (...args: any[]) => obj
     declare static readonly keys: __.KeysOf<SolutionVersion>;
     declare static readonly elements: __.ElementsOf<SolutionVersion>;
     declare static readonly actions: {
-      approve:  {
+      approveVersion:  {
         // positional
         (): any
         // named
@@ -160,7 +160,7 @@ export function _SolutionVersionAspect<TBase extends new (...args: any[]) => obj
         __parameters: globalThis.Record<never, never>, __returns: any
         kind: 'action'
       }
-      reject:  {
+      rejectVersion:  {
         // positional
         (): any
         // named

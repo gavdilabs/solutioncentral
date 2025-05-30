@@ -138,10 +138,10 @@ export default class SolutionVersionHandler {
     }
   }
 
-  @OnBoundAction(SolutionVersion.actions.approve)
+  @OnBoundAction(SolutionVersion.actions.approveVersion)
   public async onApprove(
-    @Req() req: ActionRequest<typeof SolutionVersion.actions.approve>,
-  ): ActionReturn<typeof SolutionVersion.actions.approve> {
+    @Req() req: ActionRequest<typeof SolutionVersion.actions.approveVersion>,
+  ): ActionReturn<typeof SolutionVersion.actions.approveVersion> {
     try {
       await this.solutionVersionService.handleApprovalFlow(req);
     } catch (e) {
@@ -156,10 +156,10 @@ export default class SolutionVersionHandler {
     }
   }
 
-  @OnBoundAction(SolutionVersion.actions.reject)
+  @OnBoundAction(SolutionVersion.actions.rejectVersion)
   public async onReject(
-    @Req() req: ActionRequest<typeof SolutionVersion.actions.reject>,
-  ): ActionReturn<typeof SolutionVersion.actions.reject> {
+    @Req() req: ActionRequest<typeof SolutionVersion.actions.rejectVersion>,
+  ): ActionReturn<typeof SolutionVersion.actions.rejectVersion> {
     try {
       await this.solutionVersionService.handleRejectFlow(req);
     } catch (e) {

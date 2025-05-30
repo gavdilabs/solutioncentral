@@ -11,13 +11,11 @@ import {
   OnBoundAction,
   Req,
   Result,
-  BeforeRead,
   AfterRead,
 } from "@dxfrontier/cds-ts-dispatcher";
 import { Logger, LoggerFactory } from "@gavdi/caplog";
 import RequestsService from "../../services/RequestsService";
 import SoftwareSolutionService from "../../services/SoftwareSolutionService";
-import { foreach } from "@sap/cds";
 
 @EntityHandler(SoftwareSolution)
 export default class SoftwareSolutionHandler {
@@ -140,10 +138,10 @@ export default class SoftwareSolutionHandler {
     }
   }
 
-  @OnBoundAction(SoftwareSolution.actions.approve)
+  @OnBoundAction(SoftwareSolution.actions.approveSolution)
   public async onApprove(
-    @Req() req: ActionRequest<typeof SoftwareSolution.actions.approve>,
-  ): ActionReturn<typeof SoftwareSolution.actions.approve> {
+    @Req() req: ActionRequest<typeof SoftwareSolution.actions.approveSolution>,
+  ): ActionReturn<typeof SoftwareSolution.actions.approveSolution> {
     try {
       await this.softwareSolutionService.handleApprovalLogic(req);
     } catch (e) {
@@ -152,10 +150,10 @@ export default class SoftwareSolutionHandler {
     }
   }
 
-  @OnBoundAction(SoftwareSolution.actions.reject)
+  @OnBoundAction(SoftwareSolution.actions.rejectSolution)
   public async onReject(
-    @Req() req: ActionRequest<typeof SoftwareSolution.actions.reject>,
-  ): ActionReturn<typeof SoftwareSolution.actions.reject> {
+    @Req() req: ActionRequest<typeof SoftwareSolution.actions.rejectSolution>,
+  ): ActionReturn<typeof SoftwareSolution.actions.rejectSolution> {
     try {
       await this.softwareSolutionService.handleRejectLogic(req);
     } catch (e) {

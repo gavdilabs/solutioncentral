@@ -266,7 +266,7 @@ annotate service.SoftwareSolution with @(
 annotate service.SoftwareSolution with @(UI.Identification: [
   {
     $Type        : 'UI.DataFieldForAction',
-    Action       : 'RadarService.approve',
+    Action       : 'RadarService.approveSolution',
     Label        : '{i18n>ApproveAction}',
     Determining  : true,
     Criticality  : #Positive,
@@ -291,7 +291,7 @@ annotate service.SoftwareSolution with @(UI.Identification: [
   },
   {
     $Type        : 'UI.DataFieldForAction',
-    Action       : 'RadarService.reject',
+    Action       : 'RadarService.rejectSolution',
     Label        : '{i18n>RejectAction}',
     Determining  : true,
     Criticality  : #Negative,

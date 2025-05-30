@@ -1,4 +1,4 @@
-import { SoftwareSolution, SoftwareStatus } from "#cds-models/RadarService";
+import { SoftwareSolution } from "#cds-models/RadarService";
 import {
   Request,
   ActionRequest,
@@ -32,7 +32,7 @@ export default class SoftwareSolutionService {
   }
 
   public async handleApprovalLogic(
-    req: ActionRequest<typeof SoftwareSolution.actions.approve>,
+    req: ActionRequest<typeof SoftwareSolution.actions.approveSolution>,
   ): Promise<void> {
     const solution = await this.checkApprovalFlowEntity(req);
     if (!solution || !solution.ID) {
@@ -56,7 +56,7 @@ export default class SoftwareSolutionService {
   }
 
   public async handleRejectLogic(
-    req: ActionRequest<typeof SoftwareSolution.actions.reject>,
+    req: ActionRequest<typeof SoftwareSolution.actions.rejectSolution>,
   ): Promise<void> {
     const solution = await this.checkApprovalFlowEntity(req);
     if (!solution || !solution.ID) {
@@ -81,8 +81,8 @@ export default class SoftwareSolutionService {
 
   private async checkApprovalFlowEntity(
     req: ActionRequest<
-      | typeof SoftwareSolution.actions.approve
-      | typeof SoftwareSolution.actions.reject
+      | typeof SoftwareSolution.actions.approveSolution
+      | typeof SoftwareSolution.actions.rejectSolution
     >,
   ): Promise<SoftwareSolution | undefined> {
     const solutionID =

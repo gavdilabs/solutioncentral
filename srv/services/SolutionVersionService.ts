@@ -37,7 +37,7 @@ export default class SolutionVersionService {
   }
 
   public async handleApprovalFlow(
-    req: ActionRequest<typeof SolutionVersion.actions.approve>,
+    req: ActionRequest<typeof SolutionVersion.actions.approveVersion>,
   ): Promise<void> {
     const solutionVersion = await this.checkApprovalFlowEntity(req);
     if (
@@ -69,7 +69,7 @@ export default class SolutionVersionService {
   }
 
   public async handleRejectFlow(
-    req: ActionRequest<typeof SolutionVersion.actions.reject>,
+    req: ActionRequest<typeof SolutionVersion.actions.rejectVersion>,
   ): Promise<void> {
     const solutionVersion = await this.checkApprovalFlowEntity(req);
     if (
@@ -102,8 +102,8 @@ export default class SolutionVersionService {
 
   private async checkApprovalFlowEntity(
     req: ActionRequest<
-      | typeof SolutionVersion.actions.approve
-      | typeof SolutionVersion.actions.reject
+      | typeof SolutionVersion.actions.approveVersion
+      | typeof SolutionVersion.actions.rejectVersion
     >,
   ): Promise<SolutionVersion | undefined> {
     const keys = req.params[0] as Record<string, string>;
