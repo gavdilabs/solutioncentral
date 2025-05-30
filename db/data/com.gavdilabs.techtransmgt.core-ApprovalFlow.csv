@@ -1,0 +1,4 @@
+code,name,descr
+0,No Approval,No approval flows for new solutions or versions
+1,Approval,Standard approval flow within solution for new solutions or versions
+2,BPA Approval,Approval flow that integrates for new solutions or versions

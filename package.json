@@ -9,19 +9,19 @@
     "@cap-js/postgres": "^1.10.4",
     "@dxfrontier/cds-ts-dispatcher": "^3.2.6",
     "@gavdi/caplog": "^2.5.0",
-    "@sap/cds": "^8.5.1",
-    "@sap/cds-dk": "^8.9.4",
+    "@sap/cds": "^8.9.4",
     "express": "^4",
     "npm": "^10.9.2"
   },
   "devDependencies": {
-    "@cap-js/cds-typer": "^0.30.0",
-    "@cap-js/cds-types": "0.6.4",
+    "@cap-js/cds-typer": "^0.35.0",
+    "@cap-js/cds-types": "^0.10.0",
     "@cap-js/sqlite": "^1",
+    "@sap/cds-dk": "^8.9.4",
     "@types/chai": "^4.3.19",
     "@types/chai-http": "^3.0.5",
     "@types/jest": "^29.5.14",
-    "cds-plugin-ui5": "^0.11.1",
+    "cds-plugin-ui5": "^0.12.1",
     "chai": "^4.5.0",
     "chai-as-promised": "^8.0.1",
     "chai-http": "^5.1.1",
@@ -66,6 +66,14 @@
     ]
   },
   "cds": {
+    "requires": {
+      "bpa": {
+        "kind": "rest",
+        "credentials": {
+          "destination": "BPA_API"
+        }
+      }
+    },
     "db": {
       "kind": "sqlite",
       "credentials": {

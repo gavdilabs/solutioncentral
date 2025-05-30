@@ -7,7 +7,8 @@ annotate RadarService.User with @restrict: [
       'View',
       'Reviewer',
       'Developer',
-      'Maintainer'
+      'Maintainer',
+      'Approver'
     ]
   },
   {
@@ -21,7 +22,8 @@ annotate RadarService.SoftwareSolution with @restrict: [
     grant: ['READ'],
     to   : [
       'View',
-      'Developer'
+      'Developer',
+      'Approver'
     ]
   },
   {
@@ -58,6 +60,14 @@ annotate RadarService.SoftwareSolution with @restrict: [
     where: 'team._reviewers.user.username = $user.id or team._maintainers.user.username = $user.id'
   },
   {
+    grant: [
+      'approve',
+      'reject'
+    ],
+    to   : ['Approver'],
+    where: 'solutionStatus_code = 0'
+  },
+  {
     grant: ['DELETE'],
     to   : ['Maintainer'],
     where: 'team._maintainers.user.username = $user.id'
@@ -75,7 +85,8 @@ annotate RadarService.SoftwareTeam with @restrict: [
       'View',
       'Reviewer',
       'Developer',
-      'Maintainer'
+      'Maintainer',
+      'Approver'
     ]
   },
   {
@@ -113,7 +124,8 @@ annotate RadarService.SoftwareTeamUser with @restrict: [
       'View',
       'Reviewer',
       'Developer',
-      'Maintainer'
+      'Maintainer',
+      'Approver'
     ]
   },
   {
@@ -137,7 +149,8 @@ annotate RadarService.Technology with @restrict: [
     to   : [
       'View',
       'Reviewer',
-      'Developer'
+      'Developer',
+      'Approver'
     ]
   },
   {
@@ -166,7 +179,8 @@ annotate RadarService.TechnologyReplacement with @restrict: [
     to   : [
       'View',
       'Developer',
-      'Reviewer'
+      'Reviewer',
+      'Approver'
     ]
   },
   {
@@ -190,7 +204,8 @@ annotate RadarService.CompanyConfiguration with @restrict: [
       'View',
       'Reviewer',
       'Developer',
-      'Maintainer'
+      'Maintainer',
+      'Approver'
     ]
   },
   {
@@ -206,7 +221,8 @@ annotate RadarService.TechnologyStatus with @restrict: [{
     'Developer',
     'Reviewer',
     'Maintainer',
-    'Admin'
+    'Admin',
+    'Approver'
   ]
 }];
 
@@ -217,7 +233,8 @@ annotate RadarService.SAPVersion with @restrict: [{
     'Developer',
     'Reviewer',
     'Maintainer',
-    'Admin'
+    'Admin',
+    'Approver'
   ]
 }];
 
@@ -228,7 +245,8 @@ annotate RadarService.CleanCoreLevel with @restrict: [{
     'Developer',
     'Reviewer',
     'Maintainer',
-    'Admin'
+    'Admin',
+    'Approver'
   ]
 }];
 
@@ -239,7 +257,8 @@ annotate RadarService.CodeQualityLevel with @restrict: [{
     'Developer',
     'Reviewer',
     'Maintainer',
-    'Admin'
+    'Admin',
+    'Approver'
   ]
 }];
 
@@ -250,7 +269,8 @@ annotate RadarService.BusinessCriticalityLevel with @restrict: [{
     'Developer',
     'Reviewer',
     'Maintainer',
-    'Admin'
+    'Admin',
+    'Approver'
   ]
 }];
 
@@ -259,7 +279,8 @@ annotate RadarService.SoftwareTechnology with @restrict: [
     grant: ['READ'],
     to   : [
       'View',
-      'Developer'
+      'Developer',
+      'Approver'
     ]
   },
   {
@@ -299,65 +320,9 @@ annotate RadarService.getActiveUser with @restrict: [{to: [
   'Developer',
   'Reviewer',
   'Maintainer',
-  'Admin'
+  'Admin',
+  'Approver'
 ]}];
-
-annotate RadarService.Requests with @restrict: [
-  {
-    grant: ['READ'],
-    to   : [
-      'View',
-      'Reviewer',
-      'Maintainer',
-      'Developer'
-    ]
-  },
-  {
-    grant: ['CREATE'],
-    to   : [
-      'Reviewer',
-      'Developer',
-      'Maintainer'
-    ]
-  },
-  {
-    grant: [
-      'approve',
-      'reject'
-    ],
-    to   : [
-      'Reviewer',
-      'Maintainer'
-    ],
-    where: 'approverUser.username = $user.id or approverTeam._maintainers.user.username = $user.id '
-  },
-  {
-    grant: [
-      'approve',
-      'reject'
-    ],
-    to   : [
-      'Reviewer',
-      'Maintainer'
-    ],
-    where: 'approverTeam._maintainers.user.username = $user.id'
-  },
-  {
-    grant: [
-      'approve',
-      'reject'
-    ],
-    to   : [
-      'Reviewer',
-      'Maintainer'
-    ],
-    where: 'approverTeam._reviewers.user.username = $user.id'
-  },
-  {
-    grant: ['*'],
-    to   : ['Admin']
-  }
-];
 
 annotate RadarService.SolutionVersion with @restrict: [
   {
@@ -366,7 +331,8 @@ annotate RadarService.SolutionVersion with @restrict: [
       'View',
       'Developer',
       'Reviewer',
-      'Maintainer'
+      'Maintainer',
+      'Approver'
     ]
   },
   {
@@ -376,6 +342,14 @@ annotate RadarService.SolutionVersion with @restrict: [
       'DELETE'
     ],
     to   : ['Maintainer']
+  },
+  {
+    grant: [
+      'approve',
+      'reject'
+    ],
+    to   : ['Approver'],
+    where: 'status_code = 0'
   },
   {
     grant: ['*'],

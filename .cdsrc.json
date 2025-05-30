@@ -9,6 +9,11 @@
             "password": "dummy",
             "roles": []
           },
+          "approver": {
+            "id": "approver",
+            "password": "approver1234",
+            "roles": ["Approver"]
+          },
           "admin": {
             "id": "admin",
             "password": "admin1234",

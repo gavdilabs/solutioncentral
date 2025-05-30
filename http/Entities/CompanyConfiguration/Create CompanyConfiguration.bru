@@ -1,0 +1,20 @@
+meta {
+  name: Create CompanyConfiguration
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{HOST}}/CompanyConfiguration
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "currentSAPVersion_code": "F1503",
+    "expectedMinimalCleanCoreValue_code": 2,
+    "approvalForNewSolutions": false,
+    "allowDeprecationWithoutReplacement": false
+  }
+}

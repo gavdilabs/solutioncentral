@@ -14,7 +14,7 @@ export function _cuidAspect<TBase extends new (...args: any[]) => object>(Base: 
     static readonly kind: 'entity' | 'type' | 'aspect' = 'aspect';
     declare static readonly keys: __.KeysOf<cuid>;
     declare static readonly elements: __.ElementsOf<cuid>;
-    declare static readonly actions: Record<never, never>;
+    declare static readonly actions: globalThis.Record<never, never>;
   };
 }
 /**
@@ -23,6 +23,13 @@ export function _cuidAspect<TBase extends new (...args: any[]) => object>(Base: 
 * See https://cap.cloud.sap/docs/cds/common#aspect-cuid
 */
 export class cuid extends _cuidAspect(__.Entity) {}
+/**
+* Aspect for entities with canonical universal IDs
+* 
+* See https://cap.cloud.sap/docs/cds/common#aspect-cuid
+*/
+export class cuid_ extends Array<cuid> {$count?: number}
+Object.defineProperty(cuid_, 'name', { value: 'cuid' })
 // the following represents the CDS aspect 'managed'
 export function _managedAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
   return class managed extends Base {
@@ -35,7 +42,7 @@ export function _managedAspect<TBase extends new (...args: any[]) => object>(Bas
     static readonly kind: 'entity' | 'type' | 'aspect' = 'aspect';
     declare static readonly keys: __.KeysOf<managed>;
     declare static readonly elements: __.ElementsOf<managed>;
-    declare static readonly actions: Record<never, never>;
+    declare static readonly actions: globalThis.Record<never, never>;
   };
 }
 /**
@@ -44,6 +51,13 @@ export function _managedAspect<TBase extends new (...args: any[]) => object>(Bas
 * See https://cap.cloud.sap/docs/cds/common#aspect-managed
 */
 export class managed extends _managedAspect(__.Entity) {}
+/**
+* Aspect to capture changes by user and name
+* 
+* See https://cap.cloud.sap/docs/cds/common#aspect-managed
+*/
+export class managed_ extends Array<managed> {$count?: number}
+Object.defineProperty(managed_, 'name', { value: 'managed' })
 // the following represents the CDS aspect 'temporal'
 export function _temporalAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
   return class temporal extends Base {
@@ -52,7 +66,7 @@ export function _temporalAspect<TBase extends new (...args: any[]) => object>(Ba
     static readonly kind: 'entity' | 'type' | 'aspect' = 'aspect';
     declare static readonly keys: __.KeysOf<temporal>;
     declare static readonly elements: __.ElementsOf<temporal>;
-    declare static readonly actions: Record<never, never>;
+    declare static readonly actions: globalThis.Record<never, never>;
   };
 }
 /**
@@ -61,3 +75,10 @@ export function _temporalAspect<TBase extends new (...args: any[]) => object>(Ba
 * See https://cap.cloud.sap/docs/cds/common#aspect-temporal
 */
 export class temporal extends _temporalAspect(__.Entity) {}
+/**
+* Aspect for entities with temporal data
+* 
+* See https://cap.cloud.sap/docs/cds/common#aspect-temporal
+*/
+export class temporal_ extends Array<temporal> {$count?: number}
+Object.defineProperty(temporal_, 'name', { value: 'temporal' })

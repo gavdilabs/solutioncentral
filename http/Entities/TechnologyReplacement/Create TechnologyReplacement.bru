@@ -1,0 +1,18 @@
+meta {
+  name: Create TechnologyReplacement
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{HOST}}/TechnologyReplacement
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "source": "1c448326-5f44-11ec-bf63-0242ac130004",
+    "target": "1c448326-5f44-11ec-bf63-0242ac130007"
+  }
+}

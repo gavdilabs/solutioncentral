@@ -1,0 +1,22 @@
+meta {
+  name: Action - Request Sunset
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{HOST}}/SoftwareSolution(ID={{KEY}},IsActiveEntity={{IS_ACTIVE}})/requestSunset
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "description": "Here I explain why I want this solution sunset"
+  }
+}
+
+vars:pre-request {
+  KEY: 
+  IS_ACTIVE: true
+}

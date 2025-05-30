@@ -1,0 +1,15 @@
+meta {
+  name: Delete CompanyConfiguration
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{HOST}}/CompanyConfiguration({{KEY}})
+  body: none
+  auth: inherit
+}
+
+vars:pre-request {
+  KEY: 05d104cf-5b4c-402b-a059-35da0cbc71b9
+}

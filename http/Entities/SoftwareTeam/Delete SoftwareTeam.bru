@@ -1,0 +1,15 @@
+meta {
+  name: Delete SoftwareTeam
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{HOST}}/SoftwareTeam('{{KEY}}')
+  body: none
+  auth: inherit
+}
+
+vars:pre-request {
+  KEY: Bruno Team
+}

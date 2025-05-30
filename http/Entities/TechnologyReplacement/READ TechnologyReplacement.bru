@@ -1,0 +1,16 @@
+meta {
+  name: READ TechnologyReplacement
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{HOST}}/TechnologyReplacement(source={{SOURCE}},target={{TARGET}})
+  body: none
+  auth: inherit
+}
+
+vars:pre-request {
+  SOURCE: 1c448326-5f44-11ec-bf63-0242ac130004
+  TARGET: 1c448326-5f44-11ec-bf63-0242ac130003
+}

@@ -1,0 +1,16 @@
+meta {
+  name: READ SoftwareSolution
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{HOST}}/SoftwareSolution(ID={{KEY}},IsActiveEntity={{IS_ACTIVE}})
+  body: none
+  auth: inherit
+}
+
+vars:pre-request {
+  KEY: 7e4c0b06-b305-4ca8-a8f6-2f5b851ee774
+  IS_ACTIVE: false
+}

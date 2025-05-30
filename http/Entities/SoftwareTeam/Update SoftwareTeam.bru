@@ -1,0 +1,21 @@
+meta {
+  name: Update SoftwareTeam
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{HOST}}/SoftwareTeam('{{KEY}}')
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "_owner_username": "jld"
+  }
+}
+
+vars:pre-request {
+  KEY: Bruno Team
+}

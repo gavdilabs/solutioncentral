@@ -12,20 +12,25 @@ service RadarService {
   annotate SoftwareSolution with @odata.draft.enabled;
 
   extend SoftwareSolution with actions {
-    action requestTechnology(technologyID : String);
     action requestReview(description : String);
-    action requestSunset(description : String);
-    action requestDependent(dependentID : String, softwareType : String);
+    action requestSunset(description : String, sunsetDate : DateTime);
+    action approveSolution();
+    action rejectSolution();
+  }
+
+  extend projection SoftwareSolution with {
+    virtual null as isApprover : Boolean
   }
 
   entity SolutionVersion          as projection on core.SolutionVersion;
 
-  @cds.redirection.target
-  entity Requests                 as projection on core.Request;
+  extend projection SolutionVersion with {
+    virtual null as isApprover : Boolean
+  }
 
-  extend Requests with actions {
-    action approve();
-    action reject();
+  extend SolutionVersion with actions {
+    action approveVersion();
+    action rejectVersion();
   }
 
   entity SoftwareTeam             as projection on core.SoftwareTeam;
@@ -57,6 +62,9 @@ service RadarService {
   entity CleanCoreLevel           as projection on core.CleanCoreLevel;
 
   @readonly
+  entity ApprovalFlow             as projection on core.ApprovalFlow;
+
+  @readonly
   entity CodeQualityLevel         as projection on core.CodeQualityLevel;
 
   @readonly
@@ -69,21 +77,4 @@ service RadarService {
   /*** FUNCTION IMPORTS ***/
   function getActiveUser() returns types.ActiveUser;
 
-  /*** VIEWS ***/
-  view UserRequests as
-    select from core.Request {
-      key ID,
-          requestType,
-          requester,
-          status,
-          correlationID,
-          description,
-          data
-    }
-    where
-         approverUser.username                   = $user.id
-      or approverTeam._reviewers.user.username   = $user.id
-      or approverTeam._maintainers.user.username = $user.id;
-
 }
-

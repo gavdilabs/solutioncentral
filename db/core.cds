@@ -34,11 +34,22 @@ type deploymentTypes        : String enum {
 
 // CodeLists
 entity SoftwareStatus : sap.common.CodeList {
-  key code  : Integer @assert.range: [
-        1,
+  key code             : Integer @assert.range: [
+        0,
+        6
+      ];
+      descr            : String;
+      criticalityLevel : Integer @assert.range: [
+        0,
         5
       ];
-      descr : String;
+}
+
+entity ApprovalFlow : sap.common.CodeList {
+  key code : Integer @assert.range: [
+        1,
+        3
+      ];
 }
 
 entity SAPVersion : sap.common.CodeList {
@@ -106,39 +117,9 @@ entity User : managed {
       )                       @Core.Computed;
       imageUrl      : String  @Core.IsURL  @Core.MediaType: imageType;
       imageType     : String  @Core.IsMediaType;
+      approver      : Boolean; // In the future this should be fetched from BTP in a smart way
       softwareTeams : Association to many SoftwareTeamUser
                         on softwareTeams.user = $self;
-}
-
-type RequestType            : String enum {
-  TECHNOLOGY_NEW;
-  TECHNOLOGY_CHANGE;
-  TECHNOLOGY_SUNSET;
-  SOLUTION_TECHNOLOGY_NEW;
-  SOLUTION_TECHNOLOGY_CHANGE;
-  SOLUTION_TECHNOLOGY_SUNSET;
-  SOLUTION_NEW;
-  SOLUTION_UPGRADE;
-  SOLUTION_SUNSET;
-  SOLUTION_DEPENDENT;
-  REVIEW;
-}
-
-type RequestStatus          : String enum {
-  PENDING;
-  APPROVED;
-  REJECTED;
-}
-
-entity Request : cuid, managed {
-  requestType   : RequestType                 @mandatory;
-  requester     : Association to User  @mandatory  @assert.target;
-  status        : RequestStatus               @mandatory;
-  correlationID : String(255)                 @mandatory;
-  approverTeam  : Association to SoftwareTeam @assert.target;
-  approverUser  : Association to User         @assert.target;
-  description   : String(1000);
-  data          : Map; // Data needed to fulfill the request upon approval
 }
 
 entity SolutionVersion : cuid, managed {
@@ -163,8 +144,6 @@ entity SoftwareSolution : cuid, managed {
   businessCriticality : Association to BusinessCriticalityLevel;
   cleanCoreRating     : Association to CleanCoreLevel;
   codeQualityRating   : Association to CodeQualityLevel;
-  requests            : Association to many Request
-                          on requests.correlationID = $self.ID;
   versions            : Association to many SolutionVersion
                           on versions.solution = $self;
   reasonNoCleanCore   : String;
@@ -197,8 +176,8 @@ entity SoftwareTeam : managed {
 }
 
 entity SoftwareTeamUser {
-  key team       : Association to SoftwareTeam;
-  key user       : Association to User;
+  key team       : Association to SoftwareTeam @assert.target;
+  key user       : Association to User         @asser.target;
       reviewer   : Boolean default false;
       maintainer : Boolean default false;
 }
@@ -207,8 +186,6 @@ entity SoftwareTechnology : cuid, managed {
   version    : SolutionVersion:version;
   software   : Association to SoftwareSolution;
   technology : Association to Technology;
-  requests   : Association to many Request
-                 on requests.correlationID = $self.ID;
 }
 
 @cds.search: {name}
@@ -220,8 +197,6 @@ entity Technology : cuid, managed {
     1,
     5
   ];
-  requests       : Association to many Request
-                     on requests.correlationID = $self.ID;
   group          : Association to TechnologyGroup;
   _replacements  : Association to many TechnologyReplacement
                      on _replacements.source = ID;
@@ -236,9 +211,10 @@ entity TechnologyReplacement {
                       on _technology.ID = source;
 }
 
-entity CompanyConfiguration : cuid {
+entity CompanyConfiguration : cuid, managed {
   currentSAPVersion                  : Association to SAPVersion;
   expectedMinimalCleanCoreValue      : Association to CleanCoreLevel;
-  approvalForNewSolutions            : Boolean;
+  approvalFlow                       : Association to ApprovalFlow;
   allowDeprecationWithoutReplacement : Boolean;
+  bpaEnabled                         : Boolean;
 }

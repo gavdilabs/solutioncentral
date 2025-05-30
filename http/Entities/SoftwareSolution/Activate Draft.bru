@@ -1,0 +1,15 @@
+meta {
+  name: Activate Draft
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{HOST}}/SoftwareSolution(ID={{KEY}},IsActiveEntity=false)/draftActivate
+  body: none
+  auth: inherit
+}
+
+vars:pre-request {
+  KEY: 7e4c0b06-b305-4ca8-a8f6-2f5b851ee774
+}

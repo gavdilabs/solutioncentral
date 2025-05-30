@@ -1,0 +1,18 @@
+meta {
+  name: Create SoftwareTeam
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{HOST}}/SoftwareTeam
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "teamName": "Bruno Team",
+    "_owner_username": "dummy"
+  }
+}

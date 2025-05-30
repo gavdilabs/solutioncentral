@@ -1,0 +1,21 @@
+meta {
+  name: Action - Request Access
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{HOST}}/SoftwareTeam('{{KEY}}')/requestAccess
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "username": "jld"
+  }
+}
+
+vars:pre-request {
+  KEY: Bruno Team
+}

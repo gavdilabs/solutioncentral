@@ -1,0 +1,137 @@
+import { SolutionVersion } from "#cds-models/RadarService";
+import {
+  Request,
+  ActionRequest,
+  Inject,
+  ServiceLogic,
+} from "@dxfrontier/cds-ts-dispatcher";
+import { Logger, LoggerFactory } from "@gavdi/caplog";
+import SolutionVersionRepo from "../repositories/SoftwareVersionRepo";
+import { DefaultSoftwareStatus } from "../lib/utils/defaults";
+
+@ServiceLogic()
+export default class SolutionVersionService {
+  private readonly logger: Logger;
+
+  @Inject(SolutionVersionRepo)
+  private readonly solutionVersionRepo: SolutionVersionRepo;
+
+  constructor() {
+    this.logger = LoggerFactory.createLogger("solution-version-service");
+  }
+
+  public handleVirtualProperties(
+    req: Request<SolutionVersion>,
+    result: SolutionVersion[],
+  ): SolutionVersion[] {
+    const isApprover = req.user.is("Approver");
+    result.forEach((el) => {
+      el.isApprover = isApprover;
+    });
+    return result;
+  }
+
+  public handleDefaults(data: SolutionVersion): SolutionVersion {
+    data.status_code = DefaultSoftwareStatus.AWAITING_APPROVAL;
+    return data;
+  }
+
+  public async handleApprovalFlow(
+    req: ActionRequest<typeof SolutionVersion.actions.approveVersion>,
+  ): Promise<void> {
+    const solutionVersion = await this.checkApprovalFlowEntity(req);
+    if (
+      !solutionVersion ||
+      !solutionVersion.ID ||
+      !solutionVersion.solution_ID
+    ) {
+      return;
+    }
+
+    try {
+      await this.solutionVersionRepo.updateStatus(
+        solutionVersion.ID,
+        solutionVersion.solution_ID,
+        DefaultSoftwareStatus.APPROVED,
+      );
+    } catch (e) {
+      this.logger.error(
+        "Database query failed, could not update status",
+        solutionVersion.ID,
+      );
+      this.logger.error(e);
+      req.error(
+        500,
+        "Service failed to update solution version status in database",
+      );
+      return;
+    }
+  }
+
+  public async handleRejectFlow(
+    req: ActionRequest<typeof SolutionVersion.actions.rejectVersion>,
+  ): Promise<void> {
+    const solutionVersion = await this.checkApprovalFlowEntity(req);
+    if (
+      !solutionVersion ||
+      !solutionVersion.ID ||
+      !solutionVersion.solution_ID
+    ) {
+      return;
+    }
+
+    try {
+      await this.solutionVersionRepo.updateStatus(
+        solutionVersion.ID,
+        solutionVersion.solution_ID,
+        DefaultSoftwareStatus.REJECTED,
+      );
+    } catch (e) {
+      this.logger.error(
+        "Database query failed, could not update status",
+        solutionVersion.ID,
+      );
+      this.logger.error(e);
+      req.error(
+        500,
+        "Service failed to update solution version status in database",
+      );
+      return;
+    }
+  }
+
+  private async checkApprovalFlowEntity(
+    req: ActionRequest<
+      | typeof SolutionVersion.actions.approveVersion
+      | typeof SolutionVersion.actions.rejectVersion
+    >,
+  ): Promise<SolutionVersion | undefined> {
+    const keys = req.params[0] as Record<string, string>;
+    const solutionVersionID = keys.ID;
+    if (!solutionVersionID) {
+      req.error(400, "Invalid solution version ID");
+      return;
+    }
+
+    const solutionID = keys.solution_ID;
+    if (!solutionID || typeof solutionID !== "string") {
+      req.error(400, "Invalid solution ID");
+      return;
+    }
+
+    const solutionVersion = await this.solutionVersionRepo.byKey(
+      solutionVersionID,
+      solutionID,
+      ["ID", "solution_ID", "status_code"],
+    );
+    if (
+      !solutionVersion ||
+      solutionVersion.status_code !== DefaultSoftwareStatus.AWAITING_APPROVAL
+    ) {
+      req.error(404, "No solution version found awaiting approval");
+      return;
+    }
+
+    return solutionVersion;
+  }
+}
