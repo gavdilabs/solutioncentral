@@ -39,13 +39,7 @@ export default class SoftwareSolutionHandler {
     @Result() result: SoftwareSolution[],
   ): Promise<unknown> {
     try {
-      const isApprover = req.user.is("Approver");
-
-      result.forEach((el: SoftwareSolution) => {
-        el.isApprover = isApprover;
-      });
-
-      return result;
+      return this.softwareSolutionService.handleVirtualProperties(req, result);
     } catch (e) {
       this.logger.error(
         "Error thrown while post-processing SoftwareSolution read",

@@ -139,7 +139,6 @@ entity SoftwareSolution : cuid, managed {
   costCenter          : String;
   owner               : Association to User          @mandatory  @assert.target;
   team                : Association to SoftwareTeam  @mandatory  @assert.target;
-  virtual isApprover  : Boolean;
   // Needs Required Services from Cloud Credit Control
   Technologies        : Composition of many SoftwareTechnology
                           on Technologies.software = $self;

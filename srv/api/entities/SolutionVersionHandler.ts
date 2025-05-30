@@ -13,6 +13,7 @@ import {
   Result,
   BeforeCreate,
   AfterUpdate,
+  AfterRead,
 } from "@dxfrontier/cds-ts-dispatcher";
 import { Logger, LoggerFactory } from "@gavdi/caplog";
 import SolutionVersionService from "../../services/SolutionVersionService";
@@ -32,6 +33,22 @@ export default class SolutionVersionHandler {
     this.logger = LoggerFactory.createLogger("solution-version-handler");
   }
 
+  @AfterRead()
+  public async afterReadEntities(
+    @Req() req: Request<SolutionVersion>,
+    @Result() result: SolutionVersion[],
+  ): Promise<unknown> {
+    try {
+      return this.solutionVersionService.handleVirtualProperties(req, result);
+    } catch (e) {
+      this.logger.error(
+        "Unexpected error occured while post-processing read data",
+        e,
+      );
+      return req.error(500, "Unexpected error while post-processing request");
+    }
+  }
+
   @BeforeCreate()
   public async beforeCreate(
     @Req() req: Request<SolutionVersion>,
@@ -43,7 +60,7 @@ export default class SolutionVersionHandler {
         "Unexpected error occured in pre-processing SolutionVersion create",
         e,
       );
-      return req.error(500, "Unexpcted error while pre-processing request");
+      return req.error(500, "Unexpected error while pre-processing request");
     }
   }
 

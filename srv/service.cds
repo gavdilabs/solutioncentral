@@ -18,7 +18,15 @@ service RadarService {
     action reject();
   }
 
+  extend projection SoftwareSolution with {
+    virtual null as isApprover : Boolean
+  }
+
   entity SolutionVersion          as projection on core.SolutionVersion;
+
+  extend projection SolutionVersion with {
+    virtual null as isApprover : Boolean
+  }
 
   extend SolutionVersion with actions {
     action approve();

@@ -1,5 +1,6 @@
 import { SoftwareSolution, SoftwareStatus } from "#cds-models/RadarService";
 import {
+  Request,
   ActionRequest,
   Inject,
   ServiceLogic,
@@ -17,6 +18,17 @@ export default class SoftwareSolutionService {
 
   constructor() {
     this.logger = LoggerFactory.createLogger("soft-solution-srv");
+  }
+
+  public handleVirtualProperties(
+    req: Request<SoftwareSolution>,
+    result: SoftwareSolution[],
+  ): SoftwareSolution[] {
+    const isApprover = req.user.is("Approver");
+    result.forEach((el) => {
+      el.isApprover = isApprover;
+    });
+    return result;
   }
 
   public async handleApprovalLogic(

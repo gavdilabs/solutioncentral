@@ -1,5 +1,6 @@
 import { SolutionVersion } from "#cds-models/RadarService";
 import {
+  Request,
   ActionRequest,
   Inject,
   ServiceLogic,
@@ -17,6 +18,17 @@ export default class SolutionVersionService {
 
   constructor() {
     this.logger = LoggerFactory.createLogger("solution-version-service");
+  }
+
+  public handleVirtualProperties(
+    req: Request<SolutionVersion>,
+    result: SolutionVersion[],
+  ): SolutionVersion[] {
+    const isApprover = req.user.is("Approver");
+    result.forEach((el) => {
+      el.isApprover = isApprover;
+    });
+    return result;
   }
 
   public handleDefaults(data: SolutionVersion): SolutionVersion {

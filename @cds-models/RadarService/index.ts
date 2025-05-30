@@ -72,9 +72,9 @@ export function _SoftwareSolutionAspect<TBase extends new (...args: any[]) => ob
     declare owner_username?: string | null
     declare team?: __.Association.to<SoftwareTeam> | null
     declare team_teamName?: string | null
-    declare isApprover?: boolean | null
     declare Technologies?: __.Composition.of.many<SoftwareTechnology_>
     declare Dependents?: __.Composition.of.many<SoftwareSolution.Dependents>
+    declare isApprover?: boolean | null
     static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
     declare static readonly keys: __.KeysOf<SoftwareSolution>;
     declare static readonly elements: __.ElementsOf<SoftwareSolution>;
@@ -146,6 +146,7 @@ export function _SolutionVersionAspect<TBase extends new (...args: any[]) => obj
     declare releaseDate?: __.CdsDate | null
     declare sapVersion?: __.Association.to<SAPVersion> | null
     declare sapVersion_code?: string | null
+    declare isApprover?: boolean | null
     static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
     declare static readonly keys: __.KeysOf<SolutionVersion>;
     declare static readonly elements: __.ElementsOf<SolutionVersion>;
