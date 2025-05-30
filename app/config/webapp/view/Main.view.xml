@@ -45,7 +45,8 @@
 		<f:footer>
 			<OverflowToolbar>
 				<ToolbarSpacer/>		
-				<Button icon="" text="Save" press="onSaveButtonPress" visible="{=%{appModel>/selectedTab} === 'CompanyTab' ? true : false }"/>		
+				<Button icon="" text="Save" press="onSaveConfigButtonPress" visible="{=%{appModel>/selectedTab} === 'CompanyTab' ? true : false }"/>	
+				<Button icon="" text="Save" press="onSaveTeamsButtonPress" visible="{=%{appModel>/selectedTab} === 'UsersTab' ? true : false }"/>	
 			</OverflowToolbar>
 		</f:footer>
 	</f:DynamicPage>

@@ -63,7 +63,7 @@
 					"autoExpandSelect": true,
 					"earlyRequests": true,
 					"groupProperties": {
-						"userGroup": {
+						"userUpdateGroup": {
 							"submit": "API"
 						},						
 						"configUpdateGroup": {
