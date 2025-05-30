@@ -65,7 +65,7 @@ annotate service.SoftwareSolution with @(
     $Type               : 'UI.DataPointType',
     Title               : '{i18n>SolutionStatus}',
     Value               : solutionStatus_code,
-    Criticality         : solutionStatus_code,
+    Criticality         : solutionStatus.criticalityLevel,
     ![@Common.QuickInfo]: solutionStatus.descr,
   },
   UI.DataPoint #platformInfo              : {
@@ -197,6 +197,12 @@ annotate service.SoftwareSolution with @(
     },
     {
       $Type : 'UI.ReferenceFacet',
+      Label : '{i18n>SolutionVersions}',
+      ID    : 'versions',
+      Target: 'versions/@UI.LineItem#SolutionVersions'
+    },
+    {
+      $Type : 'UI.ReferenceFacet',
       Label : '{i18n>Technologies}',
       ID    : 'Technologies',
       Target: 'Technologies/@UI.LineItem#Technologies',
@@ -252,7 +258,7 @@ annotate service.SoftwareSolution with @(
       $Type                    : 'UI.DataField',
       Label                    : '{i18n>SolutionStatus}',
       Value                    : solutionStatus_code,
-      Criticality              : solutionStatus_code,
+      Criticality              : solutionStatus.criticalityLevel,
       CriticalityRepresentation: #WithoutIcon,
       ![@UI.Importance]        : #High,
     },
@@ -526,6 +532,26 @@ annotate service.SoftwareStatus with {
     ![@UI.TextArrangement]: #TextOnly
   }
 };
+
+/** Sub table Solution Versions */
+annotate service.SolutionVersion with @(UI.LineItem #SolutionVersions: [
+  {
+    $Type: 'UI.DataField',
+    Value: version,
+    Label: '{i18n>Version}'
+  },
+  {
+    $Type      : 'UI.DataField',
+    Value      : status.name,
+    Label      : '{i18n>VersionStatus}',
+    Criticality: status.criticalityLevel
+  },
+  {
+    $Type: 'UI.DataField',
+    Value: releaseDate,
+    Label: '{i18n>ReleaseDate}'
+  }
+]);
 
 /** Sub table Dependent Solutions */
 annotate service.SoftwareSolution.Dependents with @(UI.LineItem #DependentSolutions: [

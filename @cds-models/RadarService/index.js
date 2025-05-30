@@ -37,6 +37,9 @@ module.exports.SAPVersion_ = createEntityProxy(['RadarService', 'SAPVersion'], {
 // CleanCoreLevel
 module.exports.CleanCoreLevel = createEntityProxy(['RadarService', 'CleanCoreLevel'], { target: { is_singular: true } })
 module.exports.CleanCoreLevel_ = createEntityProxy(['RadarService', 'CleanCoreLevel'], { target: { is_singular: false }})
+// ApprovalFlow
+module.exports.ApprovalFlow = createEntityProxy(['RadarService', 'ApprovalFlow'], { target: { is_singular: true } })
+module.exports.ApprovalFlow_ = createEntityProxy(['RadarService', 'ApprovalFlow'], { target: { is_singular: false }})
 // CodeQualityLevel
 module.exports.CodeQualityLevel = createEntityProxy(['RadarService', 'CodeQualityLevel'], { target: { is_singular: true } })
 module.exports.CodeQualityLevel_ = createEntityProxy(['RadarService', 'CodeQualityLevel'], { target: { is_singular: false }})
@@ -70,6 +73,9 @@ module.exports.SAPVersion.texts = createEntityProxy(['RadarService', 'SAPVersion
 // CleanCoreLevel.texts
 module.exports.CleanCoreLevel.text = createEntityProxy(['RadarService', 'CleanCoreLevel.texts'], { target: { is_singular: true } })
 module.exports.CleanCoreLevel.texts = createEntityProxy(['RadarService', 'CleanCoreLevel.texts'], { target: { is_singular: false }})
+// ApprovalFlow.texts
+module.exports.ApprovalFlow.text = createEntityProxy(['RadarService', 'ApprovalFlow.texts'], { target: { is_singular: true } })
+module.exports.ApprovalFlow.texts = createEntityProxy(['RadarService', 'ApprovalFlow.texts'], { target: { is_singular: false }})
 // CodeQualityLevel.texts
 module.exports.CodeQualityLevel.text = createEntityProxy(['RadarService', 'CodeQualityLevel.texts'], { target: { is_singular: true } })
 module.exports.CodeQualityLevel.texts = createEntityProxy(['RadarService', 'CodeQualityLevel.texts'], { target: { is_singular: false }})

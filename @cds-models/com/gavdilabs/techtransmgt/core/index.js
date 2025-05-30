@@ -3,6 +3,9 @@ const { createEntityProxy } = require('./../../../../_')
 // SoftwareStatus
 module.exports.SoftwareStatu = createEntityProxy(['com.gavdilabs.techtransmgt.core', 'SoftwareStatus'], { target: { is_singular: true } })
 module.exports.SoftwareStatus = createEntityProxy(['com.gavdilabs.techtransmgt.core', 'SoftwareStatus'], { target: { is_singular: false }})
+// ApprovalFlow
+module.exports.ApprovalFlow = createEntityProxy(['com.gavdilabs.techtransmgt.core', 'ApprovalFlow'], { target: { is_singular: true } })
+module.exports.ApprovalFlow_ = createEntityProxy(['com.gavdilabs.techtransmgt.core', 'ApprovalFlow'], { target: { is_singular: false }})
 // SAPVersion
 module.exports.SAPVersion = createEntityProxy(['com.gavdilabs.techtransmgt.core', 'SAPVersion'], { target: { is_singular: true } })
 module.exports.SAPVersion_ = createEntityProxy(['com.gavdilabs.techtransmgt.core', 'SAPVersion'], { target: { is_singular: false }})
@@ -57,6 +60,9 @@ module.exports.CompanyConfiguration_ = createEntityProxy(['com.gavdilabs.techtra
 // SoftwareStatus.texts
 module.exports.SoftwareStatus.text = createEntityProxy(['com.gavdilabs.techtransmgt.core', 'SoftwareStatus.texts'], { target: { is_singular: true } })
 module.exports.SoftwareStatus.texts = createEntityProxy(['com.gavdilabs.techtransmgt.core', 'SoftwareStatus.texts'], { target: { is_singular: false }})
+// ApprovalFlow.texts
+module.exports.ApprovalFlow.text = createEntityProxy(['com.gavdilabs.techtransmgt.core', 'ApprovalFlow.texts'], { target: { is_singular: true } })
+module.exports.ApprovalFlow.texts = createEntityProxy(['com.gavdilabs.techtransmgt.core', 'ApprovalFlow.texts'], { target: { is_singular: false }})
 // SAPVersion.texts
 module.exports.SAPVersion.text = createEntityProxy(['com.gavdilabs.techtransmgt.core', 'SAPVersion.texts'], { target: { is_singular: true } })
 module.exports.SAPVersion.texts = createEntityProxy(['com.gavdilabs.techtransmgt.core', 'SAPVersion.texts'], { target: { is_singular: false }})

@@ -62,6 +62,9 @@ service RadarService {
   entity CleanCoreLevel           as projection on core.CleanCoreLevel;
 
   @readonly
+  entity ApprovalFlow             as projection on core.ApprovalFlow;
+
+  @readonly
   entity CodeQualityLevel         as projection on core.CodeQualityLevel;
 
   @readonly
@@ -75,4 +78,3 @@ service RadarService {
   function getActiveUser() returns types.ActiveUser;
 
 }
-

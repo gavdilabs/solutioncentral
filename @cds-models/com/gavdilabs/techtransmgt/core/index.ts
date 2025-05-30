@@ -39,6 +39,7 @@ export type deploymentTypes = "OnPremise" | "Cloud"
 export function _SoftwareStatuAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
   return class SoftwareStatu extends _sap_common._CodeListAspect(Base) {
     declare code?: __.Key<number>
+    declare criticalityLevel?: number | null
     declare texts?: __.Composition.of.many<SoftwareStatus.texts>
     declare localized?: __.Association.to<SoftwareStatus.text> | null
     static override readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
@@ -62,6 +63,33 @@ Object.defineProperty(SoftwareStatu, 'is_singular', { value: true })
 */
 export class SoftwareStatus extends Array<SoftwareStatu> {$count?: number}
 Object.defineProperty(SoftwareStatus, 'name', { value: 'com.gavdilabs.techtransmgt.core.SoftwareStatus' })
+
+export function _ApprovalFlowAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
+  return class ApprovalFlow extends _sap_common._CodeListAspect(Base) {
+    declare code?: __.Key<number>
+    declare texts?: __.Composition.of.many<ApprovalFlow.texts>
+    declare localized?: __.Association.to<ApprovalFlow.text> | null
+    static override readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
+    declare static readonly keys: __.KeysOf<ApprovalFlow>;
+    declare static readonly elements: __.ElementsOf<ApprovalFlow>;
+    declare static readonly actions: typeof _sap_common.CodeList.actions & globalThis.Record<never, never>;
+  };
+}
+/**
+* Aspect for a code list with name and description
+* 
+* See https://cap.cloud.sap/docs/cds/common#aspect-codelist
+*/
+export class ApprovalFlow extends _ApprovalFlowAspect(__.Entity) {}
+Object.defineProperty(ApprovalFlow, 'name', { value: 'com.gavdilabs.techtransmgt.core.ApprovalFlow' })
+Object.defineProperty(ApprovalFlow, 'is_singular', { value: true })
+/**
+* Aspect for a code list with name and description
+* 
+* See https://cap.cloud.sap/docs/cds/common#aspect-codelist
+*/
+export class ApprovalFlow_ extends Array<ApprovalFlow> {$count?: number}
+Object.defineProperty(ApprovalFlow_, 'name', { value: 'com.gavdilabs.techtransmgt.core.ApprovalFlow' })
 
 export function _SAPVersionAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
   return class SAPVersion extends _sap_common._CodeListAspect(Base) {
@@ -530,7 +558,8 @@ export function _CompanyConfigurationAspect<TBase extends new (...args: any[]) =
     declare currentSAPVersion_code?: string | null
     declare expectedMinimalCleanCoreValue?: __.Association.to<CleanCoreLevel> | null
     declare expectedMinimalCleanCoreValue_code?: number | null
-    declare approvalForNewSolutions?: boolean | null
+    declare approvalFlow?: __.Association.to<ApprovalFlow> | null
+    declare approvalFlow_code?: number | null
     declare allowDeprecationWithoutReplacement?: boolean | null
     static override readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
     declare static readonly keys: __.KeysOf<CompanyConfiguration> & typeof _.cuid.keys;
@@ -570,6 +599,25 @@ export namespace SoftwareStatus {
   Object.defineProperty(text, 'is_singular', { value: true })
   export class texts extends Array<text> {$count?: number}
   Object.defineProperty(texts, 'name', { value: 'com.gavdilabs.techtransmgt.core.SoftwareStatus.texts' })
+  
+}
+export namespace ApprovalFlow {
+  export function _textAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
+    return class text extends _sap_common._TextsAspectAspect(Base) {
+      declare name?: string | null
+      declare descr?: string | null
+      declare code?: __.Key<number>
+      static override readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
+      declare static readonly keys: __.KeysOf<text> & typeof _sap_common.TextsAspect.keys;
+      declare static readonly elements: __.ElementsOf<text>;
+      declare static readonly actions: typeof _sap_common.TextsAspect.actions & globalThis.Record<never, never>;
+    };
+  }
+  export class text extends _textAspect(__.Entity) {}
+  Object.defineProperty(text, 'name', { value: 'com.gavdilabs.techtransmgt.core.ApprovalFlow.texts' })
+  Object.defineProperty(text, 'is_singular', { value: true })
+  export class texts extends Array<text> {$count?: number}
+  Object.defineProperty(texts, 'name', { value: 'com.gavdilabs.techtransmgt.core.ApprovalFlow.texts' })
   
 }
 export namespace SAPVersion {

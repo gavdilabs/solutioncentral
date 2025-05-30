@@ -172,19 +172,11 @@ export function _SolutionVersionAspect<TBase extends new (...args: any[]) => obj
     };
   };
 }
-/**
-* Aspect to capture changes by user and name
-* 
-* See https://cap.cloud.sap/docs/cds/common#aspect-managed
-*/
+/** Sub table Solution Versions */
 export class SolutionVersion extends _SolutionVersionAspect(__.Entity) {}
 Object.defineProperty(SolutionVersion, 'name', { value: 'RadarService.SolutionVersion' })
 Object.defineProperty(SolutionVersion, 'is_singular', { value: true })
-/**
-* Aspect to capture changes by user and name
-* 
-* See https://cap.cloud.sap/docs/cds/common#aspect-managed
-*/
+/** Sub table Solution Versions */
 export class SolutionVersion_ extends Array<SolutionVersion> {$count?: number}
 Object.defineProperty(SolutionVersion_, 'name', { value: 'RadarService.SolutionVersion' })
 
@@ -361,7 +353,8 @@ export function _CompanyConfigurationAspect<TBase extends new (...args: any[]) =
     declare currentSAPVersion_code?: string | null
     declare expectedMinimalCleanCoreValue?: __.Association.to<CleanCoreLevel> | null
     declare expectedMinimalCleanCoreValue_code?: number | null
-    declare approvalForNewSolutions?: boolean | null
+    declare approvalFlow?: __.Association.to<ApprovalFlow> | null
+    declare approvalFlow_code?: number | null
     declare allowDeprecationWithoutReplacement?: boolean | null
     static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
     declare static readonly keys: __.KeysOf<CompanyConfiguration>;
@@ -472,6 +465,35 @@ Object.defineProperty(CleanCoreLevel, 'is_singular', { value: true })
 */
 export class CleanCoreLevel_ extends Array<CleanCoreLevel> {$count?: number}
 Object.defineProperty(CleanCoreLevel_, 'name', { value: 'RadarService.CleanCoreLevel' })
+
+export function _ApprovalFlowAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
+  return class ApprovalFlow extends Base {
+    declare name?: string | null
+    declare descr?: string | null
+    declare code?: __.Key<number>
+    declare texts?: __.Composition.of.many<ApprovalFlow.texts>
+    declare localized?: __.Association.to<ApprovalFlow.text> | null
+    static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
+    declare static readonly keys: __.KeysOf<ApprovalFlow>;
+    declare static readonly elements: __.ElementsOf<ApprovalFlow>;
+    declare static readonly actions: globalThis.Record<never, never>;
+  };
+}
+/**
+* Aspect for a code list with name and description
+* 
+* See https://cap.cloud.sap/docs/cds/common#aspect-codelist
+*/
+export class ApprovalFlow extends _ApprovalFlowAspect(__.Entity) {}
+Object.defineProperty(ApprovalFlow, 'name', { value: 'RadarService.ApprovalFlow' })
+Object.defineProperty(ApprovalFlow, 'is_singular', { value: true })
+/**
+* Aspect for a code list with name and description
+* 
+* See https://cap.cloud.sap/docs/cds/common#aspect-codelist
+*/
+export class ApprovalFlow_ extends Array<ApprovalFlow> {$count?: number}
+Object.defineProperty(ApprovalFlow_, 'name', { value: 'RadarService.ApprovalFlow' })
 
 export function _CodeQualityLevelAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
   return class CodeQualityLevel extends Base {
@@ -594,6 +616,7 @@ export function _SoftwareStatuAspect<TBase extends new (...args: any[]) => objec
     declare name?: string | null
     declare descr?: string | null
     declare code?: __.Key<number>
+    declare criticalityLevel?: number | null
     declare texts?: __.Composition.of.many<SoftwareStatus.texts>
     declare localized?: __.Association.to<SoftwareStatus.text> | null
     static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
@@ -841,6 +864,27 @@ export namespace CleanCoreLevel {
   Object.defineProperty(text, 'is_singular', { value: true })
   export class texts extends Array<text> {$count?: number}
   Object.defineProperty(texts, 'name', { value: 'RadarService.CleanCoreLevel.texts' })
+  
+}
+export namespace ApprovalFlow {
+  export function _textAspect<TBase extends new (...args: any[]) => object>(Base: TBase) {
+    return class text extends Base {
+      /** Type for a language code */
+      declare locale?: __.Key<_sap_common.Locale>
+      declare name?: string | null
+      declare descr?: string | null
+      declare code?: __.Key<number>
+      static readonly kind: 'entity' | 'type' | 'aspect' = 'entity';
+      declare static readonly keys: __.KeysOf<text>;
+      declare static readonly elements: __.ElementsOf<text>;
+      declare static readonly actions: globalThis.Record<never, never>;
+    };
+  }
+  export class text extends _textAspect(__.Entity) {}
+  Object.defineProperty(text, 'name', { value: 'RadarService.ApprovalFlow.texts' })
+  Object.defineProperty(text, 'is_singular', { value: true })
+  export class texts extends Array<text> {$count?: number}
+  Object.defineProperty(texts, 'name', { value: 'RadarService.ApprovalFlow.texts' })
   
 }
 export namespace CodeQualityLevel {

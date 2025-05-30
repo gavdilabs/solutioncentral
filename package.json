@@ -21,7 +21,7 @@
     "@types/chai": "^4.3.19",
     "@types/chai-http": "^3.0.5",
     "@types/jest": "^29.5.14",
-    "cds-plugin-ui5": "^0.13.0",
+    "cds-plugin-ui5": "^0.12.1",
     "chai": "^4.5.0",
     "chai-as-promised": "^8.0.1",
     "chai-http": "^5.1.1",

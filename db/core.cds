@@ -34,11 +34,22 @@ type deploymentTypes        : String enum {
 
 // CodeLists
 entity SoftwareStatus : sap.common.CodeList {
-  key code  : Integer @assert.range: [
+  key code             : Integer @assert.range: [
         0,
         6
       ];
-      descr : String;
+      descr            : String;
+      criticalityLevel : Integer @assert.range: [
+        0,
+        5
+      ];
+}
+
+entity ApprovalFlow : sap.common.CodeList {
+  key code : Integer @assert.range: [
+        1,
+        3
+      ];
 }
 
 entity SAPVersion : sap.common.CodeList {
@@ -203,6 +214,6 @@ entity TechnologyReplacement {
 entity CompanyConfiguration : cuid, managed {
   currentSAPVersion                  : Association to SAPVersion;
   expectedMinimalCleanCoreValue      : Association to CleanCoreLevel;
-  approvalForNewSolutions            : Boolean;
+  approvalFlow                       : Association to ApprovalFlow;
   allowDeprecationWithoutReplacement : Boolean;
 }
