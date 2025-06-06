@@ -1,0 +1,209 @@
+<mvc:View
+	controllerName="com.gavdilabs.techtransmgt.solutioncentral.controller.Main"
+	displayBlock="true"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.f"
+	xmlns:fb="sap.ui.comp.filterbar"
+	core:require="{
+		formatter: 'com/gavdilabs/techtransmgt/solutioncentral/model/formatter'
+	}">
+
+<f:DynamicPage id="solutionCataloguePage">
+	<f:title>
+		<f:DynamicPageTitle>
+			<f:heading>
+				<Title text="{i18n>appTitle}"/>
+			</f:heading>
+		</f:DynamicPageTitle>
+	</f:title>
+	<f:header>
+		<f:DynamicPageHeader>
+			<f:content>
+				<!-- Filter Bar -->
+				<fb:FilterBar id="solutionCatalogueFilterBar" persistencyKey="solutionCatalogueFB"
+					useToolbar="false" search=".onFilterBarSearch" clear=".onFilterBarClear"
+					showClearOnFB="true">
+					<fb:filterGroupItems>
+						<!-- Search Field -->
+						<fb:FilterGroupItem name="Search" groupName="searchField"
+							visibleInFilterBar="true">
+							<fb:control>
+								<SearchField search=".onFilterBarSearch" value="{solutionTableConfig>/search}"/>
+							</fb:control>
+						</fb:FilterGroupItem>
+
+						<!-- Platform Multi-Select Field -->
+						<fb:FilterGroupItem name="Platform" groupName="platform"
+							label="{i18n>colPlatformName}" visibleInFilterBar="true">
+							<fb:control>
+								<MultiComboBox
+									name="{i18n>colPlatformName}"
+									selectedKeys="{solutionTableConfig>/filters/platforms}"
+									items="{
+										path: '/Platform',
+										templateShareable: true
+									}">
+									<core:Item key="{code}" text="{name}"/>
+								</MultiComboBox>
+							</fb:control>
+						</fb:FilterGroupItem>
+
+						<!-- Business Criticality field -->
+						<fb:FilterGroupItem name="Business Criticality" groupName="businessCriticality"
+							label="{i18n>colBusinessCriticality}" visibleInFilterBar="false">
+							<fb:control>
+								<MultiComboBox
+									name="{i18n>colBusinessCriticality}"
+									selectedKeys="{solutionTableConfig>/filters/businessCriticalityLevels}"
+									items="{
+										path: '/BusinessCriticalityLevel',
+										templateShareable: true
+									}">
+									<core:Item key="{code}" text="{name}"/>
+								</MultiComboBox>
+							</fb:control>
+						</fb:FilterGroupItem>
+
+						<!-- Clean Core field -->
+						<fb:FilterGroupItem name="Clean Core" groupName="cleanCore"
+							label="{i18n>colCleanCore}" visibleInFilterBar="false">
+							<fb:control>
+								<MultiComboBox
+									name="{i18n>colCleanCore}"
+									selectedKeys="{solutionTableConfig>/filters/cleanCoreLevels}"
+									items="{
+										path: '/CleanCoreLevel',
+										templateShareable: true
+									}">
+									<core:Item key="{code}" text="{code} - {descr}"/>
+								</MultiComboBox>
+							</fb:control>
+						</fb:FilterGroupItem>
+
+						<!-- Code Quality field -->
+						<fb:FilterGroupItem name="Code Quality" groupName="codeQuality"
+							label="{i18n>colCodeQuality}" visibleInFilterBar="false">
+							<fb:control>
+								<MultiComboBox
+									name="{i18n>colCodeQuality}"
+									selectedKeys="{solutionTableConfig>/filters/codeQualityLevels}"
+									items="{
+										path: '/CodeQualityLevel',
+										templateShareable: true
+									}">
+									<core:Item key="{code}" text="{code} - {descr}"/>
+								</MultiComboBox>
+							</fb:control>
+						</fb:FilterGroupItem>
+
+						<!-- Cost Center field -->
+						<fb:FilterGroupItem name="Cost Center" groupName="costCenter"
+							label="{i18n>colCostCenter}" visibleInFilterBar="false">
+							<fb:control>
+								<Input value="{solutionTableConfig>/filters/costCenter}"/>
+							</fb:control>
+						</fb:FilterGroupItem>
+
+						<!-- Status field -->
+						<fb:FilterGroupItem name="Status" groupName="status"
+							label="{i18n>colStatus}" visibleInFilterBar="false">
+							<fb:control>
+								<MultiComboBox
+									name="{i18n>colStatus}"
+									selectedKeys="{solutionTableConfig>/filters/statusses}"
+									items="{
+										path: '/SoftwareStatus',
+										templateShareable: true
+									}">
+									<core:Item key="{code}" text="{name}"/>
+								</MultiComboBox>
+							</fb:control>
+						</fb:FilterGroupItem>
+					</fb:filterGroupItems>
+				</fb:FilterBar>
+			</f:content>
+		</f:DynamicPageHeader>
+	</f:header>
+	<f:content>
+		<Table id="solutionCatalogueTable"
+			mode="MultiSelect"
+			growing="true"
+			selectionChange="onTableSelect"
+			items ="{
+				path: '/SoftwareSolution',
+				parameters: {
+					$count: true
+				}
+			}">
+			<headerToolbar>
+				<OverflowToolbar design="Solid">
+					<Title text="{
+							path: '/SoftwareSolution/$count',
+							formatter: '.formatTableTitle'
+						}"/>
+					<ToolbarSpacer/>
+					<Button tooltip="{i18n>create}" text="{i18n>create}" press=".onPressCreate"/>
+					<Button tooltip="{i18n>delete}" enabled="{= ${solutionTableConfig>/selectedItems}.length > 0}" text="{i18n>delete}" press=".onPressDelete"/>
+					<ToolbarSeparator/>
+					<Button tooltip="{i18n>settings}" icon="sap-icon://action-settings" press=".onPressTableSettings"/>
+					<Button tooltip="{i18n>export}" icon="sap-icon://excel-attachment" press=".onPressTableExport"/>
+				</OverflowToolbar>
+			</headerToolbar>
+			<columns>
+				<Column minScreenWidth="Tablet" demandPopin="true">
+					<Text text="{i18n>colSolutionName}"/>
+				</Column>
+				<Column minScreenWidth="Tablet" demandPopin="true">
+					<Text text="{i18n>colPlatformName}"/>
+				</Column>
+				<Column minScreenWidth="Tablet" demandPopin="true">
+					<Text text="{i18n>colCleanCore}"/>
+				</Column>
+				<Column minScreenWidth="Tablet" demandPopin="true">
+					<Text text="{i18n>colCodeQuality}"/>
+				</Column>
+				<Column minScreenWidth="Tablet" demandPopin="true">
+					<Text text="{i18n>colStatus}"/>
+				</Column>
+				<Column minScreenWidth="Tablet" demandPopin="false">
+					<Text text="{i18n>colCostCenter}"/>
+				</Column>
+				<Column minScreenWidth="Tablet" demandPopin="false">
+					<Text text="{i18n>colBusinessCriticality}"/>
+				</Column>
+			</columns>
+			<items>
+				<ColumnListItem type="Navigation" vAlign="Middle" press=".onTableItemPress">
+					<cells>
+						<ObjectIdentifier title="{name}"/>
+						<Text text="{platform/name}"/>
+						<RatingIndicator maxValue="5" value="{cleanCoreRating_code}" editable="false"/>
+						<RatingIndicator maxValue="5" value="{codeQualityRating_code}" editable="false"/>
+						<ObjectStatus text="{solutionStatus/descr}" state="{
+								path: 'solutionStatus/criticalityLevel',
+								formatter: 'formatter.formatSoftwareStatus'
+							}" icon="{
+								path: 'solutionStatus/criticalityLevel',
+								formatter: 'formatter.formatSoftwareStatusIcon'
+							}" inverted="true"/>
+						<Text text="{costCenter}" />
+						<ObjectStatus tooltip="{businessCriticality/descr}" icon="{
+								path: 'businessCriticality/code',
+								formatter: 'formatter.formatBusinessCriticalityLevelIcon'
+							}" state="{
+								path: 'businessCriticality/code',
+								formatter: 'formatter.formatBusinessCriticalityLevelState'
+							}" text="{
+								path: 'businessCriticality/code',
+								formatter: 'formatter.formatBusinessCriticalityLevelText'
+							}"/>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+	</f:content>
+</f:DynamicPage>
+
+</mvc:View>

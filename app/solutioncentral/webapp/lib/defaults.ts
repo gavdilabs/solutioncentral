@@ -1,0 +1,40 @@
+import { SolutionCatalogueTableEntry } from "./types";
+
+export const DefaultSolutionTableConfig = {
+	columnItems: [
+		{ key: "name", text: "colSolutionName", selected: true },
+		{ key: "description", text: "colDescription", selected: false },
+		{ key: "platform/name", text: "colPlatformName", selected: true },
+		{ key: "cleanCoreRating_code", text: "colCleanCore", selected: true },
+		{ key: "solutionStatus/descr", text: "colStatus", selected: true },
+		{ key: "costCenter", text: "colCostCenter", selected: true },
+		{ key: "businessCriticality/code", text: "colBusinessCriticality", selected: true },
+		{ key: "createdAt", text: "colCreatedOn", selected: false },
+		{ key: "createdBy", text: "colCreatedBy", selected: false },
+		{ key: "modifiedAt", text: "colLastModified", selected: false },
+		{ key: "modifiedBy", text: "colLastModifiedBy", selected: false },
+		{ key: "repository", text: "colRepository", selected: false },
+		{ key: "packageNamespace", text: "colPackageNamespace", selected: false },
+		{ key: "owner/fullName", text: "colOwnerName", selected: false },
+		{ key: "team/teamName", text: "colTeamName", selected: false },
+	],
+	sortItems: [
+		{ key: "name", text: "colSolutionName", selected: true },
+		{ key: "status_code", text: "colStatus", selected: false },
+		{ key: "createdAt", text: "colCreatedOn", selected: false },
+		{ key: "createdBy", text: "colCreatedBy", selected: false },
+		{ key: "modifiedAt", text: "colLastModified", selected: false },
+		{ key: "modifiedBy", text: "colLastModifiedBy", selected: false },
+		{ key: "platform_code", text: "colPlatformName", selected: false },
+		{ key: "cleanCoreRating_code", text: "colCleanCore", selected: false },
+		{ key: "costCenter", text: "colCostCenter", selected: false },
+		{ key: "businessCriticality/code", text: "colBusinessCriticality", selected: false },
+	],
+	groupItems: [
+		{ key: "platform_code", text: "colPlatformName", selected: false },
+		{ key: "status_code", text: "colStatus", selected: false },
+		{ key: "cleanCoreRating_code", text: "colCleanCore", selected: false },
+	],
+	selectedItems: new Array<SolutionCatalogueTableEntry>(),
+	filters: {},
+}
