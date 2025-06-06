@@ -31,3 +31,12 @@ export interface SettingsDialogItem {
 	text: string;
 	selected?: boolean;
 }
+
+export interface ViewSettingsDialogItem {
+	key: string;
+	path: string;
+	label?: string;
+	selected?: boolean;
+	sortable?: boolean;
+	groupable?: boolean;
+}

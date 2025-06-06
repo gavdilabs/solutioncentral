@@ -4,7 +4,7 @@ import { Button$PressEvent } from "sap/m/Button";
 import JSONModel from "sap/ui/model/json/JSONModel";
 import { CustomModels } from "../lib/constants";
 import { DefaultSolutionTableConfig } from "../lib/defaults";
-import { SettingsDialogItem, SolutionCatalogueTableEntry, SolutionTableConfig } from "../lib/types";
+import { SolutionCatalogueTableEntry, SolutionTableConfig, ViewSettingsDialogItem } from "../lib/types";
 import { SoftwareSolutionFilterConstructor } from "../lib/utils/filters";
 import Table from "sap/m/Table";
 import ODataListBinding from "sap/ui/model/odata/v4/ODataListBinding";
@@ -13,25 +13,45 @@ import Context from "sap/ui/model/odata/v4/Context";
 import MessageBox from "sap/m/MessageBox";
 import Spreadsheet from "sap/ui/export/Spreadsheet";
 import { getSoftwareSolutionColumnConfig } from "../lib/utils/export";
-import Fragment from "sap/ui/core/Fragment";
-import ViewSettingsDialog from "sap/m/ViewSettingsDialog";
-import { bindViewSettingsColumnAggregration, bindViewSettingsDialog } from "../lib/utils/binding";
-import List from "sap/m/List";
+import Engine from "sap/m/p13n/Engine";
+import { SoftwareSolutionPersonalization } from "../lib/utils/personalization";
+import { QuickSort$ChangeEvent } from "sap/m/table/columnmenu/QuickSort";
+import { QuickGroup$ChangeEvent } from "sap/m/table/columnmenu/QuickGroup";
+import { MenuBase$BeforeOpenEvent } from "sap/m/table/columnmenu/MenuBase";
+import Menu from "sap/m/table/columnmenu/Menu";
+import { SelectionState } from "sap/m/p13n/SelectionController";
 
 /**
  * @namespace com.gavdilabs.techtransmgt.solutioncentral.controller
  */
 export default class Main extends BaseController {
 	private readonly TABLE_ID = "solutionCatalogueTable";
-	private readonly CONFIG_MODEL = "solutionTableConfig";
 
 	private tableConfigModel: JSONModel | undefined;
-	private settingsDialog: ViewSettingsDialog | undefined;
-	private columnSettingsList: List | undefined;
+	private softwareSolutionPersonalization: SoftwareSolutionPersonalization;
 
 	public onInit(): void {
 		this.tableConfigModel = new JSONModel(DefaultSolutionTableConfig);
 		this.setModel(this.tableConfigModel, CustomModels.SOLUTION_TABLE_CONFIG);
+		this.getRouter().getRoute("main").attachPatternMatched(this._onPatternMatched, this);
+	}
+
+	private _onPatternMatched(): void {
+		const table = this.getView().byId("solutionCatalogueTable") as Table;
+		this.softwareSolutionPersonalization = new SoftwareSolutionPersonalization(table, "/items", this.tableConfigModel);
+	}
+
+	public beforeOpenColumnMenu(event: MenuBase$BeforeOpenEvent) {
+		const menu = this.getView().byId("menu") as Menu;
+		this.softwareSolutionPersonalization.beforeOpenQuickMenu(event, menu);
+	}
+
+	public onSort(event: QuickSort$ChangeEvent) {
+		this.softwareSolutionPersonalization.onSort(event);
+	}
+
+	public onGroup(event: QuickGroup$ChangeEvent) {
+		this.softwareSolutionPersonalization.onGroup(event);
 	}
 
 	public async formatTableTitle(count: number | string): Promise<string> {
@@ -75,45 +95,19 @@ export default class Main extends BaseController {
 		})
 	}
 
-	public async onPressTableSettings(): Promise<void> {
-		if (!this.settingsDialog) {
-			const resourceBundle = await this.getResourceBundle();
-
-			this.settingsDialog = await Fragment.load({
-				id: "solutionTableSettingsDialog",
-				name: "com.gavdilabs.techtransmgt.solutioncentral.view.fragments.TableSettingsDialog",
-				controller: this,
-			}) as ViewSettingsDialog;
-
-			this.getView().addDependent(this.settingsDialog);
-			this.settingsDialog.setModel(this.getView().getModel(this.CONFIG_MODEL));
-
-			bindViewSettingsDialog(this.settingsDialog, this.CONFIG_MODEL, resourceBundle);
-			this.columnSettingsList = bindViewSettingsColumnAggregration(this.settingsDialog, this.CONFIG_MODEL, resourceBundle);
-		}
-
-		this.settingsDialog.open();
-	}
-
-	public handleSettingsConfirm(): void {
-		// TODO: Implement
-	}
-
-	public handleSettingsReset(): void {
-		this.tableConfigModel.setProperty("/columnItems", DefaultSolutionTableConfig.columnItems);
-		this.tableConfigModel.setProperty("/sortItems", DefaultSolutionTableConfig.sortItems);
-		this.tableConfigModel.setProperty("/groupItems", DefaultSolutionTableConfig.groupItems);
-		this.columnSettingsList?.getBinding("items")?.getModel().refresh(true);
-
-		// TODO: Apply to table
+	public onPressTableSettings(event: Button$PressEvent): void {
+		this.softwareSolutionPersonalization.openTableSettings(event);
 	}
 
 	public async onPressTableExport(): Promise<void> {
 		const resourceBundle = await this.getResourceBundle();
 		const table = this.getView().byId(this.TABLE_ID) as Table;
 		const binding = table.getBinding("items") as ODataListBinding;
-		const columns = this.tableConfigModel.getProperty("/columnItems") as Array<SettingsDialogItem>;
-		const visibleColumns = columns.filter((el) => el.selected).map((el) => el.key);
+		const state = await Engine.getInstance().retrieveState(table) as any;
+		const selectedColumnP13nKeys = new Set((state.Columns as Array<SelectionState>).map((el) => el.key));
+		const configColumns = this.tableConfigModel.getProperty("/items") as Array<ViewSettingsDialogItem>;
+		const visibleColumns = configColumns.filter((el) => selectedColumnP13nKeys.has(el.key)).map((el)=> el.path);
+
 		const spreadsheet = new Spreadsheet({
 			workbook: {
 				columns: getSoftwareSolutionColumnConfig(visibleColumns, resourceBundle),
