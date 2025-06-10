@@ -33,12 +33,16 @@ export default class Main extends BaseController {
 	public onInit(): void {
 		this.tableConfigModel = new JSONModel(DefaultSolutionTableConfig);
 		this.setModel(this.tableConfigModel, CustomModels.SOLUTION_TABLE_CONFIG);
-		this.getRouter().getRoute("main").attachPatternMatched(this._onPatternMatched, this);
+		this.getRouter().getRoute("main").attachPatternMatched(this._onPatternMatched.bind(this), this);
 	}
 
 	private _onPatternMatched(): void {
 		const table = this.getView().byId("solutionCatalogueTable") as Table;
-		this.softwareSolutionPersonalization = new SoftwareSolutionPersonalization(table, "/items", this.tableConfigModel);
+		this.getResourceBundle().then((bundle) => {
+			this.softwareSolutionPersonalization = new SoftwareSolutionPersonalization(table, "/items", this.tableConfigModel, bundle);
+		}).catch((e) => {
+			console.error("Failed to configure personalization engine", e);
+		});
 	}
 
 	public beforeOpenColumnMenu(event: MenuBase$BeforeOpenEvent) {
@@ -103,10 +107,14 @@ export default class Main extends BaseController {
 		const resourceBundle = await this.getResourceBundle();
 		const table = this.getView().byId(this.TABLE_ID) as Table;
 		const binding = table.getBinding("items") as ODataListBinding;
-		const state = await Engine.getInstance().retrieveState(table) as any;
-		const selectedColumnP13nKeys = new Set((state.Columns as Array<SelectionState>).map((el) => el.key));
+		const state = await Engine.getInstance().retrieveState(table);
+		const selectedColumnP13nKeys = new Set((state.controller.Columns as Array<SelectionState>).map((el) => el.key));
 		const configColumns = this.tableConfigModel.getProperty("/items") as Array<ViewSettingsDialogItem>;
-		const visibleColumns = configColumns.filter((el) => selectedColumnP13nKeys.has(el.key)).map((el)=> el.path);
+
+		if (!configColumns) return;
+
+		const visibleColumns = configColumns.filter((el) =>
+			selectedColumnP13nKeys.has(el.key)).map((el) => el.path);
 
 		const spreadsheet = new Spreadsheet({
 			workbook: {

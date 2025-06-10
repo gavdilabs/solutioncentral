@@ -175,70 +175,70 @@
 					</columnmenu:Menu>
 				</dependents>
 				<columns>
-					<Column app:p13nKey="colSolutionName" headerMenu="menu" minScreenWidth="Tablet"
+					<Column app:p13nKey="column.name" headerMenu="menu" minScreenWidth="Tablet"
 						demandPopin="true">
-						<Text text="{i18n>colSolutionName}" />
+						<Text text="{i18n>column.name}" />
 					</Column>
-					<Column app:p13nKey="colPlatformName" headerMenu="menu" minScreenWidth="Tablet"
+					<Column app:p13nKey="column.platform" headerMenu="menu" minScreenWidth="Tablet"
 						demandPopin="true">
-						<Text text="{i18n>colPlatformName}" />
+						<Text text="{i18n>column.platform}" />
 					</Column>
-					<Column app:p13nKey="colCleanCore" headerMenu="menu" minScreenWidth="Tablet"
+					<Column app:p13nKey="column.cleanCoreLevel" headerMenu="menu" minScreenWidth="Tablet"
 						demandPopin="true">
-						<Text text="{i18n>colCleanCore}" />
+						<Text text="{i18n>column.cleanCoreLevel}" />
 					</Column>
-					<Column app:p13nKey="colCodeQuality" headerMenu="menu" minScreenWidth="Tablet"
+					<Column app:p13nKey="column.codeQualityLevel" headerMenu="menu" minScreenWidth="Tablet"
 						demandPopin="true">
-						<Text text="{i18n>colCodeQuality}" />
+						<Text text="{i18n>column.codeQualityLevel}" />
 					</Column>
-					<Column app:p13nKey="colStatus" headerMenu="menu" minScreenWidth="Tablet"
+					<Column app:p13nKey="column.status" headerMenu="menu" minScreenWidth="Tablet"
 						demandPopin="true">
-						<Text text="{i18n>colStatus}" />
+						<Text text="{i18n>column.status}" />
 					</Column>
-					<Column app:p13nKey="colCostCenter" headerMenu="menu" minScreenWidth="Tablet"
+					<Column app:p13nKey="column.costCenter" headerMenu="menu" minScreenWidth="Tablet"
 						demandPopin="false">
-						<Text text="{i18n>colCostCenter}" />
+						<Text text="{i18n>column.costCenter}" />
 					</Column>
-					<Column app:p13nKey="colBusinessCriticality" headerMenu="menu" minScreenWidth="Tablet"
+					<Column app:p13nKey="column.businessCriticality" headerMenu="menu" minScreenWidth="Tablet"
 						demandPopin="false">
-						<Text text="{i18n>colBusinessCriticality}" />
+						<Text text="{i18n>column.businessCriticality}" />
 					</Column>
 					<!-- Columns not visible by default -->
-					<Column app:p13nKey="colSolutionDesc" visible="false" minScreenWidth="Tablet"
+					<Column app:p13nKey="column.description" visible="false" minScreenWidth="Tablet"
 						demandPopin="true">
-						<Text text="{i18n>colSolutionDesc}" />
+						<Text text="{i18n>column.description}" />
 					</Column>
-					<Column app:p13nKey="colCreatedOn" visible="false" minScreenWidth="Tablet"
+					<Column app:p13nKey="column.createdOn" visible="false" minScreenWidth="Tablet"
 						demandPopin="true">
-						<Text text="{i18n>colCreatedOn}" />
+						<Text text="{i18n>column.createdOn}" />
 					</Column>
-					<Column app:p13nKey="colCreatedBy" visible="false" minScreenWidth="Tablet"
+					<Column app:p13nKey="column.createdBy" visible="false" minScreenWidth="Tablet"
 						demandPopin="true">
-						<Text text="{i18n>colCreatedBy}" />
+						<Text text="{i18n>column.createdBy}" />
 					</Column>
-					<Column app:p13nKey="colLastModified" visible="false" minScreenWidth="Tablet"
+					<Column app:p13nKey="column.lastModified" visible="false" minScreenWidth="Tablet"
 						demandPopin="true">
-						<Text text="{i18n>colLastModified}" />
+						<Text text="{i18n>column.lastModified}" />
 					</Column>
-					<Column app:p13nKey="colLastModifiedBy" visible="false" minScreenWidth="Tablet"
+					<Column app:p13nKey="column.lastModifiedBy" visible="false" minScreenWidth="Tablet"
 						demandPopin="true">
-						<Text text="{i18n>colLastModifiedBy}" />
+						<Text text="{i18n>column.lastModifiedBy}" />
 					</Column>
-					<Column app:p13nKey="colPackageNamespace" visible="false" minScreenWidth="Tablet"
+					<Column app:p13nKey="column.packageNamespace" visible="false" minScreenWidth="Tablet"
 						demandPopin="true">
-						<Text text="{i18n>colPackageNamespace}" />
+						<Text text="{i18n>column.packageNamespace}" />
 					</Column>
-					<Column app:p13nKey="colRepository" visible="false" minScreenWidth="Tablet"
+					<Column app:p13nKey="column.repository" visible="false" minScreenWidth="Tablet"
 						demandPopin="true">
-						<Text text="{i18n>colRepository}" />
+						<Text text="{i18n>column.repository}" />
 					</Column>
-					<Column app:p13nKey="colTeamName" visible="false" minScreenWidth="Tablet"
+					<Column app:p13nKey="column.team" visible="false" minScreenWidth="Tablet"
 						demandPopin="true">
-						<Text text="{i18n>colTeamName}" />
+						<Text text="{i18n>column.team}" />
 					</Column>
-					<Column app:p13nKey="colOwnerName" visible="false" minScreenWidth="Tablet"
+					<Column app:p13nKey="column.owner" visible="false" minScreenWidth="Tablet"
 						demandPopin="true">
-						<Text text="{i18n>colOwnerName}" />
+						<Text text="{i18n>column.owner}" />
 					</Column>
 
 				</columns>
