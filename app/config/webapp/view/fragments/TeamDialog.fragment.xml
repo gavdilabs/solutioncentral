@@ -1,0 +1,45 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+    xmlns:f="sap.ui.layout.form">
+
+    <Dialog title="{i18n>lbl_Team}" contentWidth="800px">
+        <content>
+            <f:SimpleForm id="idTeamSimpleForm"
+                fieldGroupIds="TeamFormGroup"
+                editable="true"                        
+                labelSpanXL="3"
+                labelSpanL="3"
+                labelSpanM="3"        
+                adjustLabelSpan="false"
+                emptySpanXL="4"
+                emptySpanL="4"
+                emptySpanM="4"        
+                columnsXL="1"
+                columnsL="1"        
+                singleContainerFullSize="false" >
+                <f:content>
+                    <Label text="{i18n>lbl_Team}" required="true"/>
+                    <Input value="{teamName}"  required="true"/>	
+                    <Label text="{i18n>lbl_Owner}" required="true"/>
+                    <Select selectedKey="{_owner/username}" forceSelection="false" required="true"
+						items="{ 
+							path: '/User',                             
+							templateShareable:true 
+                        }" >
+						<items>
+							<c:Item text="{fullName}" key="{username}"/>                   
+						</items>
+					</Select>	                             
+                </f:content>
+            </f:SimpleForm>
+        </content>
+        <footer>
+            <Toolbar >
+                <ToolbarSpacer/>
+                <Button text="{i18n>btnCancel}" press="onCancelButtonTeamPress"></Button>
+                <Button text="{i18n>btnSave}" press="onSaveButtonTeamPress"></Button>
+            </Toolbar>
+        </footer>
+    </Dialog>
+</c:FragmentDefinition>

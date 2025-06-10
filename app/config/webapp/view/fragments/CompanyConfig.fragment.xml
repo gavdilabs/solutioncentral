@@ -13,6 +13,7 @@
 		</headerToolbar>
         <CustomListItem >
             <f:SimpleForm id="idCompanyConfigSimpleForm"
+                fieldGroupIds="CompanyFormGroup"
                 editable="true"                        
                 labelSpanXL="3"
                 labelSpanL="3"

@@ -3,9 +3,10 @@
 	xmlns:c="sap.ui.core"
     xmlns:f="sap.ui.layout.form">
 
-    <Dialog title="User" contentWidth="800px">
+    <Dialog title="{i18n>lbl_User}" contentWidth="800px">
         <content>
             <f:SimpleForm id="idUserSimpleForm"
+                fieldGroupIds="UserFormGroup"
                 editable="true"                        
                 labelSpanXL="3"
                 labelSpanL="3"
@@ -26,6 +27,8 @@
                     <Input value="{firstName}" required="true"/> 
                     <Label text="{i18n>lblLastname}" required="true"/>
                     <Input value="{lastName}" required="true"/> 
+                   <!--  <Label text="{i18n>lblImage}"/>
+                    <Input value=" { path: 'imageUrl' }"/>   -->                  
                     <Label text="{i18n>lblApprover}"/>
                     <CheckBox selected="{approver}"/>                   
                 </f:content>
