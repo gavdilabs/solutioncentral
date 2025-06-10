@@ -1,11 +1,3 @@
----
-name: Pull Request
-about: Generic pull request template
-title: ''
-labels: ''
-assignees: ''
----
-
 ## Summary
 
 <!-- Brief description of what this PR does -->
