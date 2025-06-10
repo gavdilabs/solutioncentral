@@ -2,6 +2,53 @@
 	xmlns="sap.m"
 	xmlns:c="sap.ui.core">
 
+	 <Table		
+		id="idUserTable"
+		items="{
+			path:'/User',
+			parameters: { $$updateGroupId : 'userUpdateGroup' },
+			sorter: {
+				path: 'username',
+				descending: false
+			}
+		}" >
+		<headerToolbar>
+            <OverflowToolbar>
+				<Title text="{i18n>lbl_Users}"/>
+                <ToolbarSpacer/>               
+                <Button text="{i18n>btnAddUser}" press="onButtonAddUserPress"/>
+            </OverflowToolbar>
+        </headerToolbar>
+		<columns>			
+			<Column>
+				<Text text="{i18n>lbl_User}" />				
+			</Column>	
+			<Column>
+				<Text text="{i18n>lbl_Team}s"/>				
+			</Column>
+			<Column width="100px" hAlign="End"/>
+			
+		</columns>
+		<ColumnListItem >
+			<cells>				
+				<HBox>
+					<Avatar src="{imageUrl}"/>		
+					<VBox class="sapUiSmallMarginBegin sapUiTinyMarginTop">	
+						<Text text="{fullName} ({username})"/>		
+						<Text text="{email}" />										
+					</VBox>
+				</HBox>								
+				<VBox items="{ path:'softwareTeams', templateShareable:true}">
+					<Text text="{team/teamName}" class="sapUiTinyMargin"/>
+				</VBox>				
+				<HBox justifyContent="End"> 
+					<c:Icon src="sap-icon://edit" press="onIconEditUserPress" class="sapUiSmallMarginEnd"/>
+					<c:Icon src="sap-icon://delete" press="onIconDeleteUserPress" class="sapUiSmallMarginEnd"/>
+				</HBox>
+			</cells>
+		</ColumnListItem>
+	</Table>
+
 	<Table	
 		id="idSoftwareTeamTable"
 		class="sapUiSmallMarginBottom"	
@@ -31,93 +78,24 @@
 					<Text text="{i18n>lbl_Owner}" />
 				</header>
 			</Column>
+			<Column width="100px" hAlign="End"/>
 		</columns>
 		<ColumnListItem vAlign="Middle" >
-			<cells>
-			    <HBox>
-					<Text text="{teamName}" visible="{=%{createdAt} === null ? false : true }" />
-					<Input value="{teamName}" visible="{=%{createdAt} === null ? true : false }"/>					
-				</HBox>
+			<cells>			    
+				<Text text="{teamName}" visible="{=%{createdAt} === null ? false : true }"/>
 				<HBox>
-					<HBox visible="{=%{createdAt} === null ? false : true }" >
-						<Avatar src="{_owner/imageUrl}" enabled="{=%{createdAt} === null ? false : true }"/>	
-						<VBox class="sapUiSmallMarginBegin sapUiTinyMarginTop">	
-							<Text text="{_owner/fullName}" />
-							<Text text="{_owner/email}"/>
-						</VBox>								
-					</HBox>
-					<Select selectedKey="{_owner/username}" forceSelection="false" visible="{=%{createdAt} === null ? true : false }"
-						items="{ 
-							path: '/User',                             
-							templateShareable:true }" >
-						<items>
-							<c:Item text="{fullName}" key="{username}"/>                   
-						</items>
-					</Select>	
+					<Avatar src="{_owner/imageUrl}" enabled="{=%{createdAt} === null ? false : true }"/>	
+					<VBox class="sapUiSmallMarginBegin sapUiTinyMarginTop">	
+						<Text text="{_owner/fullName} ({_owner/username})"/>		
+						<Text text="{_owner/email}" />									
+					</VBox>								
+				</HBox>				
+				<HBox justifyContent="End"> 
+					<c:Icon src="sap-icon://edit" press="onIconEditTeamPress" class="sapUiSmallMarginEnd"/>
+					<c:Icon src="sap-icon://delete" press="onIconDeleteTeamPress" class="sapUiSmallMarginEnd"/>
 				</HBox>
 			</cells>		
 		</ColumnListItem>		
-	</Table>
-
-    <Table		
-		id="idSoftwareTeamUserTable"
-		items="{
-			path:'/SoftwareTeamUser',
-			parameters: { $$updateGroupId : 'userUpdateGroup' },
-			sorter: {
-				path: 'team/teamName',
-				descending: false
-			}
-		}" >
-		<headerToolbar>
-            <OverflowToolbar>
-				<Title text="{i18n>lbl_Users}"/>
-                <ToolbarSpacer/>               
-                <Button text="{i18n>btnAddUser}" press="onButtonAddUserPress"/>
-            </OverflowToolbar>
-        </headerToolbar>
-		<columns>
-			<Column mergeDuplicates="true">
-				<header>
-					<Text text="{i18n>lbl_Team}" />
-				</header>
-			</Column>
-			<Column>
-				<Text text="{i18n>lbl_User}" />				
-			</Column>
-			<Column
-				minScreenWidth="Tablet"
-				demandPopin="true"
-				hAlign="Center" >
-				<Text text="{i18n>lbl_Reviewer}" />				
-			</Column>
-			<Column
-				minScreenWidth="Tablet"
-				demandPopin="true"
-				hAlign="Center" >				
-				<Text text="{i18n>lbl_Maintainer}" />				
-			</Column>	
-			<Column
-				hAlign="End">
-			</Column> 		
-		</columns>
-		<ColumnListItem vAlign="Middle">
-			<cells>
-				<Text text="{team/teamName}" />
-				<HBox>
-					<Avatar src="{user/imageUrl}"/>		
-					<VBox class="sapUiSmallMarginBegin sapUiTinyMarginTop">	
-						<Text text="{user/fullName}" />
-						<Text text="{user/email}"/>
-					</VBox>
-				</HBox>
-				<CheckBox selected="{reviewer}" editable="false"/>
-				<CheckBox selected="{maintainer}" editable="false"/>
-				<HBox>
-					<c:Icon src="sap-icon://edit" press="onIconEditUserPress"/>
-				</HBox>
-			</cells>
-		</ColumnListItem>
 	</Table>
 	 
 </c:FragmentDefinition>
