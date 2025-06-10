@@ -147,7 +147,7 @@
 							formatter: '.formatTableTitle'
 						}" />
 						<ToolbarSpacer />
-						<Button tooltip="{i18n>default.create}" text="{i18n>create}" press=".onPressCreate" />
+						<Button tooltip="{i18n>default.create}" text="{i18n>default.create}" press=".onPressCreate" />
 						<Button tooltip="{i18n>default.delete}"
 							enabled="{= ${solutionTableConfig>/selectedItems}.length > 0}" text="{i18n>default.delete}"
 							press=".onPressDelete" />

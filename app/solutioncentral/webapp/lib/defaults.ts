@@ -3,6 +3,7 @@ import { SolutionCatalogueTableEntry } from "./types";
 import { SpreadsheetColumn } from "./utils/export";
 
 export const DefaultSolutionTableConfig = {
+	filters: {}, // Must be here as an empty object otherwise the binding will break
 	selectedItems: Array<SolutionCatalogueTableEntry>(),
 	items: [
 		{

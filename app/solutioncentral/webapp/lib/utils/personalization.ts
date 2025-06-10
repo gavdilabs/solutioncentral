@@ -97,7 +97,7 @@ export class SoftwareSolutionPersonalization {
 				const controllerState = state as CustomState;
 				if (controllerState.Sorter.length === 0) {
 					controllerState.Sorter.push({
-						key: "colSolutionName",
+						key: "column.name",
 						descending: true,
 					});
 					Engine.getInstance()
