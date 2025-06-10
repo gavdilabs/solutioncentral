@@ -1,4 +1,6 @@
+import { EdmType } from "sap/ui/export/library";
 import { SolutionCatalogueTableEntry } from "./types";
+import { SpreadsheetColumn } from "./utils/export";
 
 export const DefaultSolutionTableConfig = {
 	selectedItems: Array<SolutionCatalogueTableEntry>(),
@@ -133,3 +135,116 @@ export const DefaultSolutionTableConfig = {
 		},
 	],
 };
+
+export const SoftwareSolutionExportColumns = new Map<string, SpreadsheetColumn>(
+	[
+		[
+			"name",
+			{ property: "name", type: EdmType.String, label: "sheet.solutionName" },
+		],
+		[
+			"description",
+			{
+				property: "description",
+				type: EdmType.String,
+				label: "sheet.solutionDescr",
+			},
+		],
+		[
+			"platform/name",
+			{
+				property: "platform/name",
+				type: EdmType.String,
+				label: "sheet.solutionPlatform",
+			},
+		],
+		[
+			"packageNamespace",
+			{
+				property: "packageNamespace",
+				type: EdmType.String,
+				label: "sheet.solutionPackage",
+			},
+		],
+		[
+			"repository",
+			{
+				property: "repository",
+				type: EdmType.String,
+				label: "sheet.solutionRepo",
+			},
+		],
+		[
+			"documentationUrl",
+			{
+				property: "documentationUrl",
+				type: EdmType.String,
+				label: "sheet.solutionDocs",
+			},
+		],
+		[
+			"businessCriticality/code",
+			{
+				property: "businessCriticality/code",
+				type: EdmType.String,
+				label: "sheet.solutionCriticality",
+			},
+		],
+		[
+			"cleanCoreRating_code",
+			{
+				property: "cleanCoreRating_code",
+				type: EdmType.String,
+				label: "sheet.solutionCleanCore",
+			},
+		],
+		[
+			"codeQualityRating_code",
+			{
+				property: "codeQualityRating_code",
+				type: EdmType.String,
+				label: "sheet.solutionCodeQuality",
+			},
+		],
+		[
+			"solutionStatus/descr",
+			{
+				property: "solutionStatus/descr",
+				type: EdmType.String,
+				label: "sheet.solutionStatus",
+			},
+		],
+		[
+			"reasonNoCleanCore",
+			{
+				property: "reasonNoCleanCore",
+				type: EdmType.String,
+				label: "sheet.solutionNoReason",
+			},
+		],
+		[
+			"costCenter",
+			{
+				property: "costCenter",
+				type: EdmType.String,
+				label: "sheet.solutionCostCenter",
+			},
+		],
+		[
+			"owner/fullName",
+			{
+				property: "owner/fullName",
+				type: EdmType.String,
+				label: "sheet.solutionOwner",
+			},
+		],
+		[
+			"team/teamName",
+			{
+				property: "team/teamName",
+				type: EdmType.String,
+				label: "sheet.solutionTeamName",
+			},
+		],
+	],
+);

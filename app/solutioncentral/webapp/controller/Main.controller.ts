@@ -4,7 +4,11 @@ import { Button$PressEvent } from "sap/m/Button";
 import JSONModel from "sap/ui/model/json/JSONModel";
 import { CustomModels } from "../lib/constants";
 import { DefaultSolutionTableConfig } from "../lib/defaults";
-import { SolutionCatalogueTableEntry, SolutionTableConfig, ViewSettingsDialogItem } from "../lib/types";
+import {
+	SolutionCatalogueTableEntry,
+	SolutionTableConfig,
+	ViewSettingsDialogItem,
+} from "../lib/types";
 import { SoftwareSolutionFilterConstructor } from "../lib/utils/filters";
 import Table from "sap/m/Table";
 import ODataListBinding from "sap/ui/model/odata/v4/ODataListBinding";
@@ -33,16 +37,26 @@ export default class Main extends BaseController {
 	public onInit(): void {
 		this.tableConfigModel = new JSONModel(DefaultSolutionTableConfig);
 		this.setModel(this.tableConfigModel, CustomModels.SOLUTION_TABLE_CONFIG);
-		this.getRouter().getRoute("main").attachPatternMatched(this._onPatternMatched.bind(this), this);
+		this.getRouter()
+			.getRoute("main")
+			.attachPatternMatched(this._onPatternMatched.bind(this), this);
 	}
 
 	private _onPatternMatched(): void {
 		const table = this.getView().byId("solutionCatalogueTable") as Table;
-		this.getResourceBundle().then((bundle) => {
-			this.softwareSolutionPersonalization = new SoftwareSolutionPersonalization(table, "/items", this.tableConfigModel, bundle);
-		}).catch((e) => {
-			console.error("Failed to configure personalization engine", e);
-		});
+		this.getResourceBundle()
+			.then((bundle) => {
+				this.softwareSolutionPersonalization =
+					new SoftwareSolutionPersonalization(
+						table,
+						"/items",
+						this.tableConfigModel,
+						bundle,
+					);
+			})
+			.catch((e) => {
+				console.error("Failed to configure personalization engine", e);
+			});
 	}
 
 	public beforeOpenColumnMenu(event: MenuBase$BeforeOpenEvent) {
@@ -60,13 +74,15 @@ export default class Main extends BaseController {
 
 	public async formatTableTitle(count: number | string): Promise<string> {
 		const resourceBundle = await this.getResourceBundle();
-		return resourceBundle.getText("tableSolutionCatalogue", [count]);
+		return resourceBundle.getText("table.solutionCatalogue", [count]);
 	}
 
 	public onTableSelect(event: ListBase$SelectionChangeEvent): void {
 		const source = event.getSource();
 		const selected = source.getSelectedItems();
-		const entries = selected.map((el) => el.getBindingContext().getObject() as SolutionCatalogueTableEntry);
+		const entries = selected.map(
+			(el) => el.getBindingContext().getObject() as SolutionCatalogueTableEntry,
+		);
 
 		this.tableConfigModel.setProperty("/selectedItems", entries);
 	}
@@ -82,7 +98,7 @@ export default class Main extends BaseController {
 	public async onPressDelete(): Promise<void> {
 		const resourceBundle = await this.getResourceBundle();
 
-		MessageBox.confirm(resourceBundle.getText("confirmDelete"), {
+		MessageBox.confirm(resourceBundle.getText("confirmation.listDelete"), {
 			onClose: (action: unknown) => {
 				if (action !== MessageBox.Action.OK) return;
 
@@ -95,8 +111,8 @@ export default class Main extends BaseController {
 						console.error("Failed to delete entry", e);
 					});
 				}
-			}
-		})
+			},
+		});
 	}
 
 	public onPressTableSettings(event: Button$PressEvent): void {
@@ -108,29 +124,40 @@ export default class Main extends BaseController {
 		const table = this.getView().byId(this.TABLE_ID) as Table;
 		const binding = table.getBinding("items") as ODataListBinding;
 		const state = await Engine.getInstance().retrieveState(table);
-		const selectedColumnP13nKeys = new Set((state.controller.Columns as Array<SelectionState>).map((el) => el.key));
-		const configColumns = this.tableConfigModel.getProperty("/items") as Array<ViewSettingsDialogItem>;
+		const selectedColumnP13nKeys = new Set(
+			(state.controller.Columns as Array<SelectionState>).map((el) => el.key),
+		);
+		const configColumns = this.tableConfigModel.getProperty(
+			"/items",
+		) as Array<ViewSettingsDialogItem>;
 
 		if (!configColumns) return;
 
-		const visibleColumns = configColumns.filter((el) =>
-			selectedColumnP13nKeys.has(el.key)).map((el) => el.path);
+		const visibleColumns = configColumns
+			.filter((el) => selectedColumnP13nKeys.has(el.key))
+			.map((el) => el.path);
 
 		const spreadsheet = new Spreadsheet({
 			workbook: {
-				columns: getSoftwareSolutionColumnConfig(visibleColumns, resourceBundle),
+				columns: getSoftwareSolutionColumnConfig(
+					visibleColumns,
+					resourceBundle,
+				),
 				hierarchyLevel: "Level",
 			},
 			dataSource: binding,
-			fileName: resourceBundle.getText("sheetSoftwareSolution"),
+			fileName: resourceBundle.getText("sheet.softwareSolutionFileName"),
 			showProgress: true,
 		});
 
-		spreadsheet.build().catch(e => {
-			console.error("Failed to build spreadsheet", e);
-		}).finally(() => {
-			spreadsheet.destroy();
-		});
+		spreadsheet
+			.build()
+			.catch((e) => {
+				console.error("Failed to build spreadsheet", e);
+			})
+			.finally(() => {
+				spreadsheet.destroy();
+			});
 	}
 
 	public onFilterBarClear(): void {
@@ -141,7 +168,9 @@ export default class Main extends BaseController {
 
 	public onFilterBarSearch(): void {
 		const configData = this.tableConfigModel.getData() as SolutionTableConfig;
-		const filter = SoftwareSolutionFilterConstructor.constructFilter(configData.filters);
+		const filter = SoftwareSolutionFilterConstructor.constructFilter(
+			configData.filters,
+		);
 		const table = this.getView().byId(this.TABLE_ID) as Table;
 
 		if (!table) {
@@ -151,10 +180,9 @@ export default class Main extends BaseController {
 
 		const binding = table.getBinding("items") as ODataListBinding;
 		binding.changeParameters({
-			$search: configData.search
+			$search: configData.search,
 		});
 
 		binding.filter(filter ?? undefined);
 	}
-
 }

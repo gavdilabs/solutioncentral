@@ -16,7 +16,7 @@
 		<f:title>
 			<f:DynamicPageTitle>
 				<f:heading>
-					<Title text="{i18n>appTitle}" />
+					<Title text="{i18n>app.title}" />
 				</f:heading>
 			</f:DynamicPageTitle>
 		</f:title>
@@ -38,10 +38,10 @@
 
 							<!-- Platform Multi-Select Field -->
 							<fb:FilterGroupItem name="Platform" groupName="platform"
-								label="{i18n>colPlatformName}" visibleInFilterBar="true">
+								label="{i18n>column.platform}" visibleInFilterBar="true">
 								<fb:control>
 									<MultiComboBox
-										name="{i18n>colPlatformName}"
+										name="{i18n>column.platform}"
 										selectedKeys="{solutionTableConfig>/filters/platforms}"
 										items="{
 										path: '/Platform',
@@ -54,10 +54,10 @@
 
 							<!-- Business Criticality field -->
 							<fb:FilterGroupItem name="Business Criticality" groupName="businessCriticality"
-								label="{i18n>colBusinessCriticality}" visibleInFilterBar="false">
+								label="{i18n>column.businessCriticality}" visibleInFilterBar="false">
 								<fb:control>
 									<MultiComboBox
-										name="{i18n>colBusinessCriticality}"
+										name="{i18n>column.businessCriticality}"
 										selectedKeys="{solutionTableConfig>/filters/businessCriticalityLevels}"
 										items="{
 										path: '/BusinessCriticalityLevel',
@@ -70,10 +70,10 @@
 
 							<!-- Clean Core field -->
 							<fb:FilterGroupItem name="Clean Core" groupName="cleanCore"
-								label="{i18n>colCleanCore}" visibleInFilterBar="false">
+								label="{i18n>column.cleanCoreLevel}" visibleInFilterBar="false">
 								<fb:control>
 									<MultiComboBox
-										name="{i18n>colCleanCore}"
+										name="{i18n>column.cleanCoreLevel}"
 										selectedKeys="{solutionTableConfig>/filters/cleanCoreLevels}"
 										items="{
 										path: '/CleanCoreLevel',
@@ -86,10 +86,10 @@
 
 							<!-- Code Quality field -->
 							<fb:FilterGroupItem name="Code Quality" groupName="codeQuality"
-								label="{i18n>colCodeQuality}" visibleInFilterBar="false">
+								label="{i18n>column.codeQualityLevel}" visibleInFilterBar="false">
 								<fb:control>
 									<MultiComboBox
-										name="{i18n>colCodeQuality}"
+										name="{i18n>column.codeQualityLevel}"
 										selectedKeys="{solutionTableConfig>/filters/codeQualityLevels}"
 										items="{
 										path: '/CodeQualityLevel',
@@ -102,7 +102,7 @@
 
 							<!-- Cost Center field -->
 							<fb:FilterGroupItem name="Cost Center" groupName="costCenter"
-								label="{i18n>colCostCenter}" visibleInFilterBar="false">
+								label="{i18n>column.costCenter}" visibleInFilterBar="false">
 								<fb:control>
 									<Input value="{solutionTableConfig>/filters/costCenter}" />
 								</fb:control>
@@ -110,10 +110,10 @@
 
 							<!-- Status field -->
 							<fb:FilterGroupItem name="Status" groupName="status"
-								label="{i18n>colStatus}" visibleInFilterBar="false">
+								label="{i18n>column.status}" visibleInFilterBar="false">
 								<fb:control>
 									<MultiComboBox
-										name="{i18n>colStatus}"
+										name="{i18n>column.status}"
 										selectedKeys="{solutionTableConfig>/filters/statusses}"
 										items="{
 										path: '/SoftwareStatus',
@@ -147,14 +147,14 @@
 							formatter: '.formatTableTitle'
 						}" />
 						<ToolbarSpacer />
-						<Button tooltip="{i18n>create}" text="{i18n>create}" press=".onPressCreate" />
-						<Button tooltip="{i18n>delete}"
-							enabled="{= ${solutionTableConfig>/selectedItems}.length > 0}" text="{i18n>delete}"
+						<Button tooltip="{i18n>default.create}" text="{i18n>create}" press=".onPressCreate" />
+						<Button tooltip="{i18n>default.delete}"
+							enabled="{= ${solutionTableConfig>/selectedItems}.length > 0}" text="{i18n>default.delete}"
 							press=".onPressDelete" />
 						<ToolbarSeparator />
-						<Button tooltip="{i18n>settings}" icon="sap-icon://action-settings"
+						<Button tooltip="{i18n>default.settings}" icon="sap-icon://action-settings"
 							press=".onPressTableSettings" />
-						<Button tooltip="{i18n>export}" icon="sap-icon://excel-attachment"
+						<Button tooltip="{i18n>default.export}" icon="sap-icon://excel-attachment"
 							press=".onPressTableExport" />
 					</OverflowToolbar>
 				</headerToolbar>
