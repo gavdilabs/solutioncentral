@@ -1,0 +1,179 @@
+name: 🚨 Hotfix
+description: Emergency fix for critical production issues
+title: "[HOTFIX] "
+labels: ["hotfix", "critical", "urgent"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ⚠️ **CRITICAL HOTFIX** ⚠️
+        This template is for emergency fixes to critical production issues.
+
+  - type: input
+    id: critical-issue
+    attributes:
+      label: Critical Issue Summary
+      description: Brief description of the critical production issue
+      placeholder: "Database connection pool exhaustion causing 500 errors"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity-level
+    attributes:
+      label: Severity Level
+      description: How critical is this issue?
+      options:
+        - Critical - System down/major functionality broken
+        - High - Significant impact on users
+        - Security - Security vulnerability or breach
+    validations:
+      required: true
+
+  - type: input
+    id: related-incidents
+    attributes:
+      label: Related Issues/Incidents
+      description: Link to incident reports, security advisories, etc.
+      placeholder: "Fixes #123, Incident: INC-456, Security Advisory: SA-789"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: production-impact
+    attributes:
+      label: Production Impact
+      description: What is the current impact on production?
+      options:
+        - label: Complete system outage
+        - label: Partial functionality unavailable
+        - label: Performance degradation
+        - label: Data integrity issues
+        - label: Security vulnerability
+        - label: User experience severely impacted
+
+  - type: textarea
+    id: impact-details
+    attributes:
+      label: Impact Details
+      description: Provide specific details about the production impact
+      placeholder: |
+        - Affected users: X% of user base
+        - System downtime: X minutes/hours
+        - Revenue impact: $X estimated
+        - Data integrity: Description
+    validations:
+      required: true
+
+  - type: textarea
+    id: root-cause-brief
+    attributes:
+      label: Root Cause (Brief)
+      description: Quick analysis of what went wrong
+      placeholder: "Brief explanation of the root cause..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: hotfix-solution
+    attributes:
+      label: Hotfix Solution
+      description: Describe the minimal changes needed to resolve the critical issue
+      placeholder: "Explain the emergency fix approach..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: why-hotfix
+    attributes:
+      label: Justification for Hotfix Approach
+      description: Why is this approach better than a full fix?
+      placeholder: "Explain why this minimal fix is the right approach..."
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: testing-completed
+    attributes:
+      label: Critical Testing Completed
+      description: What testing has been done? (Limited due to urgency)
+      options:
+        - label: Core functionality verified
+          required: true
+        - label: No additional regressions introduced
+          required: true
+        - label: Tested in production-like environment
+          required: true
+        - label: Smoke tests completed
+        - label: Critical user flows tested
+
+  - type: dropdown
+    id: deployment-strategy
+    attributes:
+      label: Deployment Strategy
+      description: How will this hotfix be deployed?
+      options:
+        - Immediate deployment to production
+        - Staged rollout
+        - Canary deployment
+        - Blue-green deployment
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: deployment-readiness
+    attributes:
+      label: Deployment Readiness
+      description: Deployment preparation checklist
+      options:
+        - label: Rollback procedure documented and tested
+          required: true
+        - label: Monitoring alerts configured
+          required: true
+        - label: Team notified of deployment plan
+          required: true
+        - label: Communication plan ready
+        - label: Post-deployment verification steps defined
+
+  - type: checkboxes
+    id: approvals-required
+    attributes:
+      label: Required Approvals
+      description: Who needs to approve this hotfix?
+      options:
+        - label: Technical lead approval obtained
+          required: true
+        - label: Product owner approval obtained
+        - label: Security team approval (if security-related)
+        - label: Infrastructure team approval (if infra-related)
+
+  - type: textarea
+    id: follow-up-actions
+    attributes:
+      label: Follow-up Actions
+      description: What needs to be done after this hotfix?
+      placeholder: |
+        - [ ] Comprehensive fix planned for next release
+        - [ ] Root cause analysis scheduled
+        - [ ] Process improvements identified
+        - [ ] Additional monitoring planned
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: final-checklist
+    attributes:
+      label: Hotfix Checklist
+      options:
+        - label: Minimal changes to fix critical issue only
+          required: true
+        - label: No unnecessary modifications included
+          required: true
+        - label: Deployment process verified
+          required: true
+        - label: Incident tracking updated
+          required: true
+        - label: All required approvals obtained
+          required: true

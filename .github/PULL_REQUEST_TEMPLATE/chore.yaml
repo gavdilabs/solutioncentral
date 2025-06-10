@@ -1,0 +1,175 @@
+name: 🔧 Chore
+description: Maintenance, refactoring, or tooling improvements
+title: "[CHORE] "
+labels: ["chore", "maintenance"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing to project maintenance! Please provide details about your improvements.
+
+  - type: dropdown
+    id: chore-type
+    attributes:
+      label: Chore Type
+      description: What type of maintenance work is this?
+      options:
+        - Dependency update
+        - Code refactoring
+        - Build system changes
+        - CI/CD improvements
+        - Documentation cleanup
+        - Code style/formatting
+        - Tooling improvements
+        - Configuration changes
+        - Performance optimization
+        - Security improvements
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: chore-summary
+    attributes:
+      label: Summary
+      description: Brief description of the maintenance work
+      placeholder: "Update CAP from v8 to v9"
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Why is this change needed?
+      placeholder: "Explain the reasoning behind this maintenance work..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: benefits
+    attributes:
+      label: Benefits
+      description: What improvements does this bring?
+      placeholder: |
+        - Improved performance
+        - Better developer experience
+        - Enhanced security
+        - Reduced technical debt
+    validations:
+      required: true
+
+  - type: input
+    id: related-issues
+    attributes:
+      label: Related Issues
+      description: Link to maintenance issues, tech debt items, etc.
+      placeholder: "Closes #123, Relates to #456"
+
+  - type: checkboxes
+    id: dependency-changes
+    attributes:
+      label: Dependency Changes
+      description: Are there any dependency changes?
+      options:
+        - label: No dependency changes
+        - label: Dependencies added
+        - label: Dependencies updated
+        - label: Dependencies removed
+        - label: Security vulnerabilities fixed
+
+  - type: textarea
+    id: dependency-details
+    attributes:
+      label: Dependency Details
+      description: If you have dependency changes, list them here
+      placeholder: |
+        Added:
+        - package-name@version (reason)
+
+        Updated:
+        - package-name: v1.0.0 → v2.0.0 (reason)
+
+        Removed:
+        - package-name (reason)
+
+  - type: checkboxes
+    id: testing-verification
+    attributes:
+      label: Testing & Verification
+      description: How have you verified these changes?
+      options:
+        - label: No functional changes - existing tests pass
+          required: true
+        - label: Build process tested
+        - label: CI/CD pipeline verified
+        - label: Development environment tested
+        - label: Production build tested
+        - label: Performance benchmarks run
+
+  - type: checkboxes
+    id: compatibility
+    attributes:
+      label: Compatibility
+      description: Compatibility considerations
+      options:
+        - label: Backward compatibility maintained
+          required: true
+        - label: No breaking changes for developers
+        - label: No breaking changes for users
+        - label: Migration guide provided (if needed)
+
+  - type: dropdown
+    id: developer-impact
+    attributes:
+      label: Developer Experience Impact
+      description: How does this affect other developers?
+      options:
+        - Improves developer workflow
+        - No impact on developer workflow
+        - Requires developer action (documented below)
+    validations:
+      required: true
+
+  - type: textarea
+    id: migration-guide
+    attributes:
+      label: Migration Guide
+      description: If developers need to take action, provide instructions
+      placeholder: |
+        Required actions for developers:
+        1. Run `npm install` to update dependencies
+        2. Update your local config file
+        3. Restart your development server
+
+  - type: checkboxes
+    id: impact-areas
+    attributes:
+      label: Impact Areas
+      description: What areas are improved by this chore?
+      options:
+        - label: Build performance
+        - label: Runtime performance
+        - label: Developer experience
+        - label: Code maintainability
+        - label: Security posture
+        - label: Documentation quality
+        - label: Testing infrastructure
+        - label: Deployment process
+
+  - type: checkboxes
+    id: final-checklist
+    attributes:
+      label: Final Checklist
+      options:
+        - label: Changes tested locally
+          required: true
+        - label: CI/CD pipeline passes
+          required: true
+        - label: Documentation updated (if applicable)
+        - label: No functional regressions
+        - label: Code quality maintained or improved
+          required: true
+        - label: Team notified of workflow changes (if applicable)
