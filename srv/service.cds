@@ -50,6 +50,8 @@ service RadarService {
   }
 
   entity TechnologyReplacement    as projection on core.TechnologyReplacement;
+
+  @odata.singleton.nullable
   entity CompanyConfiguration     as projection on core.CompanyConfiguration;
 
   @readonly
