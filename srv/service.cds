@@ -78,5 +78,4 @@ service RadarService {
   entity SoftwareTechnology       as projection on core.SoftwareTechnology;
   /*** FUNCTION IMPORTS ***/
   function getActiveUser() returns types.ActiveUser;
-
 }

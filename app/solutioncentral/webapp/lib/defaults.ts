@@ -249,3 +249,64 @@ export const SoftwareSolutionExportColumns = new Map<string, SpreadsheetColumn>(
 		],
 	],
 );
+
+export const DefaultVersionsTableConfig = {
+	items: [
+		{
+			path: "version",
+			key: "column.version",
+			label: "column.version",
+			selected: true,
+			sortable: true,
+			groupable: true,
+		},
+		{
+			path: "status_code",
+			key: "column.statusVersion",
+			label: "column.statusVersion",
+			selected: true,
+			sortable: true,
+			groupable: true,
+		},
+		{
+			path: "releaseDate",
+			key: "column.releaseDate",
+			label: "column.releaseDate",
+			selected: true,
+			sortable: true,
+			groupable: true,
+		},
+		{
+			path: "changedBy",
+			key: "column.lastModifiedByVersion",
+			label: "column.lastModifiedByVersion",
+			selected: false,
+			sortable: true,
+			groupable: true,
+		},
+		{
+			path: "changedAt",
+			key: "column.lastModifiedVersion",
+			label: "column.lastModifiedVersion",
+			selected: false,
+			sortable: true,
+			groupable: true,
+		},
+		{
+			path: "createdBy",
+			key: "column.createdByVersion",
+			label: "column.createdByVersion",
+			selected: false,
+			sortable: true,
+			groupable: true,
+		},
+		{
+			path: "ID",
+			key: "column.softwareVersionID",
+			label: "column.softwareVersionID",
+			selected: false,
+			sortable: true,
+			groupable: true,
+		},
+	],
+};

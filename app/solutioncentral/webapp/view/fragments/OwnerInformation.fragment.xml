@@ -1,0 +1,44 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:forms="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+
+	<!-- Displaying active version -->
+	<forms:SimpleForm visible="{IsActiveEntity}"
+		columnsM="3"
+		columnsL="4"
+		columnsXL="6"
+		editable="false" layout="ColumnLayout">
+		<Label text="{i18n>column.costCenter}" />
+		<Text text="{= ${costCenter} ? ${costCenter} : '–'}" />
+
+		<Label text="{i18n>column.owner}" />
+		<Text text="{= ${owner_username} ? ${owner/fullName} : '–'}" />
+
+		<Label text="{i18n>column.team}" />
+		<Text text="{= ${team_teamName} ? ${team/teamName} : '–'}" />
+	</forms:SimpleForm>
+
+	<!-- Editing draft version -->
+	<forms:SimpleForm visible="{= !${IsActiveEntity}}"
+		columnsM="3"
+		columnsL="4"
+		columnsXL="6"
+		editable="false" layout="ColumnLayout">
+		<Label text="{i18n>column.costCenter}" />
+		<Input value="{costCenter}" />
+
+		<Label text="{i18n>column.owner}" required="true" />
+		<Select forceSelection="false" change=".handleChangeEvent" required="true"
+			selectedKey="{owner_username}" items="{/User}">
+			<core:ListItem key="{username}" text="{fullName}" />
+		</Select>
+
+		<Label text="{i18n>column.team}" required="true" />
+		<Select forceSelection="false" change=".handleChangeEvent" required="true"
+			selectedKey="{team_teamName}"
+			items="{/SoftwareTeam}">
+			<core:ListItem key="{teamName}" text="{teamName}" />
+		</Select>
+	</forms:SimpleForm>
+</core:FragmentDefinition>

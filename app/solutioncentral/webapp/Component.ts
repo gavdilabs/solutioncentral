@@ -1,6 +1,8 @@
 import UIComponent from "sap/ui/core/UIComponent";
 import models from "./model/models";
 import Device from "sap/ui/Device";
+import ODataModel from "sap/ui/model/odata/v4/ODataModel";
+import Context from "sap/ui/model/odata/v4/Context";
 
 /**
  * @namespace com.gavdilabs.techtransmgt.solutioncentral
@@ -8,7 +10,7 @@ import Device from "sap/ui/Device";
 export default class Component extends UIComponent {
 	public static metadata = {
 		manifest: "json",
-		interfaces: ["sap.ui.core.IAsyncContentCreation"]
+		interfaces: ["sap.ui.core.IAsyncContentCreation"],
 	};
 
 	private contentDensityClass: string;
@@ -33,7 +35,10 @@ export default class Component extends UIComponent {
 	public getContentDensityClass(): string {
 		if (this.contentDensityClass === undefined) {
 			// check whether FLP has already set the content density class; do nothing in this case
-			if (document.body.classList.contains("sapUiSizeCozy") || document.body.classList.contains("sapUiSizeCompact")) {
+			if (
+				document.body.classList.contains("sapUiSizeCozy") ||
+				document.body.classList.contains("sapUiSizeCompact")
+			) {
 				this.contentDensityClass = "";
 			} else if (!Device.support.touch) {
 				// apply "compact" mode if touch is not supported
@@ -44,5 +49,18 @@ export default class Component extends UIComponent {
 			}
 		}
 		return this.contentDensityClass;
+	}
+
+	public async getCompanyConfiguration(): Promise<Context | undefined> {
+		const model = this.getModel() as ODataModel;
+
+		try {
+			const binding = model.bindList("/CompanyConfiguration");
+			const result = await binding.requestContexts();
+			return result && result.length > 0 ? result[0] : undefined;
+		} catch (e) {
+			console.error("Error fetching Company Configuration: ", e);
+			throw e;
+		}
 	}
 }

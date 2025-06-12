@@ -1,3 +1,4 @@
+import EventProvider from "sap/ui/base/EventProvider";
 
 export interface SolutionTableConfig {
 	search?: string;
@@ -7,7 +8,7 @@ export interface SolutionTableConfig {
 export interface SoftwareSolutionFilters {
 	platforms?: string[];
 	businessCriticalityLevels?: string[];
-	cleanCoreLevels?: string[]
+	cleanCoreLevels?: string[];
 	codeQualityLevels?: string[];
 	costCenter?: string;
 	statusses?: string[];
@@ -39,4 +40,9 @@ export interface ViewSettingsDialogItem {
 	selected?: boolean;
 	sortable?: boolean;
 	groupable?: boolean;
+}
+
+export interface CustomControlType extends EventProvider {
+	getId: () => string;
+	setValueState: (state: string) => void;
 }

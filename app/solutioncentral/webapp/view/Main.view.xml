@@ -136,8 +136,10 @@
 				items="{
 				path: '/SoftwareSolution',
 				parameters: {
-					$count: true
-				}
+					$count: true,
+					$select: 'HasDraftEntity,HasActiveEntity'
+				},
+				suspended: true
 			}">
 				<headerToolbar>
 					<OverflowToolbar design="Solid">
@@ -147,9 +149,11 @@
 							formatter: '.formatTableTitle'
 						}" />
 						<ToolbarSpacer />
-						<Button tooltip="{i18n>default.create}" text="{i18n>default.create}" press=".onPressCreate" />
+						<Button tooltip="{i18n>default.create}" text="{i18n>default.create}"
+							press=".onPressCreate" />
 						<Button tooltip="{i18n>default.delete}"
-							enabled="{= ${solutionTableConfig>/selectedItems}.length > 0}" text="{i18n>default.delete}"
+							enabled="{= ${solutionTableConfig>/selectedItems}.length > 0}"
+							text="{i18n>default.delete}"
 							press=".onPressDelete" />
 						<ToolbarSeparator />
 						<Button tooltip="{i18n>default.settings}" icon="sap-icon://action-settings"
@@ -245,7 +249,11 @@
 				<items>
 					<ColumnListItem type="Navigation" vAlign="Middle" press=".onTableItemPress">
 						<cells>
-							<ObjectIdentifier title="{name}" />
+							<VBox justifyContent="Center" class="sapUiTinyMarginTopBottom">
+								<ObjectIdentifier title="{name}" visible="{= !${HasDraftEntity}}" />
+								<ObjectIdentifier title="{name}" visible="{HasDraftEntity}" />
+								<Link class="sapUiTinyMarginTop" text="Draft" visible="{HasDraftEntity}" />
+							</VBox>
 							<Text text="{platform/name}" />
 							<RatingIndicator maxValue="5" value="{cleanCoreRating_code}" editable="false" />
 							<RatingIndicator maxValue="5" value="{codeQualityRating_code}" editable="false" />

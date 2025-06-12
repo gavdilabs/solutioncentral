@@ -1,0 +1,28 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:forms="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+	<forms:SimpleForm
+		columnsM="3"
+		columnsL="4"
+		columnsXL="6"
+		editable="false" layout="ColumnLayout">
+		<core:Title text="Object Information" />
+
+		<Label text="{i18n>column.name}" required="true" />
+		<Input value="{name}" change=".handleChangeEvent" required="true" />
+
+		<Label text="{i18n>column.description}" />
+		<TextArea value="{description}" rows="4" />
+
+		<Label text="{i18n>column.status}" />
+		<Select selectedKey="{solutionStatus_code}" forceSelection="false" items="{/SoftwareStatus}">
+			<core:ListItem key="{code}" text="{name}" />
+		</Select>
+
+		<Label text="{i18n>column.platform}" />
+		<Select selectedKey="{platform_code}" forceSelection="false" items="{/Platform}">
+			<core:ListItem key="{code}" text="{name}" />
+		</Select>
+	</forms:SimpleForm>
+</core:FragmentDefinition>

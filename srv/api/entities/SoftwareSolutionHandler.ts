@@ -85,14 +85,14 @@ export default class SoftwareSolutionHandler {
     @Result() result: SoftwareSolution[],
   ): Promise<unknown> {
     try {
-      if (!result || result.length <= 0) {
+      if (!result || (Array.isArray(result) && result.length <= 0)) {
         this.logger.warn(
           "The created SoftwareSolution was not available for post-processing",
         );
         return;
       }
 
-      const { name, ID } = result[0];
+      const { name, ID } = Array.isArray(result) ? result[0] : result;
       if (!name || !ID) {
         this.logger.warn(
           "Invalid data for SoftwareSolution post-processing, skipping...",

@@ -44,10 +44,11 @@
 		},
 
 		"dependencies": {
-			"minUI5Version": "1.136.1",
+			"minUI5Version": "1.135.0",
 			"libs": {
 				"sap.ui.core": {},
-				"sap.m": {}
+				"sap.m": {},
+				"sap.uxap": {}
 			}
 		},
 
@@ -96,12 +97,21 @@
 					"pattern": "",
 					"name": "main",
 					"target": "main"
+				},
+				{
+					"pattern": "SoftwareSolution({key})",
+					"name": "softwareSolutionObjectPage",
+					"target": "softwareSolutionObjectPage"
 				}
 			],
 			"targets": {
 				"main": {
 					"viewId": "main",
 					"viewName": "Main"
+				},
+				"softwareSolutionObjectPage": {
+					"viewId": "softwareSolutionObjectPage",
+					"viewName": "SoftwareSolutionObjectPage"
 				}
 			}
 		}
