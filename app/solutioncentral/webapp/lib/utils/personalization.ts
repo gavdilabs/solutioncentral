@@ -34,20 +34,28 @@ export interface CustomSorter extends Sorter {
 	vGroup: boolean;
 }
 
+export interface DefaultSortProperty {
+	key: string;
+	descending: boolean;
+}
+
 export class SoftwareSolutionPersonalization {
 	private readonly table: Table;
 	private readonly target: string;
 	private readonly model: JSONModel;
+	private readonly defaultSortProperty: DefaultSortProperty;
 	private readonly resourceBundle: ResourceBundle;
 	private metadataHelper: MetadataHelper;
 
 	constructor(
 		table: Table,
+		defaultSortProperty: DefaultSortProperty,
 		target: string,
 		model: JSONModel,
 		resourceBundle?: ResourceBundle,
 	) {
 		this.table = table;
+		this.defaultSortProperty = defaultSortProperty;
 		this.target = target;
 		this.model = model;
 		this.resourceBundle = resourceBundle;
@@ -96,10 +104,7 @@ export class SoftwareSolutionPersonalization {
 			.then((state) => {
 				const controllerState = state as CustomState;
 				if (controllerState.Sorter.length === 0) {
-					controllerState.Sorter.push({
-						key: "column.name",
-						descending: true,
-					});
+					controllerState.Sorter.push(this.defaultSortProperty);
 					Engine.getInstance()
 						.applyState(this.table, state)
 						.catch((e) => {

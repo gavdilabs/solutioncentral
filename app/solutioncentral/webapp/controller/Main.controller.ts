@@ -44,11 +44,20 @@ export default class Main extends BaseController {
 
 	private _onPatternMatched(): void {
 		const table = this.getView().byId("solutionCatalogueTable") as Table;
+		if (table.getBinding("items").isSuspended()) {
+			table.getBinding("items").resume();
+		} else {
+			table.getBinding("items").refresh();
+		}
+
+		if (this.softwareSolutionPersonalization) return;
+
 		this.getResourceBundle()
 			.then((bundle) => {
 				this.softwareSolutionPersonalization =
 					new SoftwareSolutionPersonalization(
 						table,
+						{ key: "column.name", descending: false },
 						"/items",
 						this.tableConfigModel,
 						bundle,
@@ -89,10 +98,32 @@ export default class Main extends BaseController {
 
 	public onTableItemPress(event: ListItemBase$PressEvent): void {
 		// TODO: Implement
+		const context = event.getSource().getBindingContext() as Context;
+		const softwareSolutionID = context.getProperty("ID") as string;
+		const hasDraftEntity = context.getProperty("HasActiveEntity") as boolean;
+
+		this.getRouter().navTo("softwareSolutionObjectPage", {
+			key: `ID=${softwareSolutionID},IsActiveEntity=${!hasDraftEntity}`,
+		});
 	}
 
-	public onPressCreate(event: Button$PressEvent): void {
+	public async onPressCreate(event: Button$PressEvent): Promise<void> {
 		// TODO: Implement
+		const table = this.getView().byId(this.TABLE_ID) as Table;
+		const context = (table.getBinding("items") as ODataListBinding).create({
+			IsActiveEntity: false,
+		});
+
+		await context
+			.created()
+			.then(() => {
+				this.getRouter().navTo("softwareSolutionObjectPage", {
+					key: `ID=${context.getProperty("ID")},IsActiveEntity=false`,
+				});
+			})
+			.catch((e) => {
+				console.error("Failed during create of Software Solution draft. ", e);
+			});
 	}
 
 	public async onPressDelete(): Promise<void> {

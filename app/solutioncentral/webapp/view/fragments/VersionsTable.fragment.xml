@@ -1,0 +1,102 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:columnmenu="sap.m.table.columnmenu"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:core="sap.ui.core"
+	core:require="{
+		formatter: 'com/gavdilabs/techtransmgt/solutioncentral/model/formatter'
+	}">
+	<Table id="versionsTable"
+		mode="{= ${path: 'IsActiveEntity', targetType: 'any'} === true ? 'None': 'MultiSelect'}"
+		growing="true"
+		backgroundDesign="Transparent"
+		selectionChange="onTableSelect"
+		items="{path: 'versions'}">
+		<dependents>
+			<columnmenu:Menu id="versionsQuickMenu" beforeOpen=".beforeOpenColumnMenuVersions"
+				showTableSettingsButton="true"
+				tableSettingsPressed=".onPressTableSettingsVersions">
+				<columnmenu:QuickSort change=".onSortVersions">
+					<columnmenu:items>
+						<columnmenu:QuickSortItem></columnmenu:QuickSortItem>
+					</columnmenu:items>
+				</columnmenu:QuickSort>
+				<columnmenu:QuickGroup change=".onGroupVersions">
+					<columnmenu:items>
+						<columnmenu:QuickGroupItem></columnmenu:QuickGroupItem>
+					</columnmenu:items>
+				</columnmenu:QuickGroup>
+			</columnmenu:Menu>
+		</dependents>
+		<columns>
+			<Column app:p13nKey="column.version" headerMenu="versionsQuickMenu" minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.version}" />
+			</Column>
+			<Column app:p13nKey="column.statusVersion" headerMenu="versionsQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.statusVersion}" />
+			</Column>
+			<Column app:p13nKey="column.releaseDate" headerMenu="versionsQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.releaseDate}" />
+			</Column>
+
+			<!-- Columns not visible by default -->
+			<Column app:p13nKey="column.createdOnVersion" headerMenu="versionsQuickMenu" visible="false"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.createdOnVersion}" />
+			</Column>
+			<Column app:p13nKey="column.createdByVersion" headerMenu="versionsQuickMenu" visible="false"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.createdByVersion}" />
+			</Column>
+			<Column app:p13nKey="column.lastModifiedVersion" headerMenu="versionsQuickMenu"
+				visible="false"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.lastModifiedVersion}" />
+			</Column>
+			<Column app:p13nKey="column.lastModifiedByVersion" headerMenu="versionsQuickMenu"
+				visible="false"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.lastModifiedByVersion}" />
+			</Column>
+			<Column app:p13nKey="column.softwareVersionID" headerMenu="versionsQuickMenu" visible="false"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.softwareVersionID}" />
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem type="Navigation" vAlign="Middle" press=".onVersionTableItemPress">
+				<cells>
+					<ObjectIdentifier title="{version}" />
+					<ObjectStatus text="{status/descr}"
+						state="{
+								path: 'status/criticalityLevel',
+								formatter: 'formatter.formatSoftwareStatus'
+							}"
+						icon="{
+								path: 'status/criticalityLevel',
+								formatter: 'formatter.formatSoftwareStatusIcon'
+							}"
+						inverted="false" />
+					<Text text="{releaseDate}" />
+
+
+					<Text text="{createdAt}" />
+					<Text text="{createdBy}" />
+					<Text text="{modifiedAt}" />
+					<Text text="{modifiedBy}" />
+					<Text text="{ID}" />
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</core:FragmentDefinition>
