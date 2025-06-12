@@ -11,7 +11,13 @@ import MessageProcessor from "sap/ui/core/message/MessageProcessor";
 import Messaging from "sap/ui/core/Messaging";
 import View from "sap/ui/core/mvc/View";
 import MessageModel from "sap/ui/model/message/MessageModel";
+import { CustomControlType } from "../types";
+import { ValueState } from "sap/ui/core/library";
 
+/**
+ * Message Handler class for SAPUI5 application
+ * Provides centralized message management functionality
+ */
 export class MessagingUtils {
 	private readonly messaging: typeof Messaging;
 	private messageModel: MessageModel;
@@ -19,6 +25,10 @@ export class MessagingUtils {
 	private popover: Popover;
 	private view: View;
 
+	/**
+	 * Constructor
+	 * @param {View} view
+	 */
 	constructor(view: View) {
 		this.view = view;
 		this.messaging = Messaging;
@@ -29,22 +39,43 @@ export class MessagingUtils {
 		this.createMessageView();
 	}
 
+	/**
+	 * Registers message processor
+	 * @param {object} processor - The object which the message handling is registered for
+	 */
 	public registerMessageProcessor(processor: object): void {
 		this.messaging.registerMessageProcessor(processor as MessageProcessor);
 	}
 
+	/**
+	 * Unregisters message processor
+	 * @param {object} processor - The object which the message handling is registered for
+	 */
 	public unregisterMessageProcessor(processor: object): void {
 		this.messaging.unregisterMessageProcessor(processor as MessageProcessor);
 	}
 
+	/**
+	 * Clears all messages from message model
+	 * @void
+	 */
 	public clearAllMessages(): void {
 		this.messaging.removeAllMessages();
 	}
 
+	/**
+	 * Retrives all messages from message model
+	 * @returns Array of messages
+	 * */
 	public getAllMessages(): Message[] {
 		return this.messaging.getMessageModel().getData() as Message[];
 	}
 
+	/**
+	 * Creates new message view and message popover
+	 * @private
+	 * @void
+	 */
 	private createMessageView() {
 		const messageTemplate = new MessageItem({
 			type: "{type}",
@@ -99,8 +130,40 @@ export class MessagingUtils {
 		});
 	}
 
-	public handleMessageViewOpen(control: Control) {
+	/**
+	 * Handles opening message view popover
+	 * @param {Control} control - openBy control
+	 * @void
+	 */
+	public handleMessageViewOpen(control: Control): void {
 		this.messageView.navigateBack();
-		this.popover.openBy(control);
+		if (this.popover.isOpen()) {
+			this.popover.close();
+		} else {
+			this.popover.openBy(control);
+		}
+	}
+
+	/**
+	 * Clear messages releated to control id
+	 * @param {string} controlId
+	 * @void
+	 */
+	public clearMessagesByControl(controlId: string): void {
+		const messages = this.getAllMessages();
+		const messagesToRemove = messages.filter(
+			(msg: Message) => msg.getControlId() === controlId,
+		);
+		this.messaging.removeMessages(messagesToRemove);
+	}
+
+	/**
+	 * Clears input Value state and removes error related error message
+	 * @param {CustomControlType} control
+	 * @void
+	 */
+	public handleChangeEvent(control: CustomControlType): void {
+		control.setValueState(ValueState.None);
+		this.clearMessagesByControl(control.getId());
 	}
 }

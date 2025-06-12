@@ -10,7 +10,7 @@
 		<core:Title text="Object Information" />
 
 		<Label text="{i18n>column.name}" required="true" />
-		<Input value="{name}" required="true" />
+		<Input value="{name}" change=".handleChangeEvent" required="true" />
 
 		<Label text="{i18n>column.description}" />
 		<TextArea value="{description}" rows="4" />

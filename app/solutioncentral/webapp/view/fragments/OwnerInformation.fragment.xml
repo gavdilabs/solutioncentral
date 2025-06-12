@@ -29,12 +29,14 @@
 		<Input value="{costCenter}" />
 
 		<Label text="{i18n>column.owner}" required="true" />
-		<Select forceSelection="false" required="true" selectedKey="{owner_username}" items="{/User}">
+		<Select forceSelection="false" change=".handleChangeEvent" required="true"
+			selectedKey="{owner_username}" items="{/User}">
 			<core:ListItem key="{username}" text="{fullName}" />
 		</Select>
 
 		<Label text="{i18n>column.team}" required="true" />
-		<Select forceSelection="false" required="true" selectedKey="{team_teamName}"
+		<Select forceSelection="false" change=".handleChangeEvent" required="true"
+			selectedKey="{team_teamName}"
 			items="{/SoftwareTeam}">
 			<core:ListItem key="{teamName}" text="{teamName}" />
 		</Select>

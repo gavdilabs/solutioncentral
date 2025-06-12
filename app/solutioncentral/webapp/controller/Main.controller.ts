@@ -1,10 +1,11 @@
 import { ListItemBase$PressEvent } from "sap/m/ListItemBase";
 import BaseController from "./BaseController";
-import { Button$PressEvent } from "sap/m/Button";
+import Button, { Button$PressEvent } from "sap/m/Button";
 import JSONModel from "sap/ui/model/json/JSONModel";
 import { CustomModels } from "../lib/constants";
 import { DefaultSolutionTableConfig } from "../lib/defaults";
 import {
+	CustomControlType,
 	SolutionCatalogueTableEntry,
 	SolutionTableConfig,
 	ViewSettingsDialogItem,
@@ -24,6 +25,12 @@ import { QuickGroup$ChangeEvent } from "sap/m/table/columnmenu/QuickGroup";
 import { MenuBase$BeforeOpenEvent } from "sap/m/table/columnmenu/MenuBase";
 import Menu from "sap/m/table/columnmenu/Menu";
 import { SelectionState } from "sap/m/p13n/SelectionController";
+import Dialog from "sap/m/Dialog";
+import Fragment from "sap/ui/core/Fragment";
+import { discardDraft, draftActivate } from "../lib/utils/draftUtils";
+import ODataModel from "sap/ui/model/odata/v4/ODataModel";
+import { MessagingUtils } from "../lib/utils/messagingUtils";
+import Event from "sap/ui/base/Event";
 
 /**
  * @namespace com.gavdilabs.techtransmgt.solutioncentral.controller
@@ -33,6 +40,8 @@ export default class Main extends BaseController {
 
 	private tableConfigModel: JSONModel | undefined;
 	private softwareSolutionPersonalization: SoftwareSolutionPersonalization;
+	private createSoftwareSolutionDialog: Dialog;
+	private messageHandler: MessagingUtils;
 
 	public onInit(): void {
 		this.tableConfigModel = new JSONModel(DefaultSolutionTableConfig);
@@ -43,6 +52,8 @@ export default class Main extends BaseController {
 	}
 
 	private _onPatternMatched(): void {
+		this.messageHandler = new MessagingUtils(this.getView());
+		this.messageHandler.clearAllMessages();
 		const table = this.getView().byId("solutionCatalogueTable") as Table;
 		if (table.getBinding("items").isSuspended()) {
 			table.getBinding("items").resume();
@@ -107,8 +118,14 @@ export default class Main extends BaseController {
 		});
 	}
 
-	public async onPressCreate(event: Button$PressEvent): Promise<void> {
-		// TODO: Implement
+	public async onPressCreate(): Promise<void> {
+		this.messageHandler.clearAllMessages();
+		const companyConfig =
+			await this.getOwnerComponent().getCompanyConfiguration();
+
+		const hasApprovalFlow =
+			(companyConfig && companyConfig.getProperty("approvalFlow_code")) === 1;
+
 		const table = this.getView().byId(this.TABLE_ID) as Table;
 		const context = (table.getBinding("items") as ODataListBinding).create({
 			IsActiveEntity: false,
@@ -116,14 +133,37 @@ export default class Main extends BaseController {
 
 		await context
 			.created()
-			.then(() => {
-				this.getRouter().navTo("softwareSolutionObjectPage", {
-					key: `ID=${context.getProperty("ID")},IsActiveEntity=false`,
-				});
+			.then(async () => {
+				if (hasApprovalFlow) {
+					await this.handleCreateForApprovalFlow(context);
+				} else {
+					this.handleCreateForNoneApprovalFlow(context);
+				}
 			})
 			.catch((e) => {
 				console.error("Failed during create of Software Solution draft. ", e);
 			});
+	}
+
+	private async handleCreateForApprovalFlow(context: Context): Promise<void> {
+		if (!this.createSoftwareSolutionDialog) {
+			this.createSoftwareSolutionDialog = (await Fragment.load({
+				id: "CreateSoftwareSolutionDialog",
+				name: "com.gavdilabs.techtransmgt.solutioncentral.view.fragments.CreateSoftwareSolutionDialog",
+				controller: this,
+			})) as Dialog;
+
+			this.getView().addDependent(this.createSoftwareSolutionDialog);
+		}
+
+		this.createSoftwareSolutionDialog.setBindingContext(context);
+		this.createSoftwareSolutionDialog.open();
+	}
+
+	private handleCreateForNoneApprovalFlow(context: Context) {
+		this.getRouter().navTo("softwareSolutionObjectPage", {
+			key: `ID=${context.getProperty("ID")},IsActiveEntity=false`,
+		});
 	}
 
 	public async onPressDelete(): Promise<void> {
@@ -215,5 +255,46 @@ export default class Main extends BaseController {
 		});
 
 		binding.filter(filter ?? undefined);
+	}
+
+	public handleCreateDialogCancel(event: Button$PressEvent): void {
+		const context = event.getSource().getBindingContext() as Context;
+		this.createSoftwareSolutionDialog.close();
+		discardDraft(context).catch((e) => {
+			throw e;
+		});
+	}
+
+	public handleCreateDialogConfirm(event: Button$PressEvent): void {
+		this.messageHandler.clearAllMessages();
+		const context = event.getSource().getBindingContext() as Context;
+		const softwareSolutionId = context.getProperty("ID") as string;
+		const model = this.getView().getModel() as ODataModel;
+		draftActivate(context, model)
+			.then(() => {
+				this.createSoftwareSolutionDialog.close();
+				this.getRouter().navTo(
+					"softwareSolutionObjectPage",
+					{
+						key: `ID=${softwareSolutionId},IsActiveEntity=true`,
+					},
+					true,
+				);
+			})
+			.catch(() => {
+				const btn = Fragment.byId(
+					"CreateSoftwareSolutionDialog",
+					"createSolutionDialogMessageBtn",
+				) as Button;
+				this.messageHandler.handleMessageViewOpen(btn);
+			});
+	}
+
+	public openMessageView(event: Button$PressEvent) {
+		this.messageHandler.handleMessageViewOpen(event.getSource());
+	}
+
+	public handleChangeEvent(event: Event) {
+		this.messageHandler.handleChangeEvent(event.getSource<CustomControlType>());
 	}
 }

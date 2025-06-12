@@ -28,6 +28,7 @@ import Menu from "sap/m/table/columnmenu/Menu";
 import { QuickSort$ChangeEvent } from "sap/m/table/columnmenu/QuickSort";
 import { QuickGroup$ChangeEvent } from "sap/m/table/columnmenu/QuickGroup";
 import { MessagingUtils } from "../lib/utils/messagingUtils";
+import { CustomControlType } from "../lib/types";
 
 export enum DraftSwitchIndex {
 	DRAFT = 0,
@@ -84,6 +85,7 @@ export default class ObjectPage extends BaseController {
 							: DraftSwitchIndex.DRAFT;
 
 						this.messageHandler = new MessagingUtils(this.getView());
+						this.messageHandler.clearAllMessages();
 						// this.initVersionsPersonalization();
 					},
 				},
@@ -354,5 +356,10 @@ export default class ObjectPage extends BaseController {
 
 	public openMessageView(event: Button$PressEvent) {
 		this.messageHandler.handleMessageViewOpen(event.getSource());
+	}
+
+	public handleChangeEvent(event: Event) {
+		const control = event.getSource<CustomControlType>();
+		this.messageHandler.handleChangeEvent(control);
 	}
 }
