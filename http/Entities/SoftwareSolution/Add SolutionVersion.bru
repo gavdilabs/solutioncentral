@@ -1,0 +1,24 @@
+meta {
+  name: Add SolutionVersion
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{HOST}}/SoftwareSolution(ID={{ID}},IsActiveEntity=false)/versions
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "solution_ID": "{{ID}}",
+    "status_code": 5,
+    "version": "1.2.0",
+    "releaseDate": "2025-06-12"
+  }
+}
+
+vars:pre-request {
+  ID: 04017a3c-25ad-4c44-a0cc-3a383800bf0b
+}

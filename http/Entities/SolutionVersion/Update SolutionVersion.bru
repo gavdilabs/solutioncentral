@@ -1,0 +1,24 @@
+meta {
+  name: Update SolutionVersion
+  type: http
+  seq: 2
+}
+
+patch {
+  url: {{HOST}}/SolutionVersion(ID={{ID}},solution_ID={{SOL_KEY}},IsActiveEntity=false)
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "status_code": 5,
+    "version": "1.2.0",
+    "releaseDate": "2025-06-12"
+  }
+}
+
+vars:pre-request {
+  ID: 9e9522fb-bac7-4546-a34e-3645283a1a93
+  SOL_KEY: 04017a3c-25ad-4c44-a0cc-3a383800bf0b
+}
