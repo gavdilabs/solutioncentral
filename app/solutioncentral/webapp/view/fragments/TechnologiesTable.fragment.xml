@@ -11,7 +11,7 @@
 		mode="{= ${path: 'IsActiveEntity', targetType: 'any'} === true ? 'None': 'MultiSelect'}"
 		growing="true"
 		backgroundDesign="Transparent"
-		selectionChange="onTableSelect"
+		selectionChange="onTableSelect($event, 'technologiesTableConfig')"
 		items="{path: 'Technologies'}">
 		<dependents>
 			<plugins:ColumnResizer />
@@ -35,12 +35,17 @@
 			<Column app:p13nKey="column.technoName" width="30rem" headerMenu="technologiesQuickMenu"
 				minScreenWidth="Tablet"
 				demandPopin="true">
-				<Text text="{i18n>column.technoName}" />
+				<Text required="{= !${IsActiveEntity}}" text="{i18n>column.technoName}" />
 			</Column>
 			<Column app:p13nKey="column.technoDescr" headerMenu="technologiesQuickMenu"
 				minScreenWidth="Tablet"
 				demandPopin="true">
 				<Text text="{i18n>column.technoDescr}" />
+			</Column>
+			<Column app:p13nKey="column.technoVersion" headerMenu="technologiesQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Label required="{= !${IsActiveEntity}}" text="{i18n>column.technoVersion}" />
 			</Column>
 
 			<!-- Columns not visible by default -->
@@ -79,11 +84,7 @@
 				demandPopin="true">
 				<Text text="{i18n>column.technoSoftwareID}" />
 			</Column>
-			<Column app:p13nKey="column.technoVersion" visible="false" headerMenu="technologiesQuickMenu"
-				minScreenWidth="Tablet"
-				demandPopin="true">
-				<Text text="{i18n>column.technoVersion}" />
-			</Column>
+
 		</columns>
 		<items>
 			<ColumnListItem type="Navigation" vAlign="Middle" press=".onTableItemPress">
@@ -98,6 +99,10 @@
 						</Select>
 					</VBox>
 					<Text text="{technology/description}" />
+					<VBox width="100%">
+						<Text text="{version}" visible="{IsActiveEntity}" />
+						<Input value="{version}" visible="{= !${IsActiveEntity}}" />
+					</VBox>
 
 					<!-- Columns not visible by default -->
 					<Text text="{technology/createdAt}" />
@@ -106,7 +111,6 @@
 					<Text text="{technology/modifiedAt}" />
 					<Text text="{technology/ID}" />
 					<Text text="{software/ID}" />
-					<Text text="{version}" />
 				</cells>
 			</ColumnListItem>
 		</items>

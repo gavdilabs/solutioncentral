@@ -122,10 +122,13 @@
 						<actions>
 							<m:SearchField width="15rem"
 								search=".onSearchFieldChange($event, 'versionsTable', 'solution_ID')" />
-							<m:Button text="{i18n>button.create}" press="" type="Transparent"
+							<m:Button text="{i18n>button.create}" press=".onCreateNewVersionPress"
+								type="Transparent"
 								visible="{= !${IsActiveEntity}}" />
-							<m:Button text="{i18n>button.delete}" press="" type="Transparent"
-								visible="{= !${IsActiveEntity}}" enabled="false" />
+							<m:Button text="{i18n>button.delete}"
+								press=".onDeleteTableEntry($event, 'versionsTable')" type="Transparent"
+								visible="{= !${IsActiveEntity}}"
+								enabled="{= ${versionsTableConfig>/selectedItems}.length > 0}" />
 							<m:ToolbarSeparator />
 							<m:Button tooltip="{i18n>default.settings}" icon="sap-icon://action-settings"
 								press=".onPressTableSettings($event, 'versionsPersonalization')" />
@@ -147,10 +150,13 @@
 						<actions>
 							<m:SearchField width="15rem"
 								search=".onSearchFieldChange($event, 'technologiesTable', 'software_ID')" />
-							<m:Button text="{i18n>button.create}" press="" type="Transparent"
+							<m:Button text="{i18n>button.create}" press=".onCreateNewTechnologyPress"
+								type="Transparent"
 								visible="{= !${IsActiveEntity}}" />
-							<m:Button text="{i18n>button.delete}" press="" type="Transparent"
-								visible="{= !${IsActiveEntity}}" enabled="false" />
+							<m:Button text="{i18n>button.delete}"
+								press=".onDeleteTableEntry($event, 'technologiesTable')" type="Transparent"
+								visible="{= !${IsActiveEntity}}"
+								enabled="{= ${technologiesTableConfig>/selectedItems}.length > 0}" />
 							<m:ToolbarSeparator />
 							<m:Button tooltip="{i18n>default.settings}" icon="sap-icon://action-settings"
 								press=".onPressTableSettings($event, 'technologiesPerso')" />
@@ -172,10 +178,13 @@
 						<actions>
 							<m:SearchField width="15rem"
 								search=".onSearchFieldChange($event, 'dependentSolutionsTable', 'up__ID')" />
-							<m:Button text="{i18n>button.create}" press="" type="Transparent"
+							<m:Button text="{i18n>button.create}" press=".onCreateNewDependentSolutionPress"
+								type="Transparent"
 								visible="{= !${IsActiveEntity}}" />
-							<m:Button text="{i18n>button.delete}" press="" type="Transparent"
-								visible="{= !${IsActiveEntity}}" enabled="false" />
+							<m:Button text="{i18n>button.delete}"
+								press=".onDeleteTableEntry($event, 'dependentSolutionsTable')" type="Transparent"
+								visible="{= !${IsActiveEntity}}"
+								enabled="{= ${dependentSolutionsTableConfig>/selectedItems}.length > 0}" />
 							<m:ToolbarSeparator />
 							<m:Button tooltip="{i18n>default.settings}" icon="sap-icon://action-settings"
 								press=".onPressTableSettings($event, 'dependentSolutionsPerso')" />

@@ -11,7 +11,7 @@
 		mode="{= ${path: 'IsActiveEntity', targetType: 'any'} === true ? 'None': 'MultiSelect'}"
 		growing="true"
 		backgroundDesign="Transparent"
-		selectionChange="onTableSelect"
+		selectionChange="onTableSelect($event, 'versionsTableConfig')"
 		items="{path: 'versions'}">
 		<dependents>
 			<plugins:ColumnResizer />
@@ -35,12 +35,12 @@
 			<Column app:p13nKey="column.versionVersion" headerMenu="versionsQuickMenu"
 				minScreenWidth="Tablet"
 				demandPopin="true">
-				<Text text="{i18n>column.versionVersion}" />
+				<Label required="{= !${IsActiveEntity}}" text="{i18n>column.versionVersion}" />
 			</Column>
 			<Column app:p13nKey="column.versionStatus" headerMenu="versionsQuickMenu"
 				minScreenWidth="Tablet"
 				demandPopin="true">
-				<Text text="{i18n>column.versionStatus}" />
+				<Label required="{= !${IsActiveEntity}}" text="{i18n>column.versionStatus}" />
 			</Column>
 			<Column app:p13nKey="column.versionReleaseDate" headerMenu="versionsQuickMenu"
 				minScreenWidth="Tablet"
@@ -80,17 +80,31 @@
 		<items>
 			<ColumnListItem type="Navigation" vAlign="Middle" press=".onVersionTableItemPress">
 				<cells>
-					<ObjectIdentifier title="{version}" />
-					<ObjectStatus text="{status/descr}"
-						state="{
+					<VBox width="100%">
+						<ObjectIdentifier title="{version}" visible="{IsActiveEntity}" />
+						<Input value="{version}" visible="{= !${IsActiveEntity}}" />
+					</VBox>
+					<VBox width="100%">
+						<ObjectStatus visible="{IsActiveEntity}" text="{status/descr}"
+							state="{
 								path: 'status/criticalityLevel',
 								formatter: 'formatter.formatSoftwareStatus'
 							}"
-						icon="{
+							icon="{
 								path: 'status/criticalityLevel',
 								formatter: 'formatter.formatSoftwareStatusIcon'
 							}"
-						inverted="false" />
+							inverted="false" />
+						<Select width="100%"
+							required="true"
+							items="{path: '/SoftwareStatus', templateShareable: true}"
+							visible="{= !${IsActiveEntity}}"
+							selectedKey="{status_code}"
+							forceSelection="false">
+							<core:ListItem key="{code}" text="{name}" />
+						</Select>
+					</VBox>
+					<!-- TODO: make date picker-->
 					<Text text="{releaseDate}" />
 
 

@@ -251,6 +251,7 @@ export const SoftwareSolutionExportColumns = new Map<string, SpreadsheetColumn>(
 );
 
 export const DefaultVersionsTableConfig = {
+	selectedItems: [],
 	items: [
 		{
 			path: "version",
@@ -277,7 +278,7 @@ export const DefaultVersionsTableConfig = {
 			groupable: true,
 		},
 		{
-			path: "changedBy",
+			path: "modifiedBy",
 			key: "column.versionLastModifiedBy",
 			label: "column.versionLastModifiedBy",
 			selected: false,
@@ -285,7 +286,7 @@ export const DefaultVersionsTableConfig = {
 			groupable: true,
 		},
 		{
-			path: "changedAt",
+			path: "modifiedAt",
 			key: "column.versionLastModified",
 			label: "column.versionLastModified",
 			selected: false,
@@ -296,6 +297,14 @@ export const DefaultVersionsTableConfig = {
 			path: "createdBy",
 			key: "column.versionCreatedBy",
 			label: "column.versionCreatedBy",
+			selected: false,
+			sortable: true,
+			groupable: true,
+		},
+		{
+			path: "createdAt",
+			key: "column.versionCreatedOn",
+			label: "column.versionCreatedOn",
 			selected: false,
 			sortable: true,
 			groupable: true,
@@ -312,6 +321,7 @@ export const DefaultVersionsTableConfig = {
 };
 
 export const DefaultTechnologiesTableConfig = {
+	selectedItems: [],
 	items: [
 		{
 			path: "technology/name",
@@ -381,7 +391,7 @@ export const DefaultTechnologiesTableConfig = {
 			path: "version",
 			key: "column.technoVersion",
 			label: "column.technoVersion",
-			selected: false,
+			selected: true,
 			sortable: true,
 			groupable: true,
 		},
@@ -389,9 +399,10 @@ export const DefaultTechnologiesTableConfig = {
 };
 
 export const DefaultDependentSolutionTableConfig = {
+	selectedItems: [],
 	items: [
 		{
-			path: "up_/name",
+			path: "dependentSoftwareSolution/name",
 			key: "column.dependentName",
 			label: "column.dependentName",
 			selected: true,
@@ -399,7 +410,7 @@ export const DefaultDependentSolutionTableConfig = {
 			groupable: true,
 		},
 		{
-			path: "up_/description",
+			path: "dependentSoftwareSolution/description",
 			key: "column.dependentDescr",
 			label: "column.dependentDescr",
 			selected: true,
@@ -435,6 +446,6 @@ export const DefaultDependentSolutionTableConfig = {
 
 export const DefaultTableSearchColumns = {
 	versionsTable: ["version", "status/descr"],
-	technologiesTable: ["technology/name", "technology/description"],
+	technologiesTable: ["technology/name", "technology/description", "version"],
 	dependentSolutionsTable: ["up_/name", "up_/description", "softwareType_code"],
 };
