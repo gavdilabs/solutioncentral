@@ -158,7 +158,7 @@ entity SoftwareSolution : cuid, managed {
                           key ID                        : UUID;
                               dependentSoftwareSolution : Association to SoftwareSolution @mandatory;
                               softwareType              : Association to DependencyType   @mandatory;
-                        }
+                        };
 }
 
 @cds.search: {teamName}

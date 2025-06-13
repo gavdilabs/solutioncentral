@@ -1,5 +1,6 @@
 <core:FragmentDefinition
 	xmlns="sap.m"
+	xmlns:plugins="sap.m.plugins"
 	xmlns:columnmenu="sap.m.table.columnmenu"
 	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 	xmlns:core="sap.ui.core"
@@ -13,15 +14,17 @@
 		selectionChange="onTableSelect"
 		items="{path: 'versions'}">
 		<dependents>
-			<columnmenu:Menu id="versionsQuickMenu" beforeOpen=".beforeOpenColumnMenuVersions"
+			<plugins:ColumnResizer />
+			<columnmenu:Menu id="versionsQuickMenu"
+				beforeOpen=".beforeOpenColumnMenu($event, 'versionsPersonalization')"
 				showTableSettingsButton="true"
-				tableSettingsPressed=".onPressTableSettingsVersions">
-				<columnmenu:QuickSort change=".onSortVersions">
+				tableSettingsPressed=".onPressTableSettings($event, 'versionsPersonalization')">
+				<columnmenu:QuickSort change=".onSort($event, 'versionsPersonalization')">
 					<columnmenu:items>
 						<columnmenu:QuickSortItem></columnmenu:QuickSortItem>
 					</columnmenu:items>
 				</columnmenu:QuickSort>
-				<columnmenu:QuickGroup change=".onGroupVersions">
+				<columnmenu:QuickGroup change=".onGroup($event, 'versionsPersonalization')">
 					<columnmenu:items>
 						<columnmenu:QuickGroupItem></columnmenu:QuickGroupItem>
 					</columnmenu:items>
@@ -29,48 +32,49 @@
 			</columnmenu:Menu>
 		</dependents>
 		<columns>
-			<Column app:p13nKey="column.version" headerMenu="versionsQuickMenu" minScreenWidth="Tablet"
-				demandPopin="true">
-				<Text text="{i18n>column.version}" />
-			</Column>
-			<Column app:p13nKey="column.statusVersion" headerMenu="versionsQuickMenu"
+			<Column app:p13nKey="column.versionVersion" headerMenu="versionsQuickMenu"
 				minScreenWidth="Tablet"
 				demandPopin="true">
-				<Text text="{i18n>column.statusVersion}" />
+				<Text text="{i18n>column.versionVersion}" />
 			</Column>
-			<Column app:p13nKey="column.releaseDate" headerMenu="versionsQuickMenu"
+			<Column app:p13nKey="column.versionStatus" headerMenu="versionsQuickMenu"
 				minScreenWidth="Tablet"
 				demandPopin="true">
-				<Text text="{i18n>column.releaseDate}" />
+				<Text text="{i18n>column.versionStatus}" />
+			</Column>
+			<Column app:p13nKey="column.versionReleaseDate" headerMenu="versionsQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.versionReleaseDate}" />
 			</Column>
 
 			<!-- Columns not visible by default -->
-			<Column app:p13nKey="column.createdOnVersion" headerMenu="versionsQuickMenu" visible="false"
+			<Column app:p13nKey="column.versionCreatedOn" headerMenu="versionsQuickMenu" visible="false"
 				minScreenWidth="Tablet"
 				demandPopin="true">
-				<Text text="{i18n>column.createdOnVersion}" />
+				<Text text="{i18n>column.versionCreatedOn}" />
 			</Column>
-			<Column app:p13nKey="column.createdByVersion" headerMenu="versionsQuickMenu" visible="false"
+			<Column app:p13nKey="column.versionCreatedBy" headerMenu="versionsQuickMenu" visible="false"
 				minScreenWidth="Tablet"
 				demandPopin="true">
-				<Text text="{i18n>column.createdByVersion}" />
+				<Text text="{i18n>column.versionCreatedBy}" />
 			</Column>
-			<Column app:p13nKey="column.lastModifiedVersion" headerMenu="versionsQuickMenu"
+			<Column app:p13nKey="column.versionLastModified" headerMenu="versionsQuickMenu"
 				visible="false"
 				minScreenWidth="Tablet"
 				demandPopin="true">
-				<Text text="{i18n>column.lastModifiedVersion}" />
+				<Text text="{i18n>column.versionLastModified}" />
 			</Column>
-			<Column app:p13nKey="column.lastModifiedByVersion" headerMenu="versionsQuickMenu"
+			<Column app:p13nKey="column.versionLastModified" headerMenu="versionsQuickMenu"
 				visible="false"
 				minScreenWidth="Tablet"
 				demandPopin="true">
-				<Text text="{i18n>column.lastModifiedByVersion}" />
+				<Text text="{i18n>column.versionLastModifiedBy}" />
 			</Column>
-			<Column app:p13nKey="column.softwareVersionID" headerMenu="versionsQuickMenu" visible="false"
+			<Column app:p13nKey="column.versionID" headerMenu="versionsQuickMenu" visible="false"
 				minScreenWidth="Tablet"
 				demandPopin="true">
-				<Text text="{i18n>column.softwareVersionID}" />
+				<Text text="{i18n>column.versionID}" />
 			</Column>
 		</columns>
 		<items>

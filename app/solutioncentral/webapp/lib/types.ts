@@ -46,3 +46,14 @@ export interface CustomControlType extends EventProvider {
 	getId: () => string;
 	setValueState: (state: string) => void;
 }
+
+export interface CompanyConfiguration {
+	currentSAPVersion_code: number;
+	currentSAPVersion: Record<string, unknown>;
+	expectedMinimalCleanCoreValue_code: number;
+	expectedMinimalCleanCoreValue: Record<string, unknown>;
+	approvalFlow: Record<string, unknown>;
+	approvalFlow_code: number;
+	allowDeprecationWithoutReplacement: boolean;
+	bpaEnabled: boolean;
+}

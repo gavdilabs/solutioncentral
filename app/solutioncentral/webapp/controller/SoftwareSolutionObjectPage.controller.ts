@@ -18,17 +18,28 @@ import List from "sap/m/List";
 import { ListBase$SelectionChangeEvent } from "sap/m/ListBase";
 import StandardListItem from "sap/m/StandardListItem";
 import MessageBox from "sap/m/MessageBox";
-import { Link$PressEvent } from "sap/m/Link";
+import Link, { Link$PressEvent } from "sap/m/Link";
 import Table from "sap/m/Table";
 import { SoftwareSolutionPersonalization } from "../lib/utils/personalization";
 import JSONModel from "sap/ui/model/json/JSONModel";
-import { DefaultVersionsTableConfig } from "../lib/defaults";
+import {
+	DefaultDependentSolutionTableConfig,
+	DefaultTableSearchColumns,
+	DefaultTechnologiesTableConfig,
+	DefaultVersionsTableConfig,
+} from "../lib/defaults";
 import { MenuBase$BeforeOpenEvent } from "sap/m/table/columnmenu/MenuBase";
-import Menu from "sap/m/table/columnmenu/Menu";
 import { QuickSort$ChangeEvent } from "sap/m/table/columnmenu/QuickSort";
 import { QuickGroup$ChangeEvent } from "sap/m/table/columnmenu/QuickGroup";
 import { MessagingUtils } from "../lib/utils/messagingUtils";
 import { CustomControlType } from "../lib/types";
+import { ListItemBase$PressEvent } from "sap/m/ListItemBase";
+import History from "sap/ui/core/routing/History";
+import Breadcrumbs from "sap/m/Breadcrumbs";
+import ResourceBundle from "sap/base/i18n/ResourceBundle";
+import { SearchField$SearchEvent } from "sap/m/SearchField";
+import { searchTableColumns } from "../lib/utils/filters";
+import Menu from "sap/m/table/columnmenu/Menu";
 
 export enum DraftSwitchIndex {
 	DRAFT = 0,
@@ -39,15 +50,41 @@ export enum DraftSwitchIndex {
  * @namespace com.gavdilabs.techtransmgt.solutioncentral.controller
  */
 export default class ObjectPage extends BaseController {
+	private readonly VERSION_PERSONALIZATION = "versionsPersonalization";
+	private readonly TECHNOLOGIES_PERSONALIZATION = "technologiesPerso";
+	private readonly DEPENDENT_PERSONALIZATION = "dependentSolutionsPerso";
+
 	private draftIndicator: DraftIndicator;
 	private draftSwitcherPopover: Popover;
 	private itemIndex: number;
-	private versionsTableConfig: JSONModel | undefined;
-	private versionsPersonalization: SoftwareSolutionPersonalization;
 	private messageHandler: MessagingUtils;
+	private history: History;
+	private i18nBundle: ResourceBundle;
+
+	private versionsTableConfig: JSONModel | undefined;
+	private technologiesTableConfig: JSONModel | undefined;
+	private dependentSolutionsTableConfig: JSONModel | undefined;
+	private defaultSearchColumns: JSONModel | undefined;
+
+	private versionsPersonalization: SoftwareSolutionPersonalization;
+	private technologiesPerso: SoftwareSolutionPersonalization;
+	private dependentSolutionsPerso: SoftwareSolutionPersonalization;
+	private readonly personalizationInstances = new Map<
+		string,
+		SoftwareSolutionPersonalization
+	>();
 
 	public onInit(): void {
+		this.history = History.getInstance();
 		this.versionsTableConfig = new JSONModel(DefaultVersionsTableConfig);
+		this.technologiesTableConfig = new JSONModel(
+			DefaultTechnologiesTableConfig,
+		);
+		this.dependentSolutionsTableConfig = new JSONModel(
+			DefaultDependentSolutionTableConfig,
+		);
+		this.defaultSearchColumns = new JSONModel(DefaultTableSearchColumns);
+
 		this.getRouter()
 			.getRoute("softwareSolutionObjectPage")
 			.attachPatternMatched(this.onPatternMatched.bind(this), this);
@@ -64,10 +101,11 @@ export default class ObjectPage extends BaseController {
 				path: `/SoftwareSolution(${key})`,
 				parameters: {
 					$select: "HasActiveEntity,HasDraftEntity",
-					$expand: "solutionStatus,versions",
+					$expand: "solutionStatus,versions,activeVersion",
 				},
 				events: {
-					dataReceived: () => {
+					dataReceived: async () => {
+						this.i18nBundle = await this.getResourceBundle();
 						this.draftIndicator = this.getView().byId(
 							"draftIndicator",
 						) as DraftIndicator;
@@ -86,44 +124,172 @@ export default class ObjectPage extends BaseController {
 
 						this.messageHandler = new MessagingUtils(this.getView());
 						this.messageHandler.clearAllMessages();
-						// this.initVersionsPersonalization();
+						this.createBreadcrumbs();
+						this.initTablePersonalizations();
 					},
 				},
 			});
 		}
 	}
 
+	private createBreadcrumbs() {
+		const breadCrumbContainer = this.getView().byId(
+			"breadcrumbsContainer",
+		) as Breadcrumbs;
+
+		const previousHash = this.history.getPreviousHash();
+		const id = previousHash?.substring(
+			previousHash.indexOf("ID=") + 3,
+			previousHash.indexOf(",") || undefined,
+		);
+
+		// If id is not present > meaning a refresh on objectpage
+		// Set breadcrumb to navigate to main view
+		if (!id) {
+			breadCrumbContainer.removeAllLinks();
+			breadCrumbContainer.addLink(
+				new Link({
+					text: this.i18nBundle.getText("breadcrumb.solutions"),
+					press: () => this.navToMain(),
+				}),
+			);
+			return;
+		}
+
+		if (!this.getOwnerComponent().getBreadcrumbNavBack()) {
+			// Navigation from main view
+			if (!previousHash || previousHash === "") {
+				breadCrumbContainer.removeAllLinks();
+				breadCrumbContainer.addLink(
+					new Link({
+						text: this.i18nBundle.getText("breadcrumb.solutions"),
+						press: () => this.navToMain(),
+					}),
+				);
+			} else {
+				breadCrumbContainer.addLink(
+					new Link({
+						text: id,
+						press: (event: Link$PressEvent) => this.navToObjectPage(event, id),
+					}),
+				);
+			}
+		}
+	}
+
+	private navToObjectPage(event: Link$PressEvent, id: string) {
+		const breadcrumbContainer = event.getSource().getParent() as Breadcrumbs;
+		breadcrumbContainer.removeLink(event.getSource());
+		this.getOwnerComponent().setBreadcrumbNavBack(true);
+		this.getRouter().navTo("softwareSolutionObjectPage", {
+			key: `ID=${id},IsActiveEntity=true`,
+		});
+	}
+
+	private navToMain(): void {
+		this.getRouter().navTo("main");
+	}
+
+	private initTablePersonalizations() {
+		this.initVersionsPersonalization();
+		this.initTechnologiesPersonalization();
+		this.initDependentSolutionsPersonalization();
+	}
+
 	private initVersionsPersonalization() {
 		const versionsTable = this.getView().byId("versionsTable") as Table;
 
-		if (this.versionsPersonalization) return;
+		if (this.personalizationInstances.has(this.VERSION_PERSONALIZATION)) return;
 
 		this.getResourceBundle()
 			.then((bundle) => {
-				this.versionsPersonalization = new SoftwareSolutionPersonalization(
+				const versionsPersonalization = new SoftwareSolutionPersonalization(
 					versionsTable,
-					{ key: "column.version", descending: true },
+					{ key: "column.versionVersion", descending: true },
 					"/items",
 					this.versionsTableConfig,
 					bundle,
 				);
+
+				this.personalizationInstances.set(
+					this.VERSION_PERSONALIZATION,
+					versionsPersonalization,
+				);
 			})
 			.catch((e) => {
-				console.error("Failed to configure personalization engine", e);
+				console.error(
+					"Failed to configure personalization engine Versions table",
+					e,
+				);
 			});
 	}
 
-	public onNavBack() {
-		this.getRouter().navTo("main");
+	private initTechnologiesPersonalization() {
+		const technoTable = this.getView().byId("technologiesTable") as Table;
+
+		if (this.personalizationInstances.has(this.TECHNOLOGIES_PERSONALIZATION))
+			return;
+
+		this.getResourceBundle()
+			.then((bundle) => {
+				const technologiesPerso = new SoftwareSolutionPersonalization(
+					technoTable,
+					{ key: "column.technoName", descending: true },
+					"/items",
+					this.technologiesTableConfig,
+					bundle,
+				);
+
+				this.personalizationInstances.set(
+					this.TECHNOLOGIES_PERSONALIZATION,
+					technologiesPerso,
+				);
+			})
+			.catch((e) => {
+				console.error(
+					"Failed to configure personalization engine for Technologies Table",
+					e,
+				);
+			});
 	}
 
-	private async handleDiscardDraft(context: Context): Promise<void> {
+	private initDependentSolutionsPersonalization() {
+		const dependentSolutionsTable = this.getView().byId(
+			"dependentSolutionsTable",
+		) as Table;
+
+		if (this.personalizationInstances.has(this.DEPENDENT_PERSONALIZATION))
+			return;
+
+		this.getResourceBundle()
+			.then((bundle) => {
+				const dependentSolutionsPerso = new SoftwareSolutionPersonalization(
+					dependentSolutionsTable,
+					{ key: "column.dependentName", descending: true },
+					"/items",
+					this.dependentSolutionsTableConfig,
+					bundle,
+				);
+
+				this.personalizationInstances.set(
+					this.DEPENDENT_PERSONALIZATION,
+					dependentSolutionsPerso,
+				);
+			})
+			.catch((e) => {
+				console.error(
+					"Failed to configure personalization engine for Dependent Solutions Table",
+					e,
+				);
+			});
+	}
+
+	private handleDiscardDraft(context: Context): Promise<void> {
 		this.messageHandler.clearAllMessages();
-		const i18n = await this.getResourceBundle();
 		const softwareSolutionId = context.getProperty("ID") as string;
 		discardDraft(context)
 			.then((hasActiveEntity: boolean) => {
-				MessageToast.show(i18n.getText("default.draftDiscarded"), {
+				MessageToast.show(this.i18nBundle.getText("default.draftDiscarded"), {
 					closeOnBrowserNavigation: false,
 				});
 				if (hasActiveEntity) {
@@ -177,16 +343,15 @@ export default class ObjectPage extends BaseController {
 		);
 	}
 
-	public async onSaveDraft() {
+	public onSaveDraft() {
 		this.messageHandler.clearAllMessages();
 		const context = this.getView().getBindingContext() as Context;
 		const softwareSolutionId = context.getProperty("ID") as string;
 		const model = this.getView().getModel() as ODataModel;
-		const i18n = await this.getResourceBundle();
 
 		draftActivate(context, model)
 			.then(() => {
-				MessageToast.show(i18n.getText("default.objectSaved"), {
+				MessageToast.show(this.i18nBundle.getText("default.objectSaved"), {
 					closeOnBrowserNavigation: false,
 				});
 				this.getRouter().navTo(
@@ -256,36 +421,40 @@ export default class ObjectPage extends BaseController {
 		);
 	}
 
-	public async onDeleteSolutionPress(): Promise<void> {
+	public onDeleteSolutionPress(): void {
 		const context = this.getView().getBindingContext() as Context;
-		const i18n = await this.getResourceBundle();
 		const name = context.getProperty("name") as string;
 
-		MessageBox.warning(i18n.getText("solution.deleteWarning", [name]), {
-			actions: [MessageBox.Action.DELETE, MessageBox.Action.CANCEL],
-			emphasizedAction: MessageBox.Action.DELETE,
-			onClose: (action: string) => {
-				if (action === (MessageBox.Action.DELETE as string)) {
-					context
-						.delete("$auto")
-						.then(() => {
-							MessageToast.show(i18n.getText("solution.deletedMsg", [name]), {
-								closeOnBrowserNavigation: false,
+		MessageBox.warning(
+			this.i18nBundle.getText("solution.deleteWarning", [name]),
+			{
+				actions: [MessageBox.Action.DELETE, MessageBox.Action.CANCEL],
+				emphasizedAction: MessageBox.Action.DELETE,
+				onClose: (action: string) => {
+					if (action === (MessageBox.Action.DELETE as string)) {
+						context
+							.delete("$auto")
+							.then(() => {
+								MessageToast.show(
+									this.i18nBundle.getText("solution.deletedMsg", [name]),
+									{
+										closeOnBrowserNavigation: false,
+									},
+								);
+								this.getRouter().navTo("main");
+							})
+							.catch((e) => {
+								throw e;
 							});
-							this.getRouter().navTo("main");
-						})
-						.catch((e) => {
-							throw e;
-						});
-				}
+					}
+				},
 			},
-		});
+		);
 	}
 
 	public async onRejectSolution(): Promise<void> {
 		this.messageHandler.clearAllMessages();
 		const model = this.getView().getModel() as ODataModel;
-		const i18n = await this.getResourceBundle();
 		const context = this.getView().getBindingContext() as Context;
 		const operation = model.bindContext(
 			"RadarService.rejectSolution(...)",
@@ -295,7 +464,7 @@ export default class ObjectPage extends BaseController {
 		await operation
 			.invoke()
 			.then(() => {
-				MessageToast.show(i18n.getText("solution.rejectedMsg"));
+				MessageToast.show(this.i18nBundle.getText("solution.rejectedMsg"));
 				this.getView().getElementBinding().refresh();
 			})
 			.catch((e) => {
@@ -306,7 +475,6 @@ export default class ObjectPage extends BaseController {
 	public async onApproveSolution(): Promise<void> {
 		this.messageHandler.clearAllMessages();
 		const model = this.getView().getModel() as ODataModel;
-		const i18n = await this.getResourceBundle();
 		const context = this.getView().getBindingContext() as Context;
 		const operation = model.bindContext(
 			"RadarService.approveSolution(...)",
@@ -316,7 +484,7 @@ export default class ObjectPage extends BaseController {
 		await operation
 			.invoke()
 			.then(() => {
-				MessageToast.show(i18n.getText("solution.approvedMsg"));
+				MessageToast.show(this.i18nBundle.getText("solution.approvedMsg"));
 				this.getView().getElementBinding().refresh();
 			})
 			.catch((e) => {
@@ -337,21 +505,29 @@ export default class ObjectPage extends BaseController {
 		return resourceBundle.getText(i18nTextId, [count]);
 	}
 
-	public beforeOpenColumnMenuVersions(event: MenuBase$BeforeOpenEvent) {
-		const menu = this.getView().byId("versionsQuickMenu") as Menu;
-		this.versionsPersonalization.beforeOpenQuickMenu(event, menu);
+	public beforeOpenColumnMenu(
+		event: MenuBase$BeforeOpenEvent,
+		persEngineKey: string,
+	) {
+		const menu = event.getSource();
+		this.personalizationInstances
+			.get(persEngineKey)
+			.beforeOpenQuickMenu(event, menu as Menu);
 	}
 
-	public onSortVersions(event: QuickSort$ChangeEvent) {
-		this.versionsPersonalization.onSort(event);
+	public onSort(event: QuickSort$ChangeEvent, persEngineKey: string) {
+		this.personalizationInstances.get(persEngineKey).onSort(event);
 	}
 
-	public onGroupVersions(event: QuickGroup$ChangeEvent) {
-		this.versionsPersonalization.onGroup(event);
+	public onGroup(event: QuickGroup$ChangeEvent, persEngineKey: string) {
+		this.personalizationInstances.get(persEngineKey).onGroup(event);
 	}
 
-	public onPressVersionsTableSettings(event: Button$PressEvent): void {
-		this.versionsPersonalization.openTableSettings(event);
+	public onPressTableSettings(
+		event: Button$PressEvent,
+		persEngineKey: string,
+	): void {
+		this.personalizationInstances.get(persEngineKey).openTableSettings(event);
 	}
 
 	public openMessageView(event: Button$PressEvent) {
@@ -359,7 +535,34 @@ export default class ObjectPage extends BaseController {
 	}
 
 	public handleChangeEvent(event: Event) {
-		const control = event.getSource<CustomControlType>();
-		this.messageHandler.handleChangeEvent(control);
+		this.messageHandler.handleChangeEvent(event.getSource<CustomControlType>());
+	}
+
+	public onDependentSolutionTablePress(event: ListItemBase$PressEvent) {
+		this.getOwnerComponent().setBreadcrumbNavBack(false);
+		const softwareSolutionId = event
+			.getSource()
+			.getBindingContext()
+			.getProperty("dependentSoftwareSolution_ID") as string;
+
+		this.getRouter().navTo("softwareSolutionObjectPage", {
+			key: `ID=${softwareSolutionId},IsActiveEntity=true`,
+		});
+	}
+
+	public onSearchFieldChange(
+		event: SearchField$SearchEvent,
+		tableId: string,
+		solutionPath: string,
+	) {
+		const props = (
+			this.defaultSearchColumns.getData() as Record<string, unknown>
+		)[tableId] as string[];
+		const table = this.getView().byId(tableId) as Table;
+		const solution = {
+			ID: this.getView().getBindingContext().getProperty("ID") as string,
+			path: solutionPath,
+		};
+		searchTableColumns(event, table, solution, props);
 	}
 }

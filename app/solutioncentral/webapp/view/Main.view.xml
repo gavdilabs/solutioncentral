@@ -4,6 +4,7 @@
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
+	xmlns:plugins="sap.m.plugins"
 	xmlns:f="sap.f"
 	xmlns:columnmenu="sap.m.table.columnmenu"
 	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
@@ -163,6 +164,7 @@
 					</OverflowToolbar>
 				</headerToolbar>
 				<dependents>
+					<plugins:ColumnResizer />
 					<columnmenu:Menu id="menu" beforeOpen=".beforeOpenColumnMenu"
 						showTableSettingsButton="true"
 						tableSettingsPressed=".onPressTableSettings">

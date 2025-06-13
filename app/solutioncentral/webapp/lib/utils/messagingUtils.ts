@@ -152,9 +152,26 @@ export class MessagingUtils {
 	public clearMessagesByControl(controlId: string): void {
 		const messages = this.getAllMessages();
 		const messagesToRemove = messages.filter(
-			(msg: Message) => msg.getControlId() === controlId,
+			(msg) => msg.getControlId() === controlId,
 		);
 		this.messaging.removeMessages(messagesToRemove);
+		this.updateMessages();
+	}
+
+	/**
+	 * Checks all messages to find if any message has a control reference
+	 * Removes all remaining messages if not control related message is left
+	 * @void
+	 */
+	private updateMessages(): void {
+		const messages = this.getAllMessages();
+		const hasMessagesWithControlReference = messages.some(
+			(msg) => msg.getControlId() !== undefined,
+		);
+
+		if (!hasMessagesWithControlReference) {
+			this.clearAllMessages();
+		}
 	}
 
 	/**
