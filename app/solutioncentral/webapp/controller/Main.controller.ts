@@ -123,8 +123,7 @@ export default class Main extends BaseController {
 		const companyConfig =
 			await this.getOwnerComponent().getCompanyConfiguration();
 
-		const hasApprovalFlow =
-			(companyConfig && companyConfig.getProperty("approvalFlow_code")) === 1;
+		const hasApprovalFlow = companyConfig?.approvalFlow_code === 1;
 
 		const table = this.getView().byId(this.TABLE_ID) as Table;
 		const context = (table.getBinding("items") as ODataListBinding).create({

@@ -1,0 +1,118 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:columnmenu="sap.m.table.columnmenu"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:core="sap.ui.core"
+	xmlns:plugins="sap.m.plugins"
+	core:require="{
+		formatter: 'com/gavdilabs/techtransmgt/solutioncentral/model/formatter'
+	}">
+	<Table id="technologiesTable"
+		mode="{= ${path: 'IsActiveEntity', targetType: 'any'} === true ? 'None': 'MultiSelect'}"
+		growing="true"
+		backgroundDesign="Transparent"
+		selectionChange="onTableSelect($event, 'technologiesTableConfig')"
+		items="{path: 'Technologies'}">
+		<dependents>
+			<plugins:ColumnResizer />
+			<columnmenu:Menu id="technologiesQuickMenu"
+				beforeOpen=".beforeOpenColumnMenu($event, 'technologiesPerso')"
+				showTableSettingsButton="true"
+				tableSettingsPressed=".onPressTableSettings($event, 'technologiesPerso')">
+				<columnmenu:QuickSort change=".onSort($event, 'technologiesPerso')">
+					<columnmenu:items>
+						<columnmenu:QuickSortItem></columnmenu:QuickSortItem>
+					</columnmenu:items>
+				</columnmenu:QuickSort>
+				<columnmenu:QuickGroup change=".onGroup($event, 'technologiesPerso')">
+					<columnmenu:items>
+						<columnmenu:QuickGroupItem></columnmenu:QuickGroupItem>
+					</columnmenu:items>
+				</columnmenu:QuickGroup>
+			</columnmenu:Menu>
+		</dependents>
+		<columns>
+			<Column app:p13nKey="column.technoName" width="30rem" headerMenu="technologiesQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text required="{= !${IsActiveEntity}}" text="{i18n>column.technoName}" />
+			</Column>
+			<Column app:p13nKey="column.technoDescr" headerMenu="technologiesQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.technoDescr}" />
+			</Column>
+			<Column app:p13nKey="column.technoVersion" headerMenu="technologiesQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Label required="{= !${IsActiveEntity}}" text="{i18n>column.technoVersion}" />
+			</Column>
+
+			<!-- Columns not visible by default -->
+			<Column app:p13nKey="column.technoCreatedOn" visible="false"
+				headerMenu="technologiesQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.technoCreatedOn}" />
+			</Column>
+			<Column app:p13nKey="column.technoCreatedBy" visible="false"
+				headerMenu="technologiesQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.technoCreatedBy}" />
+			</Column>
+			<Column app:p13nKey="column.technoLastModifiedBy" visible="false"
+				headerMenu="technologiesQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.technoLastModifiedBy}" />
+			</Column>
+			<Column app:p13nKey="column.technoLastModified" visible="false"
+				headerMenu="technologiesQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.technoLastModified}" />
+			</Column>
+			<Column app:p13nKey="column.technoID" visible="false" headerMenu="technologiesQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.technoID}" />
+			</Column>
+			<Column app:p13nKey="column.technoSoftwareID" visible="false"
+				headerMenu="technologiesQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.technoSoftwareID}" />
+			</Column>
+
+		</columns>
+		<items>
+			<ColumnListItem type="Navigation" vAlign="Middle" press=".onTableItemPress">
+				<cells>
+					<VBox width="100%">
+						<ObjectIdentifier title="{technology/name}" visible="{IsActiveEntity}" />
+						<Select width="100%" items="{path: '/Technology', templateShareable: true}"
+							visible="{= !${IsActiveEntity}}"
+							selectedKey="{technology_ID}"
+							forceSelection="false">
+							<core:ListItem key="{ID}" text="{name}" />
+						</Select>
+					</VBox>
+					<Text text="{technology/description}" />
+					<VBox width="100%">
+						<Text text="{version}" visible="{IsActiveEntity}" />
+						<Input value="{version}" visible="{= !${IsActiveEntity}}" />
+					</VBox>
+
+					<!-- Columns not visible by default -->
+					<Text text="{technology/createdAt}" />
+					<Text text="{technology/createdBy}" />
+					<Text text="{technology/modifiedBy}" />
+					<Text text="{technology/modifiedAt}" />
+					<Text text="{technology/ID}" />
+					<Text text="{software/ID}" />
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</core:FragmentDefinition>

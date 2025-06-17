@@ -40,12 +40,14 @@ export interface DefaultSortProperty {
 }
 
 export class SoftwareSolutionPersonalization {
-	private readonly table: Table;
-	private readonly target: string;
-	private readonly model: JSONModel;
-	private readonly defaultSortProperty: DefaultSortProperty;
-	private readonly resourceBundle: ResourceBundle;
+	private table: Table;
+	private target: string;
+	private model: JSONModel;
+	private defaultSortProperty: DefaultSortProperty;
+	private resourceBundle: ResourceBundle;
 	private metadataHelper: MetadataHelper;
+
+	private static readonly metadataHelpers = new Map<string, MetadataHelper>();
 
 	constructor(
 		table: Table,
@@ -81,6 +83,16 @@ export class SoftwareSolutionPersonalization {
 	private initializeTableForP13n(): void {
 		const columns = this.model.getProperty(this.target) as MetadataObject[];
 		this.metadataHelper = new MetadataHelper(columns);
+
+		if (
+			!SoftwareSolutionPersonalization.metadataHelpers.has(this.table.getId())
+		) {
+			SoftwareSolutionPersonalization.metadataHelpers.set(
+				this.table.getId(),
+				this.metadataHelper,
+			);
+		}
+
 		Engine.getInstance().register(this.table, {
 			helper: this.metadataHelper,
 			controller: {
@@ -210,36 +222,37 @@ export class SoftwareSolutionPersonalization {
 
 	private handleStateChange(event: Event) {
 		const params = event.getParameters() as Record<string, unknown>;
+		const table = params["control"] as Table;
 		const state = params["state"] as CustomState;
 		if (!state || !state?.Columns) return;
 
-		this.updateColumns(state);
+		this.updateColumns(state, table);
 
-		const groups = this.createGroups(state);
-		const sorter = this.createSorters(state, groups);
-		(this.table.getBinding("items") as ODataListBinding).sort(sorter);
+		const groups = this.createGroups(state, table);
+		const sorter = this.createSorters(state, table, groups);
+		(table.getBinding("items") as ODataListBinding).sort(sorter);
 	}
 
-	private updateColumns(state: CustomState) {
+	private updateColumns(state: CustomState, table: Table) {
 		if (!state || !state?.Columns) return;
 
-		this.table.getColumns().forEach((column: Column, index: number) => {
+		table.getColumns().forEach((column: Column, index: number) => {
 			column.setVisible(false);
 			column.data("grouped", false);
 		});
 
 		state.Columns.forEach((oProp, index) => {
-			const col = this.table
+			const col = table
 				.getColumns()
 				.find((column) => column.data("p13nKey") === oProp.key);
 			col.setSortIndicator(SortOrder.None);
 
 			if (!col) return;
-			const oldIndex = this.table.getColumns().indexOf(col);
+			const oldIndex = table.getColumns().indexOf(col);
 			col.setVisible(true);
 
-			this.table.removeColumn(col);
-			this.table.insertColumn(col, index);
+			table.removeColumn(col);
+			table.insertColumn(col, index);
 
 			const fnMoveCells = (columnListItem: unknown) => {
 				if (columnListItem instanceof ColumnListItem) {
@@ -248,20 +261,27 @@ export class SoftwareSolutionPersonalization {
 				}
 			};
 
-			const itemsBindingInfo = this.table.getBindingInfo(
+			const itemsBindingInfo = table.getBindingInfo(
 				"items",
 			) as AggregationBindingInfo;
 			fnMoveCells(itemsBindingInfo.template);
-			this.table.getItems().forEach((item) => fnMoveCells(item));
+			table.getItems().forEach((item) => fnMoveCells(item));
 		});
 	}
 
-	private createSorters(state: CustomState, exisitingSorters?: Sorter[]) {
+	private createSorters(
+		state: CustomState,
+		table: Table,
+		exisitingSorters?: Sorter[],
+	) {
 		const sorters: Array<Sorter> = exisitingSorters || [];
 		state.Sorter.forEach((sorter) => {
 			const exisitingSorter = sorters.find((sort: Sorter) => {
 				return (
-					sort.getPath() === this.metadataHelper.getProperty(sorter.key).path
+					sort.getPath() ===
+					SoftwareSolutionPersonalization.metadataHelpers
+						.get(table.getId())
+						.getProperty(sorter.key).path
 				);
 			}) as CustomSorter;
 
@@ -270,7 +290,9 @@ export class SoftwareSolutionPersonalization {
 			} else {
 				sorters.push(
 					new Sorter(
-						this.metadataHelper.getProperty(sorter.key).path,
+						SoftwareSolutionPersonalization.metadataHelpers
+							.get(table.getId())
+							.getProperty(sorter.key).path,
 						sorter.descending,
 					),
 				);
@@ -278,7 +300,7 @@ export class SoftwareSolutionPersonalization {
 		});
 
 		state.Sorter.forEach((sorter) => {
-			const oCol = this.table
+			const oCol = table
 				.getColumns()
 				.find((column) => column.data("p13nKey") === sorter.key);
 			if (sorter.sorted !== false) {
@@ -288,12 +310,14 @@ export class SoftwareSolutionPersonalization {
 		return sorters;
 	}
 
-	private createGroups(state: CustomState) {
+	private createGroups(state: CustomState, table: Table) {
 		const groupings: Array<Sorter> = [];
 		state.Group.forEach((group) => {
 			groupings.push(
 				new Sorter(
-					this.metadataHelper.getProperty(group.key).path,
+					SoftwareSolutionPersonalization.metadataHelpers
+						.get(table.getId())
+						.getProperty(group.key).path,
 					false,
 					true,
 				),
@@ -301,7 +325,7 @@ export class SoftwareSolutionPersonalization {
 		});
 
 		state.Group.forEach((sorter) => {
-			const col = this.table
+			const col = table
 				.getColumns()
 				.find((column) => column.data("p13nKey") === sorter.key);
 			col.data("grouped", true);

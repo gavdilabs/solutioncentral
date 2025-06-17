@@ -2,7 +2,7 @@ import UIComponent from "sap/ui/core/UIComponent";
 import models from "./model/models";
 import Device from "sap/ui/Device";
 import ODataModel from "sap/ui/model/odata/v4/ODataModel";
-import Context from "sap/ui/model/odata/v4/Context";
+import { CompanyConfiguration } from "./lib/types";
 
 /**
  * @namespace com.gavdilabs.techtransmgt.solutioncentral
@@ -14,6 +14,12 @@ export default class Component extends UIComponent {
 	};
 
 	private contentDensityClass: string;
+
+	/**
+	 * Variable for storing breadcrumb navigation backwards
+	 * Used when creating breadcrumbs for objectpage
+	 */
+	private breadcrumbNavBack: boolean = false;
 
 	public init(): void {
 		// call the base component's init function
@@ -51,16 +57,33 @@ export default class Component extends UIComponent {
 		return this.contentDensityClass;
 	}
 
-	public async getCompanyConfiguration(): Promise<Context | undefined> {
+	public async getCompanyConfiguration(): Promise<
+		CompanyConfiguration | undefined
+	> {
 		const model = this.getModel() as ODataModel;
 
 		try {
-			const binding = model.bindList("/CompanyConfiguration");
-			const result = await binding.requestContexts();
-			return result && result.length > 0 ? result[0] : undefined;
+			const binding = model.bindContext("/CompanyConfiguration");
+			return (await binding.requestObject()) as CompanyConfiguration;
 		} catch (e) {
 			console.error("Error fetching Company Configuration: ", e);
 			throw e;
 		}
+	}
+
+	/**
+	 * Setter method for setting breadcrumbNavBack
+	 * @param bool
+	 */
+	public setBreadcrumbNavBack(bool: boolean) {
+		this.breadcrumbNavBack = bool;
+	}
+
+	/**
+	 * Getter method for breadcrumbNavBack
+	 * @returns {boolean} breadcrumbNavBack
+	 */
+	public getBreadcrumbNavBack(): boolean {
+		return this.breadcrumbNavBack;
 	}
 }

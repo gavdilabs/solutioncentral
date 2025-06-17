@@ -5,9 +5,9 @@
 
 	<!-- Displaying active version -->
 	<forms:SimpleForm visible="{IsActiveEntity}"
-		columnsM="3"
-		columnsL="4"
-		columnsXL="6"
+		columnsM="2"
+		columnsL="3"
+		columnsXL="4"
 		editable="false" layout="ColumnLayout">
 		<Label text="{i18n>column.packageNamespace}" />
 		<Text text="{= ${packageNamespace} ? ${packageNamespace} : '–'}" />
@@ -20,14 +20,16 @@
 			press=".onLinkPress" />
 
 		<Label text="{i18n>column.sapVersion}" />
-		<Text text="{= ${versions/0/sapVersion_code} ? ${versions/0/sapVersion/descr} : '–'}" />
+
+		<!-- TODO: Updated SAP version to proper binding -->
+		<Text text="{= ${activeVersion/sapVersion_code} ? ${activeVersion/sapVersion/name} : '–'}" />
 	</forms:SimpleForm>
 
 	<!-- Editing draft version -->
 	<forms:SimpleForm visible="{= !${IsActiveEntity}}"
-		columnsM="3"
-		columnsL="4"
-		columnsXL="6"
+		columnsM="2"
+		columnsL="3"
+		columnsXL="4"
 		editable="false" layout="ColumnLayout">
 		<Label text="{i18n>column.packageNamespace}" />
 		<Input value="{packageNamespace}" />
@@ -39,6 +41,7 @@
 		<Input value="{documentationUrl}" />
 
 		<Label text="{i18n>column.sapVersion}" />
-		<Text text="{= ${versions/0/sapVersion_code} ? ${versions/0/sapVersion/descr} : '–'}" />
+		<!-- TODO: Updated SAP version to proper binding -->
+		<Text text="{= ${activeVersion/sapVersion_code} ? ${activeVersion/sapVersion/name} : '–'}" />
 	</forms:SimpleForm>
 </core:FragmentDefinition>

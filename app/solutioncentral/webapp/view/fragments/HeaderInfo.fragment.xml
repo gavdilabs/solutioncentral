@@ -3,9 +3,9 @@
 	xmlns:forms="sap.ui.layout.form"
 	xmlns:core="sap.ui.core">
 	<forms:SimpleForm
-		columnsM="3"
-		columnsL="4"
-		columnsXL="6"
+		columnsM="2"
+		columnsL="3"
+		columnsXL="4"
 		editable="false" layout="ColumnLayout">
 		<core:Title text="Object Information" />
 

@@ -1,0 +1,100 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:columnmenu="sap.m.table.columnmenu"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:core="sap.ui.core"
+	xmlns:plugins="sap.m.plugins"
+	core:require="{
+		formatter: 'com/gavdilabs/techtransmgt/solutioncentral/model/formatter'
+	}">
+	<Table id="dependentSolutionsTable"
+		mode="{= ${path: 'IsActiveEntity', targetType: 'any'} === true ? 'None': 'MultiSelect'}"
+		growing="true"
+		backgroundDesign="Transparent"
+		selectionChange="onTableSelect($event, 'dependentSolutionsTableConfig')"
+		items="{path: 'Dependents', parameters: { $select: 'dependentSoftwareSolution_ID'}}">
+		<dependents>
+			<plugins:ColumnResizer />
+			<columnmenu:Menu id="dependentsQuickMenu"
+				beforeOpen=".beforeOpenColumnMenu($event, 'dependentSolutionsPerso')"
+				showTableSettingsButton="true"
+				tableSettingsPressed=".onPressTableSettings($event, 'dependentSolutionsPerso')">
+				<columnmenu:QuickSort change=".onSort($event, 'dependentSolutionsPerso')">
+					<columnmenu:items>
+						<columnmenu:QuickSortItem></columnmenu:QuickSortItem>
+					</columnmenu:items>
+				</columnmenu:QuickSort>
+				<columnmenu:QuickGroup change=".onGroup($event, 'dependentSolutionsPerso')">
+					<columnmenu:items>
+						<columnmenu:QuickGroupItem></columnmenu:QuickGroupItem>
+					</columnmenu:items>
+				</columnmenu:QuickGroup>
+			</columnmenu:Menu>
+		</dependents>
+		<columns>
+			<Column app:p13nKey="column.dependentName" width="30rem"
+				headerMenu="dependentsQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Label text="{i18n>column.dependentName}" required="{= !${IsActiveEntity}}" />
+			</Column>
+			<Column app:p13nKey="column.dependentDescr"
+				headerMenu="dependentsQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.dependentDescr}" />
+			</Column>
+			<Column app:p13nKey="column.dependentSoftwareType"
+				headerMenu="dependentsQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Label text="{i18n>column.dependentSoftwareType}" required="{= !${IsActiveEntity}}" />
+			</Column>
+
+			<!-- Columns not visible by default -->
+			<Column app:p13nKey="column.dependentID" visible="false" headerMenu="dependentsQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.dependentID}" />
+			</Column>
+			<Column app:p13nKey="column.dependentUp_ID" visible="false" headerMenu="dependentsQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.dependentUp_ID}" />
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem type="Navigation" vAlign="Middle" press=".onDependentSolutionTablePress">
+				<cells>
+					<VBox width="100%">
+						<ObjectIdentifier title="{dependentSoftwareSolution/name}" visible="{IsActiveEntity}" />
+						<Select width="100%"
+							required="true"
+							items="{path: '/SoftwareSolution', parameters: {$select: 'name,description'}, templateShareable: true}"
+							visible="{= !${IsActiveEntity}}"
+							selectedKey="{dependentSoftwareSolution_ID}"
+							forceSelection="false">
+							<core:ListItem key="{ID}" text="{name}" />
+						</Select>
+					</VBox>
+					<Text text="{dependentSoftwareSolution/description}" />
+					<VBox width="100%">
+						<Text text="{softwareType_code}" visible="{IsActiveEntity}" />
+						<Select width="100%"
+							required="true"
+							items="{path: '/DependencyTypes', templateShareable: true}"
+							visible="{= !${IsActiveEntity}}"
+							selectedKey="{softwareType_code}"
+							forceSelection="false">
+							<core:ListItem key="{code}" text="{code}" />
+						</Select>
+					</VBox>
+
+					<!-- Columns not visible by default -->
+					<Text text="{ID}" />
+					<Text text="{up__ID}" />
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</core:FragmentDefinition>

@@ -1,6 +1,13 @@
 import Filter from "sap/ui/model/Filter";
 import { SoftwareSolutionFilters } from "../types";
 import FilterOperator from "sap/ui/model/FilterOperator";
+import {
+	SearchField$ChangeEvent,
+	SearchField$LiveChangeEvent,
+	SearchField$SearchEvent,
+} from "sap/m/SearchField";
+import Table from "sap/m/Table";
+import ODataListBinding from "sap/ui/model/odata/v4/ODataListBinding";
 
 export class SoftwareSolutionFilterConstructor {
 	public static constructFilter(
@@ -100,4 +107,53 @@ export class SoftwareSolutionFilterConstructor {
 			and: false,
 		});
 	}
+}
+
+export function searchTableColumns(
+	event: SearchField$SearchEvent,
+	table: Table,
+	solution: {
+		ID: string;
+		path: string;
+	},
+	searchProps: string[],
+): void {
+	const params = event.getParameters() as Record<string, unknown>;
+	const searchValue = params["query"] || undefined;
+	const filters: Filter[] = [];
+	const binding = table.getBinding("items") as ODataListBinding;
+
+	if (!searchValue || searchValue === "") {
+		binding.filter(filters); // none
+		return;
+	}
+
+	searchProps.forEach((prop) => {
+		filters.push(
+			new Filter({
+				path: prop,
+				operator: FilterOperator.Contains,
+				value1: searchValue,
+				caseSensitive: false,
+			}),
+		);
+	});
+
+	const searchFilters = new Filter({
+		filters: filters,
+		and: false,
+	});
+
+	const solutionFilter = new Filter(
+		solution.path,
+		FilterOperator.EQ,
+		solution.ID,
+	);
+
+	const finalFilter =
+		!searchValue || searchValue === ""
+			? solutionFilter
+			: new Filter({ filters: [searchFilters, solutionFilter], and: true });
+
+	binding.filter(finalFilter);
 }

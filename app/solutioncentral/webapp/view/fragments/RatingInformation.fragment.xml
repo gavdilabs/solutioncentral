@@ -5,9 +5,9 @@
 
 	<!-- Displaying active version -->
 	<forms:SimpleForm visible="{IsActiveEntity}"
-		columnsM="3"
-		columnsL="4"
-		columnsXL="6"
+		columnsM="2"
+		columnsL="3"
+		columnsXL="4"
 		editable="false" layout="ColumnLayout">
 		<Label text="{i18n>column.businessCriticality}" />
 		<Text text="{= ${IsActiveEntity} ? ${businessCriticality/name} : '–'}" />
@@ -24,9 +24,9 @@
 
 	<!-- Editing draft version -->
 	<forms:SimpleForm visible="{= !${IsActiveEntity}}"
-		columnsM="3"
-		columnsL="4"
-		columnsXL="6"
+		columnsM="2"
+		columnsL="3"
+		columnsXL="4"
 		editable="false" layout="ColumnLayout">
 		<Label text="{i18n>column.businessCriticality}" />
 		<Select forceSelection="false" required="false" selectedKey="{businessCriticality_code}"
