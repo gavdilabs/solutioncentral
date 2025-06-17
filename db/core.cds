@@ -130,6 +130,8 @@ entity SolutionVersion : cuid, managed {
       mediaType    : String(255) @Core.IsMediaType;
       releaseDate  : Date default null;
       sapVersion   : Association to SAPVersion;
+      technologies : Composition of many SoftwareTechnology
+                       on technologies.softwareVersion = $self;
 }
 
 @cds.search: {name}
@@ -150,10 +152,6 @@ entity SoftwareSolution : cuid, managed {
   costCenter          : String;
   owner               : Association to User          @mandatory  @assert.target;
   team                : Association to SoftwareTeam  @mandatory  @assert.target;
-  // Needs Required Services from Cloud Credit Control
-  Technologies        : Composition of many SoftwareTechnology
-                          on Technologies.software = $self;
-
   Dependents          : Composition of many {
                           key ID                        : UUID;
                               dependentSoftwareSolution : Association to SoftwareSolution @mandatory;
@@ -183,9 +181,9 @@ entity SoftwareTeamUser {
 }
 
 entity SoftwareTechnology : cuid, managed {
-  version    : SolutionVersion:version;
-  software   : Association to SoftwareSolution;
-  technology : Association to Technology;
+  version         : String(255);
+  softwareVersion : Association to SolutionVersion;
+  technology      : Association to Technology;
 }
 
 @cds.search: {name}

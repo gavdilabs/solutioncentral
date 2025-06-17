@@ -5,7 +5,11 @@ meta {
 }
 
 get {
-  url: {{HOST}}/SoftwareSolution
+  url: {{HOST}}/SoftwareSolution?$expand=activeVersion($expand=technologies),versions($expand=technologies)
   body: none
   auth: inherit
+}
+
+params:query {
+  $expand: activeVersion($expand=technologies),versions($expand=technologies)
 }

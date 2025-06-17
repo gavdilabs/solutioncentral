@@ -5,13 +5,14 @@ meta {
 }
 
 get {
-  url: {{HOST}}/SoftwareSolution(ID={{KEY}},IsActiveEntity={{IS_ACTIVE}})?$expand=activeVersion,versions,Dependents,Technologies
+  url: {{HOST}}/SoftwareSolution(ID={{KEY}},IsActiveEntity={{IS_ACTIVE}})?$expand=activeVersion($expand=technologies)
   body: none
   auth: inherit
 }
 
 params:query {
-  $expand: activeVersion,versions,Dependents,Technologies
+  $expand: activeVersion($expand=technologies)
+  ~$expand: activeVersion,versions,Dependents
 }
 
 vars:pre-request {
