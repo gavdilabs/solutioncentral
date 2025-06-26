@@ -12,3 +12,10 @@ export enum PageKeys {
 	TECHNOLOGY_OBJECT_PAGE = "technologyObjectPage",
 	SOLUTION_VERSION_OBJECT_PAGE = "solutionVersionObjectPage",
 }
+
+export enum TableKeys {
+	ACTIVE_TECHNOLOGIES_TABLE_ID = "activeTechnologiesTable",
+	TECHNOLOGIES_TABLE_ID = "technologiesTable",
+	VERSIONS_TABLE_ID = "versionsTable",
+	DEPDENDENT_SOLUTIONS_TABLE_ID = "dependentSolutionsTable",
+}

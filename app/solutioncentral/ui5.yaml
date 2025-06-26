@@ -14,6 +14,7 @@ framework:
     - name: sap.ui.export
     - name: sap.uxap
     - name: sap.ui.layout
+    - name: sap.ui.richtexteditor
 builder:
   resources:
     excludes:

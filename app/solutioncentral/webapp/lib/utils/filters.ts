@@ -124,7 +124,12 @@ export function searchTableColumns(
 	const binding = table.getBinding("items") as ODataListBinding;
 
 	if (!searchValue || searchValue === "") {
-		binding.filter(filters); // none
+		const solutionFilter = new Filter(
+			solution.path,
+			FilterOperator.EQ,
+			solution.ID,
+		);
+		binding.filter(solutionFilter); // none
 		return;
 	}
 

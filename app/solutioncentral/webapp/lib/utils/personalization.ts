@@ -73,8 +73,8 @@ export class SoftwareSolutionPersonalization {
 		}
 
 		for (const el of data.items) {
-			if (!el.label) continue;
-			el.label = this.resourceBundle.getText(el.label);
+			if (!el.key) continue;
+			el.label = this.resourceBundle.getText(el.key);
 		}
 
 		this.model.setData(data);

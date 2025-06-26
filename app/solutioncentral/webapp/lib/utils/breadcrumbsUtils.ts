@@ -3,11 +3,12 @@ import Link from "sap/m/Link";
 import BaseController from "../../controller/BaseController";
 import { PageKeys } from "../constants";
 import ResourceBundle from "sap/base/i18n/ResourceBundle";
+import Button from "sap/m/Button";
 
 export class BreadcrumbsHandler {
 	private i18nBundle: ResourceBundle;
 	private controller: BaseController;
-	private static readonly breadcrumbLinks = new Map<string, Link>();
+	private static readonly breadcrumbLinks = new Map<string, Link | Button>();
 
 	constructor(controller: BaseController, i18nBundle: ResourceBundle) {
 		this.controller = controller;
@@ -20,6 +21,7 @@ export class BreadcrumbsHandler {
 			BreadcrumbsHandler.breadcrumbLinks.set(
 				PageKeys.MAIN_VIEW,
 				new Link({
+					icon: "sap-icon://home",
 					text: this.i18nBundle.getText("breadcrumb.solutions"),
 					press: () => this.navToMain(),
 				}),
@@ -80,5 +82,9 @@ export class BreadcrumbsHandler {
 		keysToRemove.forEach((key) =>
 			BreadcrumbsHandler.breadcrumbLinks.delete(key),
 		);
+	}
+
+	public clearBreadcrumbs() {
+		BreadcrumbsHandler.breadcrumbLinks.clear();
 	}
 }

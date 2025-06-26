@@ -85,15 +85,16 @@
 					<VBox width="100%">
 						<ObjectIdentifier title="{technology/name}"
 							visible="{= !${appConfig>/versionViewEditMode}}" />
-						<Select id="technologySelect" width="100%" required="true"
-							items="{path: '/Technology', templateShareable: true}"
+						<ComboBox id="technologySelect" width="100%" required="true"
+							items="{path: '/Technology', parameters: { $select: 'description' }, templateShareable: true}"
+							showSecondaryValues="true"
+							filterSecondaryValues="true"
 							visible="{appConfig>/versionViewEditMode}"
-							selectedKey="{technology_ID}"
-							forceSelection="false">
-							<core:ListItem key="{ID}" text="{name}" />
-						</Select>
+							selectedKey="{technology_ID}">
+							<core:ListItem key="{ID}" text="{name}" additionalText="{description}" />
+						</ComboBox>
 					</VBox>
-					<Text text="{technology/description}" />
+					<Text text="{= ${technology/description} ? ${technology/description} : '–'}" />
 					<VBox width="100%">
 						<Text text="{version}" visible="{= !${appConfig>/versionViewEditMode}}" />
 						<Input

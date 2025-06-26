@@ -32,6 +32,9 @@
 
 		</ComboBox>
 
+		<Label text="{i18n>label.releaseDate}" />
+		<DatePicker value="{releaseDate}" />
+
 		<core:Title />
 	</forms:SimpleForm>
 </core:FragmentDefinition>

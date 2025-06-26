@@ -34,15 +34,17 @@ import { QuickGroup$ChangeEvent } from "sap/m/table/columnmenu/QuickGroup";
 import { MessagingUtils } from "../lib/utils/messagingUtils";
 import { CustomControlType } from "../lib/types";
 import { ListItemBase$PressEvent } from "sap/m/ListItemBase";
-import History from "sap/ui/core/routing/History";
 import Breadcrumbs from "sap/m/Breadcrumbs";
 import ResourceBundle from "sap/base/i18n/ResourceBundle";
 import { SearchField$SearchEvent } from "sap/m/SearchField";
 import { searchTableColumns } from "../lib/utils/filters";
 import Menu from "sap/m/table/columnmenu/Menu";
 import ODataListBinding from "sap/ui/model/odata/v2/ODataListBinding";
-import { CustomModels, PageKeys } from "../lib/constants";
+import { CustomModels, PageKeys, TableKeys } from "../lib/constants";
 import { BreadcrumbsHandler } from "../lib/utils/breadcrumbsUtils";
+import FilterOperator from "sap/ui/model/FilterOperator";
+import Filter from "sap/ui/model/Filter";
+import Validator from "learnin/ui5/validator/Validator";
 
 export enum DraftSwitchIndex {
 	DRAFT = 0,
@@ -57,10 +59,6 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 	private readonly ACTIVE_TECHNOLOGIES_PERSONALIZATION =
 		"activeTechnologiesPerso";
 	private readonly DEPENDENT_PERSONALIZATION = "dependentSolutionsPerso";
-
-	private readonly VERSIONS_TABLE_ID = "versionsTable";
-	private readonly ACTIVE_TECHNOLOGIES_TABLE_ID = "activeTechnologiesTable";
-	private readonly DEPENDENT_TABLE_ID = "dependentSolutionsTable";
 	private breadCrumbHandler: BreadcrumbsHandler;
 
 	private draftIndicator: DraftIndicator;
@@ -68,6 +66,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 	private itemIndex: number;
 	private messageHandler: MessagingUtils;
 	private i18nBundle: ResourceBundle;
+	private validator: Validator;
 
 	private defaultSearchColumns: JSONModel | undefined;
 
@@ -79,7 +78,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 	private readonly tableConfigInstances = new Map<string, JSONModel>();
 
 	public onInit(): void {
-		this.history = History.getInstance();
+		this.validator = new Validator();
 		this.tableConfigInstances.set(
 			CustomModels.VERSIONS_TABLE_CONFIG,
 			new JSONModel(DefaultVersionsTableConfig),
@@ -154,10 +153,34 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 						);
 						this.setBreadcrumbs();
 						this.initTablePersonalizations();
+
+						const appConfig = this.getView().getModel("appConfig") as JSONModel;
+						appConfig.setProperty(
+							"/softwareSolutionEditMode",
+							!this.getView().getBindingContext().getProperty("IsActiveEntity"),
+						);
+
+						this.filterVersionsTable();
 					},
 				},
 			});
 		}
+	}
+
+	private filterVersionsTable() {
+		const table = this.getView().byId(TableKeys.VERSIONS_TABLE_ID) as Table;
+		const binding = table.getBinding("items") as ODataListBinding;
+
+		const filter = new Filter(
+			"solution_ID",
+			FilterOperator.EQ,
+			this.getView().getBindingContext().getProperty("ID"),
+		);
+
+		binding.filter(filter);
+		if (binding.isSuspended()) {
+			binding.resume();
+		} else binding.refresh();
 	}
 
 	private setBreadcrumbs() {
@@ -175,7 +198,9 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 	}
 
 	private initVersionsPersonalization() {
-		const versionsTable = this.getView().byId(this.VERSIONS_TABLE_ID) as Table;
+		const versionsTable = this.getView().byId(
+			TableKeys.VERSIONS_TABLE_ID,
+		) as Table;
 
 		if (this.personalizationInstances.has(this.VERSION_PERSONALIZATION)) return;
 
@@ -204,7 +229,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 
 	private initTechnologiesPersonalization() {
 		const technoTable = this.getView().byId(
-			this.ACTIVE_TECHNOLOGIES_TABLE_ID,
+			TableKeys.ACTIVE_TECHNOLOGIES_TABLE_ID,
 		) as Table;
 
 		if (
@@ -241,7 +266,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 
 	private initDependentSolutionsPersonalization() {
 		const dependentSolutionsTable = this.getView().byId(
-			this.DEPENDENT_TABLE_ID,
+			TableKeys.DEPDENDENT_SOLUTIONS_TABLE_ID,
 		) as Table;
 
 		if (this.personalizationInstances.has(this.DEPENDENT_PERSONALIZATION))
@@ -273,6 +298,8 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 	private handleDiscardDraft(context: Context): void {
 		this.messageHandler.clearAllMessages();
 		const softwareSolutionId = context.getProperty("ID") as string;
+		const model = this.getView().getModel() as ODataModel;
+		model.resetChanges("solutionVersionGroup");
 		discardDraft(context)
 			.then((hasActiveEntity: boolean) => {
 				MessageToast.show(this.i18nBundle.getText("default.draftDiscarded"), {
@@ -331,12 +358,20 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 
 	public onSaveDraft() {
 		this.messageHandler.clearAllMessages();
+		this.validator.removeErrors(this.getView());
+		this.getOwnerComponent().removeAllTechnicalMessages();
+
 		const context = this.getView().getBindingContext() as Context;
 		const softwareSolutionId = context.getProperty("ID") as string;
 		const model = this.getView().getModel() as ODataModel;
 
+		this.validator.validate(this.getView(), {
+			isDoConstraintsValidation: true,
+		});
+
 		draftActivate(context, model)
-			.then(() => {
+			.then(async () => {
+				await model.submitBatch("solutionVersionGroup");
 				MessageToast.show(this.i18nBundle.getText("default.objectSaved"), {
 					closeOnBrowserNavigation: false,
 				});
@@ -398,6 +433,8 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 			.getSelectedItem() as StandardListItem;
 		const isActiveEntity = selectedItem.getId().includes("saved");
 		const context = this.getView().getBindingContext() as Context;
+		const model = this.getView().getModel() as ODataModel;
+		if (model.hasPendingChanges()) model.resetChanges("solutionVersionGroup");
 		this.getRouter().navTo(
 			PageKeys.SOFTWARE_SOLUTION_OBJECT_PAGE,
 			{
@@ -483,14 +520,6 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 		window.open(link, "_blank");
 	}
 
-	public async formatTableTitle(
-		i18nTextId: string,
-		count: number | string,
-	): Promise<string> {
-		const resourceBundle = await this.getResourceBundle();
-		return resourceBundle.getText(i18nTextId, [!count ? 0 : count]);
-	}
-
 	public beforeOpenColumnMenu(
 		event: MenuBase$BeforeOpenEvent,
 		persEngineKey: string,
@@ -525,7 +554,6 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 	}
 
 	public onDependentSolutionTablePress(event: ListItemBase$PressEvent) {
-		this.getOwnerComponent().setBreadcrumbNavBack(false);
 		const softwareSolutionId = event
 			.getSource()
 			.getBindingContext()
@@ -546,7 +574,6 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 	}
 
 	public onVersionTableItemPress(event: ListItemBase$PressEvent) {
-		this.getOwnerComponent().setBreadcrumbNavBack(false);
 		const versionId = event
 			.getSource()
 			.getBindingContext()
@@ -565,7 +592,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 		);
 
 		this.getRouter().navTo(PageKeys.SOLUTION_VERSION_OBJECT_PAGE, {
-			key: `ID=${versionId},solution_ID=${solution_ID},IsActiveEntity=true`,
+			key: `ID=${versionId},solution_ID=${solution_ID}`,
 		});
 	}
 
@@ -587,7 +614,9 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 
 	public onCreateNewDependentSolutionPress(): void {
 		this.messageHandler.clearAllMessages();
-		const table = this.getView().byId(this.DEPENDENT_TABLE_ID) as Table;
+		const table = this.getView().byId(
+			TableKeys.DEPDENDENT_SOLUTIONS_TABLE_ID,
+		) as Table;
 		(table.getBinding("items") as ODataListBinding).create({
 			IsActiveEntity: false,
 			up__ID: this.getView().getBindingContext().getProperty("ID") as string,
@@ -596,12 +625,17 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 
 	public onCreateNewVersionPress(): void {
 		this.messageHandler.clearAllMessages();
-		const table = this.getView().byId(this.VERSIONS_TABLE_ID) as Table;
-		(table.getBinding("items") as ODataListBinding).create({
-			IsActiveEntity: false,
+		const table = this.getView().byId(TableKeys.VERSIONS_TABLE_ID) as Table;
+		const context = (table.getBinding("items") as ODataListBinding).create({
 			solution_ID: this.getView()
 				.getBindingContext()
 				.getProperty("ID") as string,
+		});
+
+		context.created().catch((e) => {
+			if (!(e as Record<string, unknown>).canceled) {
+				throw e;
+			}
 		});
 	}
 

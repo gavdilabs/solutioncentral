@@ -12,7 +12,7 @@
 		growing="true"
 		backgroundDesign="Transparent"
 		selectionChange="onTableSelect($event, 'versionsTableConfig')"
-		items="{path: 'versions'}">
+		items="{path: '/SolutionVersion', suspended: true, parameters: { $$updateGroupId: 'solutionVersionGroup'}}">
 		<dependents>
 			<plugins:ColumnResizer />
 			<columnmenu:Menu id="versionsQuickMenu"
@@ -81,12 +81,15 @@
 			<ColumnListItem type="Navigation" vAlign="Middle" press=".onVersionTableItemPress">
 				<cells>
 					<VBox width="100%">
-						<ObjectIdentifier title="{version}" visible="{IsActiveEntity}" />
+						<ObjectIdentifier title="{version}"
+							visible="{= !${appConfig>/softwareSolutionEditMode}}" />
 						<Input id="SoftwareSolutionVersionsInput" value="{version}"
-							visible="{= !${IsActiveEntity}}" />
+							required="true"
+							visible="{appConfig>/softwareSolutionEditMode}" />
 					</VBox>
 					<VBox width="100%">
-						<ObjectStatus visible="{IsActiveEntity}" text="{status/descr}"
+						<ObjectStatus visible="{= !${appConfig>/softwareSolutionEditMode}}"
+							text="{status/descr}"
 							state="{
 								path: 'status/criticalityLevel',
 								formatter: 'formatter.formatSoftwareStatus'
@@ -100,14 +103,16 @@
 							id="softwareSolutionVersionStatusSelect"
 							required="true"
 							items="{path: '/SoftwareStatus', templateShareable: true}"
-							visible="{= !${IsActiveEntity}}"
+							visible="{appConfig>/softwareSolutionEditMode}"
 							selectedKey="{status_code}"
 							forceSelection="false">
 							<core:ListItem key="{code}" text="{name}" />
 						</Select>
 					</VBox>
-					<!-- TODO: make date picker-->
-					<Text text="{releaseDate}" />
+					<VBox width="100%">
+						<Text text="{releaseDate}" visible="{= !${appConfig>/softwareSolutionEditMode}}" />
+						<DatePicker value="{releaseDate}" visible="{appConfig>/softwareSolutionEditMode}" />
+					</VBox>
 
 
 					<Text text="{createdAt}" />

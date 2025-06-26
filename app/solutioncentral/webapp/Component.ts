@@ -75,22 +75,6 @@ export default class Component extends UIComponent {
 		}
 	}
 
-	/**
-	 * Setter method for setting breadcrumbNavBack
-	 * @param bool
-	 */
-	public setBreadcrumbNavBack(bool: boolean) {
-		this.breadcrumbNavBack = bool;
-	}
-
-	/**
-	 * Getter method for breadcrumbNavBack
-	 * @returns {boolean} breadcrumbNavBack
-	 */
-	public getBreadcrumbNavBack(): boolean {
-		return this.breadcrumbNavBack;
-	}
-
 	public hasErrorMessages(): boolean {
 		return (
 			(Messaging.getMessageModel().getProperty("/") as Message[]).filter(

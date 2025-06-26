@@ -126,8 +126,7 @@ entity SolutionVersion : cuid, managed {
   key solution     : Association to SoftwareSolution;
       status       : Association to SoftwareStatus  @mandatory  @assert.target;
       version      : String(100) @mandatory;
-      releaseNotes : LargeBinary @Core.MediaType: mediaType;
-      mediaType    : String(255) @Core.IsMediaType;
+      releaseNotes : LargeString;
       releaseDate  : Date default null;
       sapVersion   : Association to SAPVersion;
       technologies : Association to many SoftwareTechnology
@@ -146,7 +145,7 @@ entity SoftwareSolution : cuid, managed {
   businessCriticality : Association to BusinessCriticalityLevel;
   cleanCoreRating     : Association to CleanCoreLevel;
   codeQualityRating   : Association to CodeQualityLevel;
-  versions            : Composition of many SolutionVersion
+  versions            : Association to many SolutionVersion
                           on versions.solution = $self;
   reasonNoCleanCore   : String;
   costCenter          : String;

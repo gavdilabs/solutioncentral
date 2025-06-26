@@ -1,4 +1,5 @@
 import { IndicationColor, ValueState } from "sap/ui/core/library";
+import { TableKeys } from "../lib/constants";
 
 export default {
 	formatValue: (value: string) => {
@@ -86,5 +87,18 @@ export default {
 			default:
 				return "N/A";
 		}
+	},
+
+	formatTableCount: (
+		object: Record<string, unknown>,
+		table?: TableKeys,
+	): number => {
+		if (!object) return 0;
+
+		if (table && table === TableKeys.ACTIVE_TECHNOLOGIES_TABLE_ID) {
+			return (object.technologies as Record<string, unknown>[]).length;
+		}
+
+		return object.length as number;
 	},
 };

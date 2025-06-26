@@ -80,7 +80,9 @@ export default class SolutionVersionHandler {
         return;
       }
 
-      const { solution_ID, ID, version } = result[0];
+      const { solution_ID, ID, version } = Array.isArray(result)
+        ? result[0]
+        : result;
       if (!solution_ID || !ID || !version) {
         this.logger.warn(
           "Invalid data for SolutionVersion post-processing, skipping...",
@@ -115,7 +117,9 @@ export default class SolutionVersionHandler {
         return;
       }
 
-      const { status_code, solution_ID, version } = result[0];
+      const { status_code, solution_ID, version } = Array.isArray(result)
+        ? result[0]
+        : result;
       if (!status_code) {
         this.logger.warn("No status code available, skipping check");
         return;

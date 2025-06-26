@@ -115,10 +115,7 @@
 			<ObjectPageSection title="{i18n>title.versions}">
 				<subSections>
 					<ObjectPageSubSection showTitle="true"
-						title="{
-							parts: [{value: 'table.versionsTable'}, 'versions/$count'],
-							formatter: '.formatTableTitle'
-						}">
+						title="{i18n>table.versionsTable} ({ path: 'versions', targetType: 'any', formatter: 'formatter.formatTableCount' })">
 						<actions>
 							<m:SearchField width="15rem"
 								search=".onSearchFieldChange($event, 'versionsTable', 'solution_ID')" />
@@ -143,10 +140,7 @@
 			<ObjectPageSection title="{i18n>title.activeTechnologies}">
 				<subSections>
 					<ObjectPageSubSection showTitle="true"
-						title="{
-							parts: [{value: 'table.activeTechnologies'}, 'activeVersion/technologies/$count'],
-							formatter: '.formatTableTitle'
-						}">
+						title="{i18n>table.activeTechnologies} ({ parts: [{path: 'activeVersion', targetType: 'any'}, {value: 'activeTechnologiesTable'}], formatter: 'formatter.formatTableCount' })">
 						<actions>
 							<m:SearchField width="15rem"
 								search=".onSearchFieldChange($event, 'activeTechnologiesTable', 'softwareVersion_solution_ID')" />
@@ -164,10 +158,7 @@
 			<ObjectPageSection title="{i18n>title.dependentSolutions}">
 				<subSections>
 					<ObjectPageSubSection showTitle="true"
-						title="{
-							parts: [{value: 'table.dependentSolutions'}, 'Dependents/$count'],
-							formatter: '.formatTableTitle'
-						}">
+						title="{i18n>table.dependentSolutions} ({path: 'Dependents', targetType: 'any', formatter: 'formatter.formatTableCount' })">
 						<actions>
 							<m:SearchField width="15rem"
 								search=".onSearchFieldChange($event, 'dependentSolutionsTable', 'up__ID')" />

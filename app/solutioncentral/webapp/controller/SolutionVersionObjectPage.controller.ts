@@ -1,6 +1,6 @@
 import { Route$PatternMatchedEvent } from "sap/ui/core/routing/Route";
 import BaseController from "./BaseController";
-import { CustomModels, PageKeys } from "../lib/constants";
+import { CustomModels, PageKeys, TableKeys } from "../lib/constants";
 import { MessagingUtils } from "../lib/utils/messagingUtils";
 import Table from "sap/m/Table";
 import { SoftwareSolutionPersonalization } from "../lib/utils/personalization";
@@ -29,12 +29,12 @@ import ResourceBundle from "sap/base/i18n/ResourceBundle";
 import Breadcrumbs from "sap/m/Breadcrumbs";
 import { MenuBase$BeforeOpenEvent } from "sap/m/table/columnmenu/MenuBase";
 import Menu from "sap/m/table/columnmenu/Menu";
+import MessageToast from "sap/m/MessageToast";
 
 /**
  * @namespace com.gavdilabs.techtransmgt.solutioncentral.controller
  */
 export default class SolutionVersionObjectPage extends BaseController {
-	private readonly TECHNOLOGIES_TABLE_ID = "technologiesTable";
 	private readonly TECHNOLOGIES_PERSONALIZATION = "technologiesPerso";
 
 	private messageHandler: MessagingUtils;
@@ -107,10 +107,11 @@ export default class SolutionVersionObjectPage extends BaseController {
 
 	private initTablePersonalizations() {
 		const technologiesTable = this.getView().byId(
-			this.TECHNOLOGIES_TABLE_ID,
+			TableKeys.TECHNOLOGIES_TABLE_ID,
 		) as Table;
 
-		if (this.personalizationInstances.has(this.TECHNOLOGIES_TABLE_ID)) return;
+		if (this.personalizationInstances.has(TableKeys.TECHNOLOGIES_TABLE_ID))
+			return;
 
 		this.getResourceBundle()
 			.then((bundle) => {
@@ -242,7 +243,7 @@ export default class SolutionVersionObjectPage extends BaseController {
 
 	public onCreateNewTechnologyPress(): void {
 		this.messageHandler.clearAllMessages();
-		const table = this.getView().byId(this.TECHNOLOGIES_TABLE_ID) as Table;
+		const table = this.getView().byId(TableKeys.TECHNOLOGIES_TABLE_ID) as Table;
 		const context = (table.getBinding("items") as ODataListBinding).create({
 			softwareVersion_solution_ID: this.getView()
 				.getBindingContext()
@@ -272,10 +273,10 @@ export default class SolutionVersionObjectPage extends BaseController {
 
 		const model = this.getView().getModel() as ODataModel;
 		const appConfig = this.getView().getModel("appConfig") as JSONModel;
-		const i18n = await this.getResourceBundle();
 
 		await model.submitBatch("solutionVersionGroup").then(() => {
 			appConfig.setProperty("/versionViewEditMode", false);
+			this.getView().getElementBinding().refresh();
 		});
 	}
 
@@ -300,5 +301,82 @@ export default class SolutionVersionObjectPage extends BaseController {
 				}
 			},
 		});
+	}
+
+	public onDeleteSolutionVersion(): void {
+		const context = this.getView().getBindingContext() as Context;
+		const version = context.getProperty("version") as string;
+
+		MessageBox.warning(
+			this.i18nBundle.getText("solution.deleteWarning", [version]),
+			{
+				actions: [MessageBox.Action.DELETE, MessageBox.Action.CANCEL],
+				emphasizedAction: MessageBox.Action.DELETE,
+				onClose: (action: string) => {
+					if (action === (MessageBox.Action.DELETE as string)) {
+						context
+							.delete("$auto")
+							.then(() => {
+								MessageToast.show(
+									this.i18nBundle.getText("solutionVersion.deletedMsg", [
+										version,
+									]),
+									{
+										closeOnBrowserNavigation: false,
+									},
+								);
+								this.getRouter().navTo(PageKeys.MAIN_VIEW);
+							})
+							.catch((e) => {
+								throw e;
+							});
+					}
+				},
+			},
+		);
+	}
+
+	public async onRejectSolutionVersion(): Promise<void> {
+		this.messageHandler.clearAllMessages();
+		const model = this.getView().getModel() as ODataModel;
+		const context = this.getView().getBindingContext() as Context;
+		const operation = model.bindContext(
+			"RadarService.rejectVersion(...)",
+			context,
+		);
+
+		await operation
+			.invoke()
+			.then(() => {
+				MessageToast.show(
+					this.i18nBundle.getText("solutionVersion.rejectedMsg"),
+				);
+				this.getView().getElementBinding().refresh();
+			})
+			.catch((e) => {
+				console.log("Failed to approve solution", e);
+			});
+	}
+
+	public async onApproveSolutionVersion(): Promise<void> {
+		this.messageHandler.clearAllMessages();
+		const model = this.getView().getModel() as ODataModel;
+		const context = this.getView().getBindingContext() as Context;
+		const operation = model.bindContext(
+			"RadarService.approveVersion(...)",
+			context,
+		);
+
+		await operation
+			.invoke()
+			.then(() => {
+				MessageToast.show(
+					this.i18nBundle.getText("solutionVersion.approvedMsg"),
+				);
+				this.getView().getElementBinding().refresh();
+			})
+			.catch((e) => {
+				console.log("Failed to approve solution", e);
+			});
 	}
 }

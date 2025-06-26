@@ -8,7 +8,7 @@
 	<ObjectPageLayout id="solutionVersionObjectPage" useIconTabBar="false"
 		showTitleInHeaderContent="true"
 		showFooter="{= ${appConfig>/versionViewEditMode} || !${appConfig>/versionViewEditMode} &amp;&amp; ${path: 'status_code', targetType: 'any'} === 0}"
-		headerContentPinnable="{= ${IsActiveEntity} ? true : false}"
+		headerContentPinnable="{= !${appConfig>/versionViewEditMode} ? true : false}"
 		showHeaderContent="{= !${appConfig>/versionViewEditMode}}"
 		upperCaseAnchorBar="false">
 		<headerTitle>
@@ -33,9 +33,11 @@
 				</snappedContent>
 
 				<actions>
-					<m:Button text="{i18n>button.edit}" visible="{= !${appConfig>/versionViewEditMode}}"
+					<m:Button text="{i18n>button.edit}"
+						visible="{= ${path: 'status_code', targetType: 'any'} !== 5 &amp;&amp; !${appConfig>/versionViewEditMode}}"
 						type="Emphasized" press=".onEditSolutionVersion" />
-					<m:Button text="{i18n>button.delete}" visible="{= !${appConfig>/versionViewEditMode}}"
+					<m:Button text="{i18n>button.delete}"
+						visible="{= ${path: 'status_code', targetType: 'any'} !== 5 &amp;&amp; !${appConfig>/versionViewEditMode}}"
 						type="Transparent" press=".onDeleteSolutionVersion" />
 				</actions>
 			</ObjectPageDynamicHeaderTitle>
@@ -70,6 +72,12 @@
 						class="sapMObjectStatusLarge" />
 				</m:VBox>
 
+				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+					<m:Title text="{i18n>label.sapVersion}" class="sapUiSmallMarginBottom" />
+					<m:ObjectStatus text="{= ${sapVersion_code} ? ${sapVersion/name} : '–'}" state="None"
+						class="sapMObjectStatusLarge" />
+				</m:VBox>
+
 			</m:FlexBox>
 		</headerContent>
 
@@ -88,10 +96,7 @@
 			<ObjectPageSection title="{i18n>title.technologies}">
 				<subSections>
 					<ObjectPageSubSection showTitle="true"
-						title="{
-							parts: [{value: 'table.technologies'}, 'technologies/$count'],
-							formatter: '.formatTableTitle'
-						}">
+						title="{i18n>table.technologies} ({ path: 'technologies', targetType: 'any', formatter: 'formatter.formatTableCount' })">
 						<actions>
 							<m:SearchField width="15rem"
 								search=".onSearchFieldChange($event, 'technologiesTable', 'softwareVersion_solution_ID')" />
@@ -108,6 +113,16 @@
 						</actions>
 						<core:Fragment
 							fragmentName="com.gavdilabs.techtransmgt.solutioncentral.view.fragments.TechnologiesTable"
+							type="XML" />
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="{i18n>title.releaseNotes}">
+				<subSections>
+					<ObjectPageSubSection showTitle="true" title="{i18n>title.releaseNotes}">
+						<core:Fragment
+							fragmentName="com.gavdilabs.techtransmgt.solutioncentral.view.fragments.VersionReleaseNote"
 							type="XML" />
 					</ObjectPageSubSection>
 				</subSections>
