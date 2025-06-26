@@ -130,7 +130,7 @@ entity SolutionVersion : cuid, managed {
       mediaType    : String(255) @Core.IsMediaType;
       releaseDate  : Date default null;
       sapVersion   : Association to SAPVersion;
-      technologies : Composition of many SoftwareTechnology
+      technologies : Association to many SoftwareTechnology
                        on technologies.softwareVersion = $self;
 }
 

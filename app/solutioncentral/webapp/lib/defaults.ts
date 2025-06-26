@@ -380,14 +380,6 @@ export const DefaultTechnologiesTableConfig = {
 			groupable: true,
 		},
 		{
-			path: "software/ID",
-			key: "column.technoSoftwareID",
-			label: "column.technoSoftwareID",
-			selected: false,
-			sortable: true,
-			groupable: true,
-		},
-		{
 			path: "version",
 			key: "column.technoVersion",
 			label: "column.technoVersion",
@@ -446,6 +438,11 @@ export const DefaultDependentSolutionTableConfig = {
 
 export const DefaultTableSearchColumns = {
 	versionsTable: ["version", "status/descr"],
+	activeTechnologiesTable: [
+		"technology/name",
+		"technology/description",
+		"version",
+	],
 	technologiesTable: ["technology/name", "technology/description", "version"],
 	dependentSolutionsTable: ["up_/name", "up_/description", "softwareType_code"],
 };

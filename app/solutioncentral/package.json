@@ -22,6 +22,7 @@
 		"test": "npm run lint && npm run test-ui5"
 	},
 	"devDependencies": {
+		"@learnin/ui5-validator": "1.0.0",
 		"@sapui5/types": "1.136.1",
 		"@ui5/cli": "^4.0.8",
 		"@ui5/linter": "^1.0.2",
@@ -35,5 +36,10 @@
 		"ui5-middleware-simpleproxy": "^3.4.1",
 		"ui5-test-runner": "^5.4.3",
 		"ui5-tooling-transpile": "^3.5.0"
+	},
+	"ui5": {
+		"dependencies": [
+			"@learnin/ui5-validator"
+		]
 	}
 }

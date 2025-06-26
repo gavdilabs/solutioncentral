@@ -70,6 +70,7 @@
 						<ObjectIdentifier title="{dependentSoftwareSolution/name}" visible="{IsActiveEntity}" />
 						<Select width="100%"
 							required="true"
+							id="dependentSolutionSelect"
 							items="{path: '/SoftwareSolution', parameters: {$select: 'name,description'}, templateShareable: true}"
 							visible="{= !${IsActiveEntity}}"
 							selectedKey="{dependentSoftwareSolution_ID}"
@@ -82,6 +83,7 @@
 						<Text text="{softwareType_code}" visible="{IsActiveEntity}" />
 						<Select width="100%"
 							required="true"
+							id="dependentSolutionTypeSelect"
 							items="{path: '/DependencyTypes', templateShareable: true}"
 							visible="{= !${IsActiveEntity}}"
 							selectedKey="{softwareType_code}"

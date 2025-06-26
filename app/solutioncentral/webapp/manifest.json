@@ -48,8 +48,12 @@
 			"libs": {
 				"sap.ui.core": {},
 				"sap.m": {},
-				"sap.uxap": {}
+				"sap.uxap": {},
+				"learnin.ui5.validator": {}
 			}
+		},
+		"resourceRoots": {
+			"learnin.ui5.validator": "./lib/learnin/ui5/validator/"
 		},
 
 		"handleValidation": true,
@@ -66,16 +70,26 @@
 				"settings": {
 					"operationMode": "Server",
 					"autoExpandSelect": true,
-					"earlyRequests": true
+					"earlyRequests": true,
+					"groupProperties": {
+						"solutionVersionGroup": {
+							"submit": "API"
+						}
+					}
 				}
 			},
 			"solutionTableConfig": {
 				"type": "sap.ui.model.json.JSONModel",
 				"preload": false
 			},
-			"dependentSolutionTableConfig": {
+			"dependentSolutionsTableConfig": {
 				"type": "sap.ui.model.json.JSONModel",
 				"preload": false
+			},
+			"appConfig": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/appConfig.json",
+				"preload": true
 			},
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
@@ -106,6 +120,11 @@
 					"pattern": "SoftwareSolution({key})",
 					"name": "softwareSolutionObjectPage",
 					"target": "softwareSolutionObjectPage"
+				},
+				{
+					"pattern": "SolutionVersion({key})",
+					"name": "solutionVersionObjectPage",
+					"target": "solutionVersionObjectPage"
 				}
 			],
 			"targets": {
@@ -116,6 +135,10 @@
 				"softwareSolutionObjectPage": {
 					"viewId": "softwareSolutionObjectPage",
 					"viewName": "SoftwareSolutionObjectPage"
+				},
+				"solutionVersionObjectPage": {
+					"viewId": "solutionVersionObjectPage",
+					"viewName": "SolutionVersionObjectPage"
 				}
 			}
 		}

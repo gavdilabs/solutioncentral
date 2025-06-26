@@ -3,6 +3,10 @@ import models from "./model/models";
 import Device from "sap/ui/Device";
 import ODataModel from "sap/ui/model/odata/v4/ODataModel";
 import { CompanyConfiguration } from "./lib/types";
+import Messaging from "sap/ui/core/Messaging";
+import Message from "sap/ui/core/message/Message";
+import MessageType from "sap/ui/core/message/MessageType";
+import MessageModel from "sap/ui/model/message/MessageModel";
 
 /**
  * @namespace com.gavdilabs.techtransmgt.solutioncentral
@@ -85,5 +89,20 @@ export default class Component extends UIComponent {
 	 */
 	public getBreadcrumbNavBack(): boolean {
 		return this.breadcrumbNavBack;
+	}
+
+	public hasErrorMessages(): boolean {
+		return (
+			(Messaging.getMessageModel().getProperty("/") as Message[]).filter(
+				(message: Message) => message.getType() === MessageType.Error,
+			).length > 0
+		);
+	}
+
+	public removeAllTechnicalMessages(): void {
+		const aTechnicalMessages = (
+			Messaging.getMessageModel().getProperty("/") as Message[]
+		).filter((message) => message.getTechnical());
+		Messaging.removeMessages(aTechnicalMessages);
 	}
 }

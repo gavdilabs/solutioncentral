@@ -1,0 +1,136 @@
+<mvc:View
+	controllerName="com.gavdilabs.techtransmgt.solutioncentral.controller.SolutionVersionObjectPage"
+	xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.uxap"
+	xmlns:layout="sap.ui.layout"
+	core:require="{
+		formatter: 'com/gavdilabs/techtransmgt/solutioncentral/model/formatter'
+	}">
+	<ObjectPageLayout id="solutionVersionObjectPage" useIconTabBar="false"
+		showTitleInHeaderContent="true"
+		showFooter="{= ${appConfig>/versionViewEditMode} || !${appConfig>/versionViewEditMode} &amp;&amp; ${path: 'status_code', targetType: 'any'} === 0}"
+		headerContentPinnable="{= ${IsActiveEntity} ? true : false}"
+		showHeaderContent="{= !${appConfig>/versionViewEditMode}}"
+		upperCaseAnchorBar="false">
+		<headerTitle>
+			<ObjectPageDynamicHeaderTitle>
+				<breadcrumbs>
+					<m:Breadcrumbs id="breadcrumbsContainerVersions"
+						currentLocationText="{i18n>label.version} {version}">
+					</m:Breadcrumbs>
+				</breadcrumbs>
+				<expandedHeading>
+					<m:Title text="{i18n>label.version} {version}" />
+				</expandedHeading>
+
+				<snappedHeading>
+					<m:Title text="{i18n>label.version} {version}" />
+				</snappedHeading>
+
+				<expandedContent>
+				</expandedContent>
+
+				<snappedContent>
+				</snappedContent>
+
+				<actions>
+					<m:Button text="{i18n>button.edit}" visible="{= !${appConfig>/versionViewEditMode}}"
+						type="Emphasized" press=".onEditSolutionVersion" />
+					<m:Button text="{i18n>button.delete}" visible="{= !${appConfig>/versionViewEditMode}}"
+						type="Transparent" press=".onDeleteSolutionVersion" />
+				</actions>
+			</ObjectPageDynamicHeaderTitle>
+		</headerTitle>
+		<headerContent>
+			<m:FlexBox wrap="Wrap" fitContainer="true">
+				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+					<m:Title text="{i18n>title.solution}" class="sapUiSmallMarginBottom" />
+					<layout:VerticalLayout>
+						<m:ObjectStatus title="{i18n>column.name}" text="{solution/name}" />
+						<m:ObjectStatus title="{i18n>column.description}" text="{solution/description}" />
+					</layout:VerticalLayout>
+				</m:VBox>
+
+				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+					<m:Title text="Status" class="sapUiSmallMarginBottom" />
+					<m:ObjectStatus text="{= ${status_code} ? ${status/descr} : '–'}"
+						state="{
+								path: 'status/criticalityLevel',
+								formatter: 'formatter.formatSoftwareStatus'
+							}"
+						icon="{
+								path: 'status/criticalityLevel',
+								formatter: 'formatter.formatSoftwareStatusIcon'
+							}"
+						class="sapMObjectStatusLarge" />
+				</m:VBox>
+
+				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+					<m:Title text="{i18n>label.releaseDate}" class="sapUiSmallMarginBottom" />
+					<m:ObjectStatus text="{= ${releaseDate} ? ${releaseDate} : '–'}" state="None"
+						class="sapMObjectStatusLarge" />
+				</m:VBox>
+
+			</m:FlexBox>
+		</headerContent>
+
+		<sections>
+			<ObjectPageSection id="versionHeaderInfoSection" title="{i18n>title.header}"
+				visible="{appConfig>/versionViewEditMode}">
+				<subSections>
+					<ObjectPageSubSection title="{i18n>title.header}" showTitle="false">
+						<core:Fragment
+							fragmentName="com.gavdilabs.techtransmgt.solutioncentral.view.fragments.VersionHeaderInfo"
+							type="XML" />
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="{i18n>title.technologies}">
+				<subSections>
+					<ObjectPageSubSection showTitle="true"
+						title="{
+							parts: [{value: 'table.technologies'}, 'technologies/$count'],
+							formatter: '.formatTableTitle'
+						}">
+						<actions>
+							<m:SearchField width="15rem"
+								search=".onSearchFieldChange($event, 'technologiesTable', 'softwareVersion_solution_ID')" />
+							<m:Button text="{i18n>button.create}" press=".onCreateNewTechnologyPress"
+								type="Transparent"
+								visible="{appConfig>/versionViewEditMode}" />
+							<m:Button text="{i18n>button.delete}"
+								press=".onDeleteTableEntry($event, 'technologiesTable')" type="Transparent"
+								visible="{appConfig>/versionViewEditMode}"
+								enabled="{= ${technologiesTableConfig>/selectedItems}.length > 0}" />
+							<m:ToolbarSeparator />
+							<m:Button tooltip="{i18n>default.settings}" icon="sap-icon://action-settings"
+								press=".onPressTableSettings($event, 'technologiesPerso')" />
+						</actions>
+						<core:Fragment
+							fragmentName="com.gavdilabs.techtransmgt.solutioncentral.view.fragments.TechnologiesTable"
+							type="XML" />
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+		<footer>
+			<m:OverflowToolbar>
+				<m:Button id="versionObjectPageMessagingBtn" press=".openMessageView"
+					text="{= ${message>/}.length}"
+					icon="{= ${message>/}.length > 0 ? 'sap-icon://error' : 'sap-icon://sys-enter-2'}"
+					type="{= ${message>/}.length > 0 ? 'Negative' : 'Ghost'}"
+					enabled="{= ${message>/}.length > 0}" />
+				<m:ToolbarSpacer />
+				<m:Button text="{i18n>button.save}" type="Emphasized" press=".onSaveSolutionVersion"
+					visible="{appConfig>/versionViewEditMode}" />
+				<m:Button text="{i18n>default.discard}" visible="{appConfig>/versionViewEditMode}"
+					type="Transparent" press=".onCancelVersionEdit" />
+				<m:Button text="{i18n>button.approve}" press=".onApproveSolutionVersion"
+					type="Accept"
+					visible="{= !${appConfig>/versionViewEditMode} &amp;&amp; ${path: 'status_code', targetType: 'any'} === 0 }" />
+				<m:Button text="{i18n>button.reject}" press=".onRejectSolutionVersion" type="Reject"
+					visible="{= !${appConfig>/versionViewEditMode} &amp;&amp; ${path: 'status_code', targetType: 'any'} === 0 }" />
+			</m:OverflowToolbar>
+		</footer>
+	</ObjectPageLayout>
+</mvc:View>

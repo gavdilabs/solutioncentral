@@ -2,7 +2,9 @@ import Bar from "sap/m/Bar";
 import Button from "sap/m/Button";
 import { PlacementType } from "sap/m/library";
 import MessageItem from "sap/m/MessageItem";
-import MessageView from "sap/m/MessageView";
+import MessageView, {
+	MessageView$ActiveTitlePressEvent,
+} from "sap/m/MessageView";
 import Popover from "sap/m/Popover";
 import Control from "sap/ui/core/Control";
 import IconPool from "sap/ui/core/IconPool";
@@ -11,8 +13,10 @@ import MessageProcessor from "sap/ui/core/message/MessageProcessor";
 import Messaging from "sap/ui/core/Messaging";
 import View from "sap/ui/core/mvc/View";
 import MessageModel from "sap/ui/model/message/MessageModel";
-import { CustomControlType } from "../types";
+import { CustomControlType, CustomMessageType } from "../types";
 import { ValueState } from "sap/ui/core/library";
+import Table from "sap/ui/table/Table";
+import JSONModel from "sap/ui/model/json/JSONModel";
 
 /**
  * Message Handler class for SAPUI5 application
@@ -72,16 +76,85 @@ export class MessagingUtils {
 	}
 
 	/**
+	 * Handles pressing active title for error message
+	 * @param {MessageView$ActiveTitlePressEvent} event
+	 * @void
+	 */
+	private async handleActiveTitlePress(
+		event: MessageView$ActiveTitlePressEvent,
+	): Promise<void> {
+		const message = event
+			.getParameters()
+			.item.getBindingContext()
+			.getObject() as CustomMessageType;
+		let control = this.view.byId(message.getControlId());
+
+		this.popover.close();
+
+		if (control) {
+			let fullTarget = null;
+			if (message.fullTarget) {
+				if (Array.isArray(message.fullTarget)) {
+					if (message.fullTarget.length > 0) {
+						fullTarget = message.fullTarget[0];
+					}
+				} else {
+					fullTarget = message.fullTarget;
+				}
+			}
+			if (
+				fullTarget &&
+				control.getParent() instanceof Table &&
+				control.getParent().getBinding("rows").getModel() instanceof JSONModel
+			) {
+				const column = control;
+				const table = column.getParent() as Table;
+				const targetDataRowIndex = fullTarget.replace(
+					`${table.getBinding("rows").getPath()}/`,
+					"",
+				);
+				const columnIndex = table
+					.getColumns()
+					.filter((col) => col.getVisible())
+					.findIndex((col) => col.getId() === column.getId());
+				if (columnIndex === -1) {
+					return;
+				}
+				const sTableModelName = table.getBindingInfo("rows").model;
+
+				table.setFirstVisibleRow(parseInt(targetDataRowIndex));
+				await new Promise((resolve) => setTimeout(resolve, 100));
+
+				control = table
+					.getRows()
+					.find(
+						(oRow) =>
+							oRow
+								.getCells()
+								[columnIndex].getBindingContext(sTableModelName)
+								.getPath() === fullTarget,
+					)
+					.getCells()[columnIndex];
+				if (!control) {
+					return;
+				}
+			}
+			setTimeout(() => control.focus(), 300);
+		}
+	}
+
+	/**
 	 * Creates new message view and message popover
 	 * @private
 	 * @void
 	 */
 	private createMessageView() {
 		const messageTemplate = new MessageItem({
-			type: "{type}",
 			title: "{message}",
-			description: "{description}",
 			subtitle: "{additionalText}",
+			activeTitle: "{= ${controlIds}.length > 0}",
+			type: "{type}",
+			description: "{description}",
 		});
 
 		this.messageView = new MessageView({
@@ -89,6 +162,8 @@ export class MessagingUtils {
 			itemSelect: function () {
 				backBtn.setVisible(true);
 			},
+			activeTitlePress: async (event: MessageView$ActiveTitlePressEvent) =>
+				await this.handleActiveTitlePress(event),
 			items: {
 				path: "/",
 				template: messageTemplate,

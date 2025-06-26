@@ -82,7 +82,8 @@
 				<cells>
 					<VBox width="100%">
 						<ObjectIdentifier title="{version}" visible="{IsActiveEntity}" />
-						<Input value="{version}" visible="{= !${IsActiveEntity}}" />
+						<Input id="SoftwareSolutionVersionsInput" value="{version}"
+							visible="{= !${IsActiveEntity}}" />
 					</VBox>
 					<VBox width="100%">
 						<ObjectStatus visible="{IsActiveEntity}" text="{status/descr}"
@@ -96,6 +97,7 @@
 							}"
 							inverted="false" />
 						<Select width="100%"
+							id="softwareSolutionVersionStatusSelect"
 							required="true"
 							items="{path: '/SoftwareStatus', templateShareable: true}"
 							visible="{= !${IsActiveEntity}}"

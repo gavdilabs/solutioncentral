@@ -18,7 +18,7 @@ import List from "sap/m/List";
 import { ListBase$SelectionChangeEvent } from "sap/m/ListBase";
 import StandardListItem from "sap/m/StandardListItem";
 import MessageBox from "sap/m/MessageBox";
-import Link, { Link$PressEvent } from "sap/m/Link";
+import { Link$PressEvent } from "sap/m/Link";
 import Table from "sap/m/Table";
 import { SoftwareSolutionPersonalization } from "../lib/utils/personalization";
 import JSONModel from "sap/ui/model/json/JSONModel";
@@ -41,7 +41,8 @@ import { SearchField$SearchEvent } from "sap/m/SearchField";
 import { searchTableColumns } from "../lib/utils/filters";
 import Menu from "sap/m/table/columnmenu/Menu";
 import ODataListBinding from "sap/ui/model/odata/v2/ODataListBinding";
-import { CustomModels } from "../lib/constants";
+import { CustomModels, PageKeys } from "../lib/constants";
+import { BreadcrumbsHandler } from "../lib/utils/breadcrumbsUtils";
 
 export enum DraftSwitchIndex {
 	DRAFT = 0,
@@ -51,23 +52,21 @@ export enum DraftSwitchIndex {
 /**
  * @namespace com.gavdilabs.techtransmgt.solutioncentral.controller
  */
-export default class ObjectPage extends BaseController {
+export default class SoftwareSolutionObjectPage extends BaseController {
 	private readonly VERSION_PERSONALIZATION = "versionsPersonalization";
-	private readonly TECHNOLOGIES_PERSONALIZATION = "technologiesPerso";
+	private readonly ACTIVE_TECHNOLOGIES_PERSONALIZATION =
+		"activeTechnologiesPerso";
 	private readonly DEPENDENT_PERSONALIZATION = "dependentSolutionsPerso";
 
 	private readonly VERSIONS_TABLE_ID = "versionsTable";
-	private readonly TECHNOLOGIES_TABLE_ID = "technologiesTable";
+	private readonly ACTIVE_TECHNOLOGIES_TABLE_ID = "activeTechnologiesTable";
 	private readonly DEPENDENT_TABLE_ID = "dependentSolutionsTable";
-
-	private readonly MAIN_VIEW_KEY = "main";
-	private readonly OBJECT_PAGE_KEY = "softwareSolutionObjectPage";
+	private breadCrumbHandler: BreadcrumbsHandler;
 
 	private draftIndicator: DraftIndicator;
 	private draftSwitcherPopover: Popover;
 	private itemIndex: number;
 	private messageHandler: MessagingUtils;
-	private history: History;
 	private i18nBundle: ResourceBundle;
 
 	private defaultSearchColumns: JSONModel | undefined;
@@ -86,7 +85,7 @@ export default class ObjectPage extends BaseController {
 			new JSONModel(DefaultVersionsTableConfig),
 		);
 		this.tableConfigInstances.set(
-			CustomModels.TECHNOLOGIES_TABLE_CONFIG,
+			CustomModels.ACTIVE_TECHNOLOGIES_TABLE_CONFIG,
 			new JSONModel(DefaultTechnologiesTableConfig),
 		);
 		this.tableConfigInstances.set(
@@ -99,8 +98,10 @@ export default class ObjectPage extends BaseController {
 			CustomModels.VERSIONS_TABLE_CONFIG,
 		);
 		this.setModel(
-			this.tableConfigInstances.get(CustomModels.TECHNOLOGIES_TABLE_CONFIG),
-			CustomModels.TECHNOLOGIES_TABLE_CONFIG,
+			this.tableConfigInstances.get(
+				CustomModels.ACTIVE_TECHNOLOGIES_TABLE_CONFIG,
+			),
+			CustomModels.ACTIVE_TECHNOLOGIES_TABLE_CONFIG,
 		);
 		this.setModel(
 			this.tableConfigInstances.get(CustomModels.DEPENDENT_TABLE_CONFIG),
@@ -109,7 +110,7 @@ export default class ObjectPage extends BaseController {
 		this.defaultSearchColumns = new JSONModel(DefaultTableSearchColumns);
 
 		this.getRouter()
-			.getRoute(this.OBJECT_PAGE_KEY)
+			.getRoute(PageKeys.SOFTWARE_SOLUTION_OBJECT_PAGE)
 			.attachPatternMatched(this.onPatternMatched.bind(this), this);
 	}
 
@@ -118,7 +119,7 @@ export default class ObjectPage extends BaseController {
 		const key = args["key"] as string;
 
 		if (key == null) {
-			this.getRouter().navTo(this.MAIN_VIEW_KEY);
+			this.getRouter().navTo(PageKeys.MAIN_VIEW);
 		} else {
 			this.getView().bindElement({
 				path: `/SoftwareSolution(${key})`,
@@ -147,7 +148,11 @@ export default class ObjectPage extends BaseController {
 
 						this.messageHandler = new MessagingUtils(this.getView());
 						this.messageHandler.clearAllMessages();
-						this.createBreadcrumbs();
+						this.breadCrumbHandler = new BreadcrumbsHandler(
+							this,
+							this.i18nBundle,
+						);
+						this.setBreadcrumbs();
 						this.initTablePersonalizations();
 					},
 				},
@@ -155,62 +160,12 @@ export default class ObjectPage extends BaseController {
 		}
 	}
 
-	private createBreadcrumbs() {
+	private setBreadcrumbs() {
 		const breadCrumbContainer = this.getView().byId(
 			"breadcrumbsContainer",
 		) as Breadcrumbs;
 
-		const previousHash = this.history.getPreviousHash();
-		const id = previousHash?.substring(
-			previousHash.indexOf("ID=") + 3,
-			previousHash.indexOf(",") || undefined,
-		);
-
-		// If id is not present > meaning a refresh on objectpage
-		// Set breadcrumb to navigate to main view
-		if (!id) {
-			breadCrumbContainer.removeAllLinks();
-			breadCrumbContainer.addLink(
-				new Link({
-					text: this.i18nBundle.getText("breadcrumb.solutions"),
-					press: () => this.navToMain(),
-				}),
-			);
-			return;
-		}
-
-		if (!this.getOwnerComponent().getBreadcrumbNavBack()) {
-			// Navigation from main view
-			if (!previousHash || previousHash === "") {
-				breadCrumbContainer.removeAllLinks();
-				breadCrumbContainer.addLink(
-					new Link({
-						text: this.i18nBundle.getText("breadcrumb.solutions"),
-						press: () => this.navToMain(),
-					}),
-				);
-			} else {
-				breadCrumbContainer.addLink(
-					new Link({
-						text: id,
-						press: (event: Link$PressEvent) => this.navToObjectPage(event, id),
-					}),
-				);
-			}
-		}
-	}
-
-	private navToObjectPage(event: Link$PressEvent, id: string) {
-		const breadcrumbContainer = event.getSource().getParent() as Breadcrumbs;
-		breadcrumbContainer.removeLink(event.getSource());
-		this.getOwnerComponent().setBreadcrumbNavBack(true);
-		this.getRouter().navTo(this.OBJECT_PAGE_KEY, {
-			key: `ID=${id},IsActiveEntity=true`,
-		});
-	}
-
-	private navToMain(): void {
-		this.getRouter().navTo(this.MAIN_VIEW_KEY);
+		this.breadCrumbHandler.setBreadcrumbLinks(breadCrumbContainer);
 	}
 
 	private initTablePersonalizations() {
@@ -249,10 +204,14 @@ export default class ObjectPage extends BaseController {
 
 	private initTechnologiesPersonalization() {
 		const technoTable = this.getView().byId(
-			this.TECHNOLOGIES_TABLE_ID,
+			this.ACTIVE_TECHNOLOGIES_TABLE_ID,
 		) as Table;
 
-		if (this.personalizationInstances.has(this.TECHNOLOGIES_PERSONALIZATION))
+		if (
+			this.personalizationInstances.has(
+				this.ACTIVE_TECHNOLOGIES_PERSONALIZATION,
+			)
+		)
 			return;
 
 		this.getResourceBundle()
@@ -261,12 +220,14 @@ export default class ObjectPage extends BaseController {
 					technoTable,
 					{ key: "column.technoName", descending: true },
 					"/items",
-					this.tableConfigInstances.get(CustomModels.TECHNOLOGIES_TABLE_CONFIG),
+					this.tableConfigInstances.get(
+						CustomModels.ACTIVE_TECHNOLOGIES_TABLE_CONFIG,
+					),
 					bundle,
 				);
 
 				this.personalizationInstances.set(
-					this.TECHNOLOGIES_PERSONALIZATION,
+					this.ACTIVE_TECHNOLOGIES_PERSONALIZATION,
 					technologiesPerso,
 				);
 			})
@@ -319,14 +280,14 @@ export default class ObjectPage extends BaseController {
 				});
 				if (hasActiveEntity) {
 					this.getRouter().navTo(
-						this.OBJECT_PAGE_KEY,
+						PageKeys.SOFTWARE_SOLUTION_OBJECT_PAGE,
 						{
 							key: `ID=${softwareSolutionId},IsActiveEntity=true`,
 						},
 						true,
 					);
 				} else {
-					this.getRouter().navTo(this.MAIN_VIEW_KEY);
+					this.getRouter().navTo(PageKeys.MAIN_VIEW);
 				}
 			})
 			.catch((e) => {
@@ -360,7 +321,7 @@ export default class ObjectPage extends BaseController {
 		const model = this.getView().getModel() as ODataModel;
 		const draftContext = await activateDraftEdit(activeContext, model);
 		this.getRouter().navTo(
-			this.OBJECT_PAGE_KEY,
+			PageKeys.SOFTWARE_SOLUTION_OBJECT_PAGE,
 			{
 				key: `ID=${draftContext.getProperty("ID")},IsActiveEntity=false`,
 			},
@@ -380,7 +341,7 @@ export default class ObjectPage extends BaseController {
 					closeOnBrowserNavigation: false,
 				});
 				this.getRouter().navTo(
-					this.OBJECT_PAGE_KEY,
+					PageKeys.SOFTWARE_SOLUTION_OBJECT_PAGE,
 					{
 						key: `ID=${softwareSolutionId},IsActiveEntity=true`,
 					},
@@ -438,7 +399,7 @@ export default class ObjectPage extends BaseController {
 		const isActiveEntity = selectedItem.getId().includes("saved");
 		const context = this.getView().getBindingContext() as Context;
 		this.getRouter().navTo(
-			this.OBJECT_PAGE_KEY,
+			PageKeys.SOFTWARE_SOLUTION_OBJECT_PAGE,
 			{
 				key: `ID=${context.getProperty("ID")},IsActiveEntity=${isActiveEntity}`,
 			},
@@ -466,7 +427,7 @@ export default class ObjectPage extends BaseController {
 										closeOnBrowserNavigation: false,
 									},
 								);
-								this.getRouter().navTo(this.MAIN_VIEW_KEY);
+								this.getRouter().navTo(PageKeys.MAIN_VIEW);
 							})
 							.catch((e) => {
 								throw e;
@@ -527,7 +488,7 @@ export default class ObjectPage extends BaseController {
 		count: number | string,
 	): Promise<string> {
 		const resourceBundle = await this.getResourceBundle();
-		return resourceBundle.getText(i18nTextId, [count]);
+		return resourceBundle.getText(i18nTextId, [!count ? 0 : count]);
 	}
 
 	public beforeOpenColumnMenu(
@@ -570,8 +531,41 @@ export default class ObjectPage extends BaseController {
 			.getBindingContext()
 			.getProperty("dependentSoftwareSolution_ID") as string;
 
-		this.getRouter().navTo(this.OBJECT_PAGE_KEY, {
+		const currentViewKey = this.breadCrumbHandler.getKeyFromContextPath(
+			this.getView().getBindingContext().getPath(),
+		);
+
+		this.breadCrumbHandler.createObjectPageLink(
+			this.getView().getBindingContext().getProperty("name") as string,
+			currentViewKey,
+		);
+
+		this.getRouter().navTo(PageKeys.SOFTWARE_SOLUTION_OBJECT_PAGE, {
 			key: `ID=${softwareSolutionId},IsActiveEntity=true`,
+		});
+	}
+
+	public onVersionTableItemPress(event: ListItemBase$PressEvent) {
+		this.getOwnerComponent().setBreadcrumbNavBack(false);
+		const versionId = event
+			.getSource()
+			.getBindingContext()
+			.getProperty("ID") as string;
+		const solution_ID = this.getView()
+			.getBindingContext()
+			.getProperty("ID") as string;
+
+		const currentViewKey = this.breadCrumbHandler.getKeyFromContextPath(
+			this.getView().getBindingContext().getPath(),
+		);
+
+		this.breadCrumbHandler.createObjectPageLink(
+			this.getView().getBindingContext().getProperty("name") as string,
+			currentViewKey,
+		);
+
+		this.getRouter().navTo(PageKeys.SOLUTION_VERSION_OBJECT_PAGE, {
+			key: `ID=${versionId},solution_ID=${solution_ID},IsActiveEntity=true`,
 		});
 	}
 
@@ -606,17 +600,6 @@ export default class ObjectPage extends BaseController {
 		(table.getBinding("items") as ODataListBinding).create({
 			IsActiveEntity: false,
 			solution_ID: this.getView()
-				.getBindingContext()
-				.getProperty("ID") as string,
-		});
-	}
-
-	public onCreateNewTechnologyPress(): void {
-		this.messageHandler.clearAllMessages();
-		const table = this.getView().byId(this.TECHNOLOGIES_TABLE_ID) as Table;
-		(table.getBinding("items") as ODataListBinding).create({
-			IsActiveEntity: false,
-			software_ID: this.getView()
 				.getBindingContext()
 				.getProperty("ID") as string,
 		});

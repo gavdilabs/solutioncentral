@@ -49,7 +49,7 @@
 		<headerContent>
 			<m:FlexBox wrap="Wrap" fitContainer="true">
 				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
-					<m:Title text="Status" class="sapUiSmallMarginBottom" />
+					<m:Title text="{i18n>label.status}" class="sapUiSmallMarginBottom" />
 					<m:ObjectStatus text="{= ${solutionStatus_code} ? ${solutionStatus/descr} : '–'}"
 						state="{
 								path: 'solutionStatus/criticalityLevel',
@@ -63,7 +63,7 @@
 				</m:VBox>
 
 				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
-					<m:Title text="Platform" class="sapUiSmallMarginBottom" />
+					<m:Title text="{i18n>label.platform}" class="sapUiSmallMarginBottom" />
 					<m:ObjectStatus text="{= ${platform_code} ? ${platform/name} : '–'}" state="None"
 						class="sapMObjectStatusLarge" />
 				</m:VBox>
@@ -140,29 +140,22 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection title="{i18n>title.technologies}">
+			<ObjectPageSection title="{i18n>title.activeTechnologies}">
 				<subSections>
 					<ObjectPageSubSection showTitle="true"
 						title="{
-							parts: [{value: 'table.technologies'}, 'Technologies/$count'],
+							parts: [{value: 'table.activeTechnologies'}, 'activeVersion/technologies/$count'],
 							formatter: '.formatTableTitle'
 						}">
 						<actions>
 							<m:SearchField width="15rem"
-								search=".onSearchFieldChange($event, 'technologiesTable', 'software_ID')" />
-							<m:Button text="{i18n>button.create}" press=".onCreateNewTechnologyPress"
-								type="Transparent"
-								visible="{= !${IsActiveEntity}}" />
-							<m:Button text="{i18n>button.delete}"
-								press=".onDeleteTableEntry($event, 'technologiesTable')" type="Transparent"
-								visible="{= !${IsActiveEntity}}"
-								enabled="{= ${technologiesTableConfig>/selectedItems}.length > 0}" />
+								search=".onSearchFieldChange($event, 'activeTechnologiesTable', 'softwareVersion_solution_ID')" />
 							<m:ToolbarSeparator />
 							<m:Button tooltip="{i18n>default.settings}" icon="sap-icon://action-settings"
-								press=".onPressTableSettings($event, 'technologiesPerso')" />
+								press=".onPressTableSettings($event, 'activeTechnologiesPerso')" />
 						</actions>
 						<core:Fragment
-							fragmentName="com.gavdilabs.techtransmgt.solutioncentral.view.fragments.TechnologiesTable"
+							fragmentName="com.gavdilabs.techtransmgt.solutioncentral.view.fragments.ActiveTechnologiesTable"
 							type="XML" />
 					</ObjectPageSubSection>
 				</subSections>

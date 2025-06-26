@@ -1,4 +1,5 @@
 import EventProvider from "sap/ui/base/EventProvider";
+import Message from "sap/ui/core/message/Message";
 
 export interface SolutionTableConfig {
 	search?: string;
@@ -45,6 +46,10 @@ export interface ViewSettingsDialogItem {
 export interface CustomControlType extends EventProvider {
 	getId: () => string;
 	setValueState: (state: string) => void;
+}
+
+export interface CustomMessageType extends Message {
+	fullTarget: string | string[];
 }
 
 export interface CompanyConfiguration {
