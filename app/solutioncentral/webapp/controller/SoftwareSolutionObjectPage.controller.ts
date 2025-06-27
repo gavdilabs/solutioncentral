@@ -124,7 +124,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 				path: `/SoftwareSolution(${key})`,
 				parameters: {
 					$select: "HasActiveEntity,HasDraftEntity",
-					$expand: "solutionStatus,versions,activeVersion",
+					$expand: "solutionStatus,versions,activeVersion,Dependents",
 				},
 				events: {
 					dataReceived: async () => {
@@ -365,9 +365,14 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 		const softwareSolutionId = context.getProperty("ID") as string;
 		const model = this.getView().getModel() as ODataModel;
 
-		this.validator.validate(this.getView(), {
-			isDoConstraintsValidation: true,
-		});
+		if (
+			!this.validator.validate(this.getView(), {
+				isDoConstraintsValidation: true,
+			}) ||
+			this.getOwnerComponent().hasErrorMessages()
+		) {
+			return;
+		}
 
 		draftActivate(context, model)
 			.then(async () => {

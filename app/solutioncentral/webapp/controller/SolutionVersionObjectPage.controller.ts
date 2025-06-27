@@ -276,7 +276,20 @@ export default class SolutionVersionObjectPage extends BaseController {
 
 		await model.submitBatch("solutionVersionGroup").then(() => {
 			appConfig.setProperty("/versionViewEditMode", false);
-			this.getView().getElementBinding().refresh();
+
+			const bindingPath = this.getView().getElementBinding().getPath();
+			this.rebindView(bindingPath);
+		});
+	}
+
+	private rebindView(path: string) {
+		if (this.getView().getObjectBinding()) this.getView().unbindObject();
+		this.getView().bindElement({
+			path: path,
+			parameters: {
+				$expand: "technologies",
+				$$updateGroupId: "solutionVersionGroup",
+			},
 		});
 	}
 

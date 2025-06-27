@@ -80,7 +80,7 @@
 
 		</columns>
 		<items>
-			<ColumnListItem vAlign="Middle" press=".onTableItemPress">
+			<ColumnListItem vAlign="Middle">
 				<cells>
 					<ObjectIdentifier title="{technology/name}" />
 					<Text text="{technology/description}" />
