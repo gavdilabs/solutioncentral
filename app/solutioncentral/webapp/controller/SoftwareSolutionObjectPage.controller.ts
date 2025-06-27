@@ -371,6 +371,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 			}) ||
 			this.getOwnerComponent().hasErrorMessages()
 		) {
+			this.messageHandler.removeDuplicateMessagesByTarget();
 			return;
 		}
 

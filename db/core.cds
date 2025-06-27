@@ -150,7 +150,7 @@ entity SoftwareSolution : cuid, managed {
   reasonNoCleanCore   : String;
   costCenter          : String;
   owner               : Association to User          @mandatory  @assert.target;
-  team                : Association to SoftwareTeam  @mandatory  @assert.target;
+  team                : Association to SoftwareTeam  @mandatory  @assert.target  @title: 'TESTING TITLE';
   Dependents          : Composition of many {
                           key ID                        : UUID;
                               dependentSoftwareSolution : Association to SoftwareSolution @mandatory;

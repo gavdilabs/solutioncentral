@@ -17,6 +17,7 @@ import { CustomControlType, CustomMessageType } from "../types";
 import { ValueState } from "sap/ui/core/library";
 import Table from "sap/ui/table/Table";
 import JSONModel from "sap/ui/model/json/JSONModel";
+import CustomData from "sap/ui/core/CustomData";
 
 /**
  * Message Handler class for SAPUI5 application
@@ -257,5 +258,49 @@ export class MessagingUtils {
 	public handleChangeEvent(control: CustomControlType): void {
 		control.setValueState(ValueState.None);
 		this.clearMessagesByControl(control.getId());
+	}
+
+	/**
+	 * Removes all duplicate message by control id
+	 * Necessary after validation due to issue between standard ui5 validation and the thirdparty ui5 validator
+	 * @void
+	 */
+	public removeDuplicateMessagesByTarget() {
+		const messages = this.messageModel.getData() as Message[];
+		const seenTargets = new Map<string, boolean>();
+		const uniqueMessages: Message[] = [];
+
+		messages.forEach((msg) => {
+			if (!seenTargets.has(msg.getControlId())) {
+				seenTargets.set(msg.getControlId(), true);
+				uniqueMessages.push(msg);
+			}
+		});
+
+		this.clearAllMessages();
+		uniqueMessages.forEach((msg) => {
+			const controlLabel = this.getAdditionalTextForTableEntries(
+				msg.getControlId(),
+			);
+			if (controlLabel) {
+				msg.setAdditionalText(controlLabel);
+			}
+
+			this.messaging.addMessages(msg);
+		});
+	}
+
+	private getAdditionalTextForTableEntries(
+		controlId: string,
+	): string | undefined {
+		if (!this.view.byId(controlId).getId().includes("clone")) return undefined;
+
+		const customData = this.view.byId(controlId).getCustomData() as unknown[];
+		if (!customData) return undefined;
+
+		const properties = (customData[0] as Record<string, unknown>).mProperties;
+		const label = (properties as Record<string, unknown>).value as string;
+
+		return label;
 	}
 }

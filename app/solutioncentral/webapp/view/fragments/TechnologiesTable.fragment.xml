@@ -35,7 +35,8 @@
 			<Column app:p13nKey="column.technoName" width="30rem" headerMenu="technologiesQuickMenu"
 				minScreenWidth="Tablet"
 				demandPopin="true">
-				<Label required="{appConfig>/versionViewEditMode}" text="{i18n>column.technoName}" />
+				<Label required="{appConfig>/versionViewEditMode}"
+					text="{i18n>column.technoName}" />
 			</Column>
 			<Column app:p13nKey="column.technoDescr" headerMenu="technologiesQuickMenu"
 				minScreenWidth="Tablet"
@@ -92,6 +93,10 @@
 							visible="{appConfig>/versionViewEditMode}"
 							selectedKey="{technology_ID}">
 							<core:ListItem key="{ID}" text="{name}" additionalText="{description}" />
+							<customData>
+								<core:CustomData key="customDataTechnoName"
+									value="{i18n>label.technology} - {i18n>column.technoName}" />
+							</customData>
 						</ComboBox>
 					</VBox>
 					<Text text="{= ${technology/description} ? ${technology/description} : '–'}" />
@@ -100,7 +105,12 @@
 						<Input
 							id="versionInput"
 							value="{version}"
-							required="true" visible="{appConfig>/versionViewEditMode}" />
+							required="true" visible="{appConfig>/versionViewEditMode}">
+							<customData>
+								<core:CustomData key="customDataTechnoVersion"
+									value="{i18n>label.technology} - {i18n>column.technoVersion}" />
+							</customData>
+						</Input>
 					</VBox>
 
 					<!-- Columns not visible by default -->

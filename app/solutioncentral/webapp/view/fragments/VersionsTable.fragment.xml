@@ -85,7 +85,12 @@
 							visible="{= !${appConfig>/softwareSolutionEditMode}}" />
 						<Input id="SoftwareSolutionVersionsInput" value="{version}"
 							required="true"
-							visible="{appConfig>/softwareSolutionEditMode}" />
+							visible="{appConfig>/softwareSolutionEditMode}">
+							<customData>
+								<core:CustomData key="customDataVersion"
+									value="{i18n>label.version} - {i18n>column.versionVersion}" />
+							</customData>
+						</Input>
 					</VBox>
 					<VBox width="100%">
 						<ObjectStatus visible="{= !${appConfig>/softwareSolutionEditMode}}"
@@ -107,6 +112,10 @@
 							selectedKey="{status_code}"
 							forceSelection="false">
 							<core:ListItem key="{code}" text="{name}" />
+							<customData>
+								<core:CustomData key="customDataVersionStatus"
+									value="{i18n>label.version} - {i18n>column.versionStatus}" />
+							</customData>
 						</Select>
 					</VBox>
 					<VBox width="100%">

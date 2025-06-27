@@ -76,6 +76,10 @@
 							selectedKey="{dependentSoftwareSolution_ID}"
 							forceSelection="false">
 							<core:ListItem key="{ID}" text="{name}" />
+							<customData>
+								<core:CustomData key="customDataDependent"
+									value="{i18n>label.dependentSoftware} - {i18n>column.dependentName}" />
+							</customData>
 						</Select>
 					</VBox>
 					<Text text="{dependentSoftwareSolution/description}" />
@@ -89,6 +93,10 @@
 							selectedKey="{softwareType_code}"
 							forceSelection="false">
 							<core:ListItem key="{code}" text="{code}" />
+							<customData>
+								<core:CustomData key="customDataDependentType"
+									value="{i18n>label.dependentSoftware} - {i18n>column.dependentSoftwareType}" />
+							</customData>
 						</Select>
 					</VBox>
 

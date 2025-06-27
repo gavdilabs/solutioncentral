@@ -24,8 +24,9 @@
 		</Select>
 
 		<Label text="{i18n>column.sapVersion}" />
-		<ComboBox selectedKey="{sapVersion_code}"
+		<ComboBox id="solutionVersionSAPVersionSelect" selectedKey="{sapVersion_code}"
 			showSecondaryValues="true"
+			required="true"
 			filterSecondaryValues="true"
 			items="{ path: '/SAPVersion', parameters: { $select: 'deployment'}, sorter: [{ path: 'deployment', group: true, descending: false}, {path: 'code', descending: true}]}">
 			<core:ListItem key="{code}" additionalText="{descr}" text="{code}" />
