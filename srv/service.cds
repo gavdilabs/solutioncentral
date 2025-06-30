@@ -19,7 +19,8 @@ service RadarService {
   }
 
   extend projection SoftwareSolution with {
-    virtual null as isApprover : Boolean
+    virtual null as isApprover : Boolean,
+    activeVersion              : Association to ActiveSolutionVersion on activeVersion.solution = $self
   }
 
   entity SolutionVersion          as projection on core.SolutionVersion;
@@ -50,6 +51,8 @@ service RadarService {
   }
 
   entity TechnologyReplacement    as projection on core.TechnologyReplacement;
+
+  @odata.singleton.nullable
   entity CompanyConfiguration     as projection on core.CompanyConfiguration;
 
   @readonly
@@ -73,8 +76,28 @@ service RadarService {
   @readonly
   entity DependencyTypes          as projection on core.DependencyType;
 
+  @readonly
+  entity SoftwareStatus           as projection on core.SoftwareStatus;
+
   entity SoftwareTechnology       as projection on core.SoftwareTechnology;
   /*** FUNCTION IMPORTS ***/
   function getActiveUser() returns types.ActiveUser;
 
+  /** VIEWS **/
+  view ActiveSolutionVersion as
+    select from SolutionVersion as version
+    where
+          version.status.code =      5
+      and version.releaseDate is not null
+      and version.releaseDate =      (
+        select max(
+          sv.releaseDate
+        ) from SolutionVersion as sv
+        inner join SoftwareStatus as status
+          on sv.status = status
+        where
+              sv.solution.ID =      version.solution.ID
+          and status.code    =      5
+          and sv.releaseDate is not null
+      );
 }

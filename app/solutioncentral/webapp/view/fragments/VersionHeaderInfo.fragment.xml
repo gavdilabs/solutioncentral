@@ -1,0 +1,41 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:forms="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+	<forms:SimpleForm
+		columnsM="2"
+		columnsL="3"
+		columnsXL="4"
+		editable="false" layout="ColumnLayout">
+		<core:Title text="{i18n>title.solution}" />
+		<Label text="{i18n>column.name}" />
+		<Text text="{solution/name}" />
+
+		<Label text="{i18n>column.description}" />
+		<Text text="{solution/description}" />
+
+		<core:Title text="{i18n>title.versionInfo}" />
+		<Label text="{i18n>label.version}" required="true" />
+		<Input value="{version}" required="true" />
+
+		<Label text="{i18n>column.status}" />
+		<Select selectedKey="{status_code}" forceSelection="false" items="{/SoftwareStatus}">
+			<core:ListItem key="{code}" text="{name}" />
+		</Select>
+
+		<Label text="{i18n>column.sapVersion}" />
+		<ComboBox id="solutionVersionSAPVersionSelect" selectedKey="{sapVersion_code}"
+			showSecondaryValues="true"
+			required="true"
+			filterSecondaryValues="true"
+			items="{ path: '/SAPVersion', parameters: { $select: 'deployment'}, sorter: [{ path: 'deployment', group: true, descending: false}, {path: 'code', descending: true}]}">
+			<core:ListItem key="{code}" additionalText="{descr}" text="{code}" />
+
+		</ComboBox>
+
+		<Label text="{i18n>label.releaseDate}" />
+		<DatePicker value="{releaseDate}" />
+
+		<core:Title />
+	</forms:SimpleForm>
+</core:FragmentDefinition>

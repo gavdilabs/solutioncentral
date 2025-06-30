@@ -1,0 +1,147 @@
+{
+	"_version": "1.12.0",
+
+	"sap.app": {
+		"id": "com.gavdilabs.techtransmgt.solutioncentral",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"title": "{{app.title}}",
+		"description": "{{app.description}}",
+		"applicationVersion": {
+			"version": "${version}"
+		},
+		"sourceTemplate": {
+			"id": "generator-ui5-ts-app",
+			"version": "1.1.0"
+		},
+		"dataSources": {
+			"mainService": {
+				"uri": "RadarService/",
+				"type": "OData",
+				"settings": {
+					"localUri": "localService/metadata.xml",
+					"odataVersion": "4.0"
+				}
+			}
+		}
+	},
+
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "com.gavdilabs.techtransmgt.solutioncentral.view.App",
+			"type": "XML",
+			"id": "app"
+		},
+
+		"dependencies": {
+			"minUI5Version": "1.135.0",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.uxap": {},
+				"learnin.ui5.validator": {},
+				"sap.ui.richtexteditor": {}
+			}
+		},
+		"resourceRoots": {
+			"learnin.ui5.validator": "./lib/learnin/ui5/validator/"
+		},
+
+		"handleValidation": true,
+
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+
+		"models": {
+			"": {
+				"dataSource": "mainService",
+				"preload": true,
+				"settings": {
+					"operationMode": "Server",
+					"autoExpandSelect": true,
+					"earlyRequests": true,
+					"groupProperties": {
+						"solutionVersionGroup": {
+							"submit": "API"
+						}
+					}
+				}
+			},
+			"solutionTableConfig": {
+				"type": "sap.ui.model.json.JSONModel",
+				"preload": false
+			},
+			"dependentSolutionsTableConfig": {
+				"type": "sap.ui.model.json.JSONModel",
+				"preload": false
+			},
+			"appConfig": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/appConfig.json",
+				"preload": true
+			},
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "com.gavdilabs.techtransmgt.solutioncentral.i18n.i18n",
+					"supportedLocales": ["en", "de"],
+					"fallbackLocale": "en",
+					"async": true
+				}
+			}
+		},
+
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "com.gavdilabs.techtransmgt.solutioncentral.view",
+				"controlId": "app",
+				"controlAggregation": "pages"
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "main",
+					"target": "main"
+				},
+				{
+					"pattern": "SoftwareSolution({key})",
+					"name": "softwareSolutionObjectPage",
+					"target": "softwareSolutionObjectPage"
+				},
+				{
+					"pattern": "SolutionVersion({key})",
+					"name": "solutionVersionObjectPage",
+					"target": "solutionVersionObjectPage"
+				}
+			],
+			"targets": {
+				"main": {
+					"viewId": "main",
+					"viewName": "Main"
+				},
+				"softwareSolutionObjectPage": {
+					"viewId": "softwareSolutionObjectPage",
+					"viewName": "SoftwareSolutionObjectPage"
+				},
+				"solutionVersionObjectPage": {
+					"viewId": "solutionVersionObjectPage",
+					"viewName": "SolutionVersionObjectPage"
+				}
+			}
+		}
+	}
+}

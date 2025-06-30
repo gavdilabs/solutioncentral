@@ -1,0 +1,53 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:forms="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+
+	<Dialog id="CreateSoftwareSolutionDialog"
+		draggable="true"
+		contentWidth="30rem"
+		class="sapUiContentPadding"
+		title="{i18n>title.createSoftwareSolution}"
+	>
+		<content>
+			<forms:SimpleForm>
+				<Label text="{i18n>column.name}" />
+				<Input change=".handleChangeEvent"
+					value="{name}"
+					required="true" />
+
+				<Label text="{i18n>column.description}" />
+				<TextArea id="createSolutionDialogDescr" value="{description}" rows="4"
+					required="false" />
+
+				<Label text="{i18n>column.owner}" required="true" />
+				<Select forceSelection="false" required="true"
+					selectedKey="{owner_username}"
+					change=".handleChangeEvent"
+					items="{/User}">
+					<core:ListItem key="{username}" text="{fullName}" />
+				</Select>
+
+				<Label text="{i18n>column.team}" required="true" />
+				<Select forceSelection="false" required="true"
+					selectedKey="{team_teamName}"
+					change=".handleChangeEvent"
+					items="{/SoftwareTeam}">
+					<core:ListItem key="{teamName}" text="{teamName}" />
+				</Select>
+			</forms:SimpleForm>
+		</content>
+		<footer>
+			<OverflowToolbar>
+				<Button id="createSolutionDialogMessageBtn" press=".openMessageView"
+					text="{= ${message>/}.length}"
+					icon="{= ${message>/}.length > 0 ? 'sap-icon://error' : 'sap-icon://sys-enter-2'}"
+					type="{= ${message>/}.length > 0 ? 'Negative' : 'Ghost'}"
+					enabled="{= ${message>/}.length > 0}" />
+				<ToolbarSpacer />
+				<Button text="{i18n>button.create}" type="Emphasized" press=".handleCreateDialogConfirm" />
+				<Button text="{i18n>button.cancel}" type="Transparent" press=".handleCreateDialogCancel" />
+			</OverflowToolbar>
+		</footer>
+	</Dialog>
+</core:FragmentDefinition>

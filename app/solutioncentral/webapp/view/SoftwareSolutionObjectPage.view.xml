@@ -1,0 +1,206 @@
+<mvc:View
+	controllerName="com.gavdilabs.techtransmgt.solutioncentral.controller.softwareSolutionObjectPage"
+	xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.uxap"
+	core:require="{
+		formatter: 'com/gavdilabs/techtransmgt/solutioncentral/model/formatter'
+	}">
+	<ObjectPageLayout id="softwareSolutionObjectPage" useIconTabBar="false"
+		showFooter="{= !${IsActiveEntity} || ${IsActiveEntity} &amp;&amp; ${path: 'solutionStatus_code', targetType: 'any'} === 0}"
+		showTitleInHeaderContent="true"
+		headerContentPinnable="{= ${IsActiveEntity} ? true : false}"
+		showHeaderContent="{= ${IsActiveEntity} ? true : false}"
+		upperCaseAnchorBar="false">
+		<headerTitle>
+			<ObjectPageDynamicHeaderTitle>
+				<breadcrumbs>
+					<m:Breadcrumbs id="breadcrumbsContainer"
+						currentLocationText="{= ${name} ? ${name} : ${i18n>title.newSolution}}">
+					</m:Breadcrumbs>
+				</breadcrumbs>
+				<expandedHeading>
+					<m:Title text="{= ${name} ? ${name} :${i18n>title.newSolution}}" wrapping="true" />
+				</expandedHeading>
+
+				<snappedHeading>
+					<m:Title text="{= ${name} ? ${name} : ${i18n>title.newSolution}}" wrapping="true" />
+				</snappedHeading>
+
+				<expandedContent>
+					<m:Text text="{description}" />
+				</expandedContent>
+
+				<snappedContent>
+					<m:Text text="{description}" />
+				</snappedContent>
+
+				<actions>
+					<m:Button
+						text="{= ${path: 'IsActiveEntity', targetType: 'any'} === true ? ${i18n>button.savedVersion} : ${i18n>button.draft}}"
+						press=".onDraftSwitcherPress" type="Ghost" icon="sap-icon://navigation-down-arrow"
+						iconFirst="false"
+						visible="{= ${IsActiveEntity} &amp;&amp; ${HasDraftEntity} || !${IsActiveEntity}}" />
+					<m:Button text="{i18n>button.edit}" type="Emphasized" press=".onEditSolution"
+						visible="{= ${IsActiveEntity} &amp;&amp; !${HasDraftEntity}}" />
+					<m:Button text="{i18n>button.delete}" type="Transparent" press=".onDeleteSolutionPress"
+						visible="{= ${IsActiveEntity} &amp;&amp; !${HasDraftEntity}}" />
+				</actions>
+			</ObjectPageDynamicHeaderTitle>
+		</headerTitle>
+		<headerContent>
+			<m:FlexBox wrap="Wrap" fitContainer="true">
+				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+					<m:Title text="{i18n>label.status}" class="sapUiSmallMarginBottom" />
+					<m:ObjectStatus text="{= ${solutionStatus_code} ? ${solutionStatus/descr} : '–'}"
+						state="{
+								path: 'solutionStatus/criticalityLevel',
+								formatter: 'formatter.formatSoftwareStatus'
+							}"
+						icon="{
+								path: 'solutionStatus/criticalityLevel',
+								formatter: 'formatter.formatSoftwareStatusIcon'
+							}"
+						class="sapMObjectStatusLarge" />
+				</m:VBox>
+
+				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+					<m:Title text="{i18n>label.platform}" class="sapUiSmallMarginBottom" />
+					<m:ObjectStatus text="{= ${platform_code} ? ${platform/name} : '–'}" state="None"
+						class="sapMObjectStatusLarge" />
+				</m:VBox>
+			</m:FlexBox>
+		</headerContent>
+
+		<sections>
+			<ObjectPageSection visible="{= !${IsActiveEntity}}" title="{i18n>title.header}">
+				<subSections>
+					<ObjectPageSubSection title="{i18n>title.header}" showTitle="false">
+						<core:Fragment
+							fragmentName="com.gavdilabs.techtransmgt.solutioncentral.view.fragments.HeaderInfo"
+							type="XML" />
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="{i18n>title.technicalInfo}">
+				<subSections>
+					<ObjectPageSubSection title="{i18n>title.technicalInfo}">
+						<core:Fragment
+							fragmentName="com.gavdilabs.techtransmgt.solutioncentral.view.fragments.TechnicalInformation"
+							type="XML" />
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="{i18n>title.owner}">
+				<subSections>
+					<ObjectPageSubSection title="{i18n>title.owner}">
+						<core:Fragment
+							fragmentName="com.gavdilabs.techtransmgt.solutioncentral.view.fragments.OwnerInformation"
+							type="XML" />
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="{i18n>title.rating}">
+				<subSections>
+					<ObjectPageSubSection title="{i18n>title.rating}">
+						<core:Fragment
+							fragmentName="com.gavdilabs.techtransmgt.solutioncentral.view.fragments.RatingInformation"
+							type="XML" />
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+
+			<ObjectPageSection title="{i18n>title.versions}">
+				<subSections>
+					<ObjectPageSubSection showTitle="true"
+						title="{i18n>table.versionsTable} ({ path: 'versions', targetType: 'any', formatter: 'formatter.formatTableCount' })">
+						<actions>
+							<m:SearchField width="15rem"
+								search=".onSearchFieldChange($event, 'versionsTable', 'solution_ID')" />
+							<m:Button text="{i18n>button.create}" press=".onCreateNewVersionPress"
+								type="Transparent"
+								visible="{= !${IsActiveEntity}}" />
+							<m:Button text="{i18n>button.delete}"
+								press=".onDeleteTableEntry($event, 'versionsTable')" type="Transparent"
+								visible="{= !${IsActiveEntity}}"
+								enabled="{= ${versionsTableConfig>/selectedItems}.length > 0}" />
+							<m:ToolbarSeparator />
+							<m:Button tooltip="{i18n>default.settings}" icon="sap-icon://action-settings"
+								press=".onPressTableSettings($event, 'versionsPersonalization')" />
+						</actions>
+						<core:Fragment
+							fragmentName="com.gavdilabs.techtransmgt.solutioncentral.view.fragments.VersionsTable"
+							type="XML" />
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="{i18n>title.activeTechnologies}">
+				<subSections>
+					<ObjectPageSubSection showTitle="true"
+						title="{i18n>table.activeTechnologies} ({ parts: [{path: 'activeVersion', targetType: 'any'}, {value: 'activeTechnologiesTable'}], formatter: 'formatter.formatTableCount' })">
+						<actions>
+							<m:SearchField width="15rem"
+								search=".onSearchFieldChange($event, 'activeTechnologiesTable', 'softwareVersion_solution_ID')" />
+							<m:ToolbarSeparator />
+							<m:Button tooltip="{i18n>default.settings}" icon="sap-icon://action-settings"
+								press=".onPressTableSettings($event, 'activeTechnologiesPerso')" />
+						</actions>
+						<core:Fragment
+							fragmentName="com.gavdilabs.techtransmgt.solutioncentral.view.fragments.ActiveTechnologiesTable"
+							type="XML" />
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="{i18n>title.dependentSolutions}">
+				<subSections>
+					<ObjectPageSubSection showTitle="true"
+						title="{i18n>table.dependentSolutions} ({path: 'Dependents', targetType: 'any', formatter: 'formatter.formatTableCount' })">
+						<actions>
+							<m:SearchField width="15rem"
+								search=".onSearchFieldChange($event, 'dependentSolutionsTable', 'up__ID')" />
+							<m:Button text="{i18n>button.create}" press=".onCreateNewDependentSolutionPress"
+								type="Transparent"
+								visible="{= !${IsActiveEntity}}" />
+							<m:Button text="{i18n>button.delete}"
+								press=".onDeleteTableEntry($event, 'dependentSolutionsTable')" type="Transparent"
+								visible="{= !${IsActiveEntity}}"
+								enabled="{= ${dependentSolutionsTableConfig>/selectedItems}.length > 0}" />
+							<m:ToolbarSeparator />
+							<m:Button tooltip="{i18n>default.settings}" icon="sap-icon://action-settings"
+								press=".onPressTableSettings($event, 'dependentSolutionsPerso')" />
+						</actions>
+						<core:Fragment
+							fragmentName="com.gavdilabs.techtransmgt.solutioncentral.view.fragments.DependentSolutionsTable"
+							type="XML" />
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+		<footer>
+			<m:OverflowToolbar>
+				<m:Button id="objectPageMessagingBtn" press=".openMessageView"
+					text="{= ${message>/}.length}"
+					icon="{= ${message>/}.length > 0 ? 'sap-icon://error' : 'sap-icon://sys-enter-2'}"
+					type="{= ${message>/}.length > 0 ? 'Negative' : 'Ghost'}"
+					enabled="{= ${message>/}.length > 0}" />
+				<m:ToolbarSpacer />
+				<m:DraftIndicator id="draftIndicator" visible="{= !${IsActiveEntity}}" />
+				<m:Button text="{i18n>button.save}" type="Emphasized" press=".onSaveDraft"
+					visible="{= ${HasActiveEntity} &amp;&amp; !${IsActiveEntity}}" />
+				<m:Button text="{i18n>button.create}" type="Emphasized" press=".onSaveDraft"
+					visible="{= !${HasActiveEntity} &amp;&amp; !${IsActiveEntity}}" />
+				<m:Button text="{i18n>button.discardDraft}" visible="{= !${IsActiveEntity}}"
+					type="Transparent" press=".onDiscardDraftPress" />
+				<m:Button text="{i18n>button.approve}" press=".onApproveSolution"
+					type="Accept"
+					visible="{= ${IsActiveEntity} &amp;&amp; ${path: 'solutionStatus_code', targetType: 'any'} === 0 }" />
+				<m:Button text="{i18n>button.reject}" press=".onRejectSolution" type="Reject"
+					visible="{= ${IsActiveEntity} &amp;&amp; ${path: 'solutionStatus_code', targetType: 'any'} === 0 }" />
+			</m:OverflowToolbar>
+		</footer>
+	</ObjectPageLayout>
+</mvc:View>

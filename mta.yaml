@@ -1,0 +1,211 @@
+ID: solution-central
+_schema-version: 3.2.0
+version: 1.0.0
+description: "Technology Management Solution"
+parameters:
+  enable-parallel-deployments: true
+
+modules:
+  # Service Module + Postgres deployer
+  - name: solution-central-srv
+    type: nodejs
+    path: ./gen/srv
+    parameters:
+      disk-quota: 320M
+      memory: 512M
+      routes:
+        - route: ${protocol}://solution-central-service.${default-domain}
+    properties:
+      EXIT: 1
+    provides:
+      - name: solution-central-api #Name for other apps consumption
+        properties:
+          url: ${protocol}://soltion-central-service.${default-domain}
+    requires:
+      - name: solution-central-postgresql
+      - name: solution-central-autoscaler
+      - name: solution-central-destination-srv
+      - name: solution-central-xsuaa-srv
+
+  - name: solution-central-postgres-deployer
+    type: nodejs
+    path: gen/pg
+    parameters:
+      buildpack: nodejs_buildpack
+      no-route: true
+      no-start: true
+      tasks:
+        - name: deploy-to-postgresql
+          command: npm start
+    requires:
+      - name: solution-central-postgresql
+
+  # Solution approuter, can be replaced with FLP if desired
+  - name: solution-central-router
+    type: approuter.nodejs
+    parameters:
+      disk-quota: 256M
+      memory: 256M
+      routes:
+        - route: ${protocol}://solution-central.${default-domain}
+    requires:
+      - name: solution-central-autoscaler
+      - name: solution-central-destination-srv
+      - name: solution-central-xsuaa-srv
+      - name: solution-central-html-repo-runtime
+
+  # UI5 Applications - Resources + Deployers
+  - name: solution-central-app-src
+    type: html5
+    path: app/solutioncentral
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm run build
+      supported-platforms: []
+
+  - name: solution-central-app-deployer
+    type: com.sap.html5.application-content
+    path: app/solutioncentral/deployer
+    parameters:
+      memory: 380M
+    requires:
+      - name: solution-central-app-html5-repo-host
+        parameters:
+          content-target: true
+
+  - name: solution-central-radar-src
+    type: html5
+    path: app/techradar
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm run build
+      supported-platforms: []
+
+  - name: solution-central-radar-deployer
+    type: com.sap.html5.application-content
+    path: app/techradar/deployer
+    parameters:
+      memory: 380M
+    requires:
+      - name: solution-central-radar-html5-repo-host
+        parameters:
+          content-target: true
+
+  - name: solution-central-admin-src
+    type: html5
+    path: app/config
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm run build
+      supported-platforms: []
+
+  - name: solution-central-admin-deployer
+    type: com.sap.html5.application-content
+    path: app/config/deployer
+    parameters:
+      memory: 380M
+    requires:
+      - name: solution-central-admin-html5-repo-host
+        parameters:
+          content-target: true
+
+  # Configuration deployment modules
+  - name: solution-central-destination-content
+    type: com.sap.application.content
+    build-parameters:
+      no-source: true
+    requires:
+      - name: solution-central-api
+      - name: solution-central-xsuaa-srv
+        parameters:
+          service-key:
+          name: solution-central-xsuaa-key
+      - name: solution-central-destination-srv
+        parameters:
+          content-target: true
+    parameters:
+      content:
+        instance:
+          existing_destinations_policy: update
+          destinations:
+            - Name: SOLUTION-CENTRAL-API
+              Description: Principal propagation access to Solution Central API
+              URL: ~{solution-central-api/url}/odata/v4/radar/
+              Authentication: OAuth2UserTokenExchange
+              TokenServiceInstanceName: solution-central-xsuaa-srv
+              TokenServiceKeyName: solution-central-xsuaa-key
+
+resources:
+  - name: solution-central-autoscaler
+    type: org.cloudfoundry.managed-service
+    parameters:
+      config-path: ./config/autoscaler.json
+      service: autoscaler
+      service-plan: standard
+
+  - name: solution-central-destination-srv
+    type: org.cloudfoundry.managed-service
+    parameters:
+      config:
+        HTML5Runtime_enabled: true
+        init_data:
+          instance:
+            destinations:
+              - Authentication: NoAuthentication
+                Name: ui5
+                ProxyType: Internet
+                Type: HTTP
+                URL: https://ui5.sap.com
+            existing_destinations_policy: update
+      service: destination
+      service-plan: lite
+
+  - name: solution-central-xsuaa-srv
+    type: org.cloudfoundry.managed-service
+    parameters:
+      config-path: ./config/xs-security.json
+      service-plan: application
+      service: xsuaa
+      service-key:
+        name: solution-central-xsuaa-key
+
+  - name: solution-central-postgresql
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: postgresql-db
+      service-name: solution-central-postgresql
+      service-plan: free
+      service-tags:
+        - plain
+      skip-service-updates:
+        parameters: true
+
+  - name: solution-central-html-repo-runtime
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service-plan: app-runtime
+      service: html5-apps-repo
+
+  - name: solution-central-app-html5-repo-host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service-plan: app-host
+      service: html5-apps-repo
+
+  - name: solution-central-radar-html5-repo-host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service-plan: app-host
+      service: html5-apps-repo
+
+  - name: solution-central-admin-html5-repo-host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service-plan: app-host
+      service: html5-apps-repo

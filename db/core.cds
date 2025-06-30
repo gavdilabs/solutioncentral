@@ -126,10 +126,11 @@ entity SolutionVersion : cuid, managed {
   key solution     : Association to SoftwareSolution;
       status       : Association to SoftwareStatus  @mandatory  @assert.target;
       version      : String(100) @mandatory;
-      releaseNotes : LargeBinary @Core.MediaType: mediaType;
-      mediaType    : String(255) @Core.IsMediaType;
+      releaseNotes : LargeString;
       releaseDate  : Date default null;
       sapVersion   : Association to SAPVersion;
+      technologies : Association to many SoftwareTechnology
+                       on technologies.softwareVersion = $self;
 }
 
 @cds.search: {name}
@@ -144,21 +145,17 @@ entity SoftwareSolution : cuid, managed {
   businessCriticality : Association to BusinessCriticalityLevel;
   cleanCoreRating     : Association to CleanCoreLevel;
   codeQualityRating   : Association to CodeQualityLevel;
-  versions            : Composition of many SolutionVersion
+  versions            : Association to many SolutionVersion
                           on versions.solution = $self;
   reasonNoCleanCore   : String;
   costCenter          : String;
   owner               : Association to User          @mandatory  @assert.target;
-  team                : Association to SoftwareTeam  @mandatory  @assert.target;
-  // Needs Required Services from Cloud Credit Control
-  Technologies        : Composition of many SoftwareTechnology
-                          on Technologies.software = $self;
-
+  team                : Association to SoftwareTeam  @mandatory  @assert.target  @title: 'TESTING TITLE';
   Dependents          : Composition of many {
                           key ID                        : UUID;
                               dependentSoftwareSolution : Association to SoftwareSolution @mandatory;
                               softwareType              : Association to DependencyType   @mandatory;
-                        }
+                        };
 }
 
 @cds.search: {teamName}
@@ -183,9 +180,9 @@ entity SoftwareTeamUser {
 }
 
 entity SoftwareTechnology : cuid, managed {
-  version    : SolutionVersion:version;
-  software   : Association to SoftwareSolution;
-  technology : Association to Technology;
+  version         : String(255);
+  softwareVersion : Association to SolutionVersion;
+  technology      : Association to Technology;
 }
 
 @cds.search: {name}

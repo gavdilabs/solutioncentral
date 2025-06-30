@@ -1,0 +1,16 @@
+meta {
+  name: GET SoftwareTechnology
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{HOST}}/SoftwareTechnology(ID={{ID}},IsActiveEntity={{IS_ACTIVE}})
+  body: none
+  auth: inherit
+}
+
+vars:pre-request {
+  ID: 34584da8-f3f5-4800-90ca-8c827c7bc095
+  IS_ACTIVE: true
+}

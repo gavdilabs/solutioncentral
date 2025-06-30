@@ -1,0 +1,304 @@
+<mvc:View
+	controllerName="com.gavdilabs.techtransmgt.solutioncentral.controller.Main"
+	displayBlock="true"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:plugins="sap.m.plugins"
+	xmlns:f="sap.f"
+	xmlns:columnmenu="sap.m.table.columnmenu"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:fb="sap.ui.comp.filterbar"
+	core:require="{
+		formatter: 'com/gavdilabs/techtransmgt/solutioncentral/model/formatter'
+	}">
+
+	<f:DynamicPage id="solutionCataloguePage">
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading>
+					<Title text="{i18n>app.title}" />
+				</f:heading>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:header>
+			<f:DynamicPageHeader>
+				<f:content>
+					<!-- Filter Bar -->
+					<fb:FilterBar id="solutionCatalogueFilterBar" persistencyKey="solutionCatalogueFB"
+						useToolbar="false" search=".onFilterBarSearch" clear=".onFilterBarClear"
+						showClearOnFB="true">
+						<fb:filterGroupItems>
+							<!-- Search Field -->
+							<fb:FilterGroupItem name="Search" groupName="searchField"
+								visibleInFilterBar="true">
+								<fb:control>
+									<SearchField search=".onFilterBarSearch" value="{solutionTableConfig>/search}" />
+								</fb:control>
+							</fb:FilterGroupItem>
+
+							<!-- Platform Multi-Select Field -->
+							<fb:FilterGroupItem name="Platform" groupName="platform"
+								label="{i18n>column.platform}" visibleInFilterBar="true">
+								<fb:control>
+									<MultiComboBox
+										name="{i18n>column.platform}"
+										selectedKeys="{solutionTableConfig>/filters/platforms}"
+										items="{
+										path: '/Platform',
+										templateShareable: true
+									}">
+										<core:Item key="{code}" text="{name}" />
+									</MultiComboBox>
+								</fb:control>
+							</fb:FilterGroupItem>
+
+							<!-- Business Criticality field -->
+							<fb:FilterGroupItem name="Business Criticality" groupName="businessCriticality"
+								label="{i18n>column.businessCriticality}" visibleInFilterBar="false">
+								<fb:control>
+									<MultiComboBox
+										name="{i18n>column.businessCriticality}"
+										selectedKeys="{solutionTableConfig>/filters/businessCriticalityLevels}"
+										items="{
+										path: '/BusinessCriticalityLevel',
+										templateShareable: true
+									}">
+										<core:Item key="{code}" text="{name}" />
+									</MultiComboBox>
+								</fb:control>
+							</fb:FilterGroupItem>
+
+							<!-- Clean Core field -->
+							<fb:FilterGroupItem name="Clean Core" groupName="cleanCore"
+								label="{i18n>column.cleanCoreLevel}" visibleInFilterBar="false">
+								<fb:control>
+									<MultiComboBox
+										name="{i18n>column.cleanCoreLevel}"
+										selectedKeys="{solutionTableConfig>/filters/cleanCoreLevels}"
+										items="{
+										path: '/CleanCoreLevel',
+										templateShareable: true
+									}">
+										<core:Item key="{code}" text="{code} - {descr}" />
+									</MultiComboBox>
+								</fb:control>
+							</fb:FilterGroupItem>
+
+							<!-- Code Quality field -->
+							<fb:FilterGroupItem name="Code Quality" groupName="codeQuality"
+								label="{i18n>column.codeQualityLevel}" visibleInFilterBar="false">
+								<fb:control>
+									<MultiComboBox
+										name="{i18n>column.codeQualityLevel}"
+										selectedKeys="{solutionTableConfig>/filters/codeQualityLevels}"
+										items="{
+										path: '/CodeQualityLevel',
+										templateShareable: true
+									}">
+										<core:Item key="{code}" text="{code} - {descr}" />
+									</MultiComboBox>
+								</fb:control>
+							</fb:FilterGroupItem>
+
+							<!-- Cost Center field -->
+							<fb:FilterGroupItem name="Cost Center" groupName="costCenter"
+								label="{i18n>column.costCenter}" visibleInFilterBar="false">
+								<fb:control>
+									<Input value="{solutionTableConfig>/filters/costCenter}" />
+								</fb:control>
+							</fb:FilterGroupItem>
+
+							<!-- Status field -->
+							<fb:FilterGroupItem name="Status" groupName="status"
+								label="{i18n>column.status}" visibleInFilterBar="false">
+								<fb:control>
+									<MultiComboBox
+										name="{i18n>column.status}"
+										selectedKeys="{solutionTableConfig>/filters/statusses}"
+										items="{
+										path: '/SoftwareStatus',
+										templateShareable: true
+									}">
+										<core:Item key="{code}" text="{name}" />
+									</MultiComboBox>
+								</fb:control>
+							</fb:FilterGroupItem>
+						</fb:filterGroupItems>
+					</fb:FilterBar>
+				</f:content>
+			</f:DynamicPageHeader>
+		</f:header>
+		<f:content>
+			<Table id="solutionCatalogueTable"
+				mode="MultiSelect"
+				growing="true"
+				selectionChange="onTableSelect"
+				items="{
+				path: '/SoftwareSolution',
+				parameters: {
+					$count: true,
+					$select: 'HasDraftEntity,HasActiveEntity'
+				},
+				suspended: true
+			}">
+				<headerToolbar>
+					<OverflowToolbar design="Solid">
+						<Title
+							text="{
+							path: '/SoftwareSolution/$count',
+							formatter: '.formatTableTitle'
+						}" />
+						<ToolbarSpacer />
+						<Button tooltip="{i18n>default.create}" text="{i18n>default.create}"
+							press=".onPressCreate" />
+						<Button tooltip="{i18n>default.delete}"
+							enabled="{= ${solutionTableConfig>/selectedItems}.length > 0}"
+							text="{i18n>default.delete}"
+							press=".onPressDelete" />
+						<ToolbarSeparator />
+						<Button tooltip="{i18n>default.settings}" icon="sap-icon://action-settings"
+							press=".onPressTableSettings" />
+						<Button tooltip="{i18n>default.export}" icon="sap-icon://excel-attachment"
+							press=".onPressTableExport" />
+					</OverflowToolbar>
+				</headerToolbar>
+				<dependents>
+					<plugins:ColumnResizer />
+					<columnmenu:Menu id="menu" beforeOpen=".beforeOpenColumnMenu"
+						showTableSettingsButton="true"
+						tableSettingsPressed=".onPressTableSettings">
+						<columnmenu:QuickSort change=".onSort">
+							<columnmenu:items>
+								<columnmenu:QuickSortItem></columnmenu:QuickSortItem>
+							</columnmenu:items>
+						</columnmenu:QuickSort>
+						<columnmenu:QuickGroup change=".onGroup">
+							<columnmenu:items>
+								<columnmenu:QuickGroupItem></columnmenu:QuickGroupItem>
+							</columnmenu:items>
+						</columnmenu:QuickGroup>
+					</columnmenu:Menu>
+				</dependents>
+				<columns>
+					<Column app:p13nKey="column.name" headerMenu="menu" minScreenWidth="Tablet"
+						demandPopin="true">
+						<Text text="{i18n>column.name}" />
+					</Column>
+					<Column app:p13nKey="column.platform" headerMenu="menu" minScreenWidth="Tablet"
+						demandPopin="true">
+						<Text text="{i18n>column.platform}" />
+					</Column>
+					<Column app:p13nKey="column.cleanCoreLevel" headerMenu="menu" minScreenWidth="Tablet"
+						demandPopin="true">
+						<Text text="{i18n>column.cleanCoreLevel}" />
+					</Column>
+					<Column app:p13nKey="column.codeQualityLevel" headerMenu="menu" minScreenWidth="Tablet"
+						demandPopin="true">
+						<Text text="{i18n>column.codeQualityLevel}" />
+					</Column>
+					<Column app:p13nKey="column.status" headerMenu="menu" minScreenWidth="Tablet"
+						demandPopin="true">
+						<Text text="{i18n>column.status}" />
+					</Column>
+					<Column app:p13nKey="column.costCenter" headerMenu="menu" minScreenWidth="Tablet"
+						demandPopin="false">
+						<Text text="{i18n>column.costCenter}" />
+					</Column>
+					<Column app:p13nKey="column.businessCriticality" headerMenu="menu" minScreenWidth="Tablet"
+						demandPopin="false">
+						<Text text="{i18n>column.businessCriticality}" />
+					</Column>
+					<!-- Columns not visible by default -->
+					<Column app:p13nKey="column.description" visible="false" minScreenWidth="Tablet"
+						demandPopin="true">
+						<Text text="{i18n>column.description}" />
+					</Column>
+					<Column app:p13nKey="column.createdOn" visible="false" minScreenWidth="Tablet"
+						demandPopin="true">
+						<Text text="{i18n>column.createdOn}" />
+					</Column>
+					<Column app:p13nKey="column.createdBy" visible="false" minScreenWidth="Tablet"
+						demandPopin="true">
+						<Text text="{i18n>column.createdBy}" />
+					</Column>
+					<Column app:p13nKey="column.lastModified" visible="false" minScreenWidth="Tablet"
+						demandPopin="true">
+						<Text text="{i18n>column.lastModified}" />
+					</Column>
+					<Column app:p13nKey="column.lastModifiedBy" visible="false" minScreenWidth="Tablet"
+						demandPopin="true">
+						<Text text="{i18n>column.lastModifiedBy}" />
+					</Column>
+					<Column app:p13nKey="column.packageNamespace" visible="false" minScreenWidth="Tablet"
+						demandPopin="true">
+						<Text text="{i18n>column.packageNamespace}" />
+					</Column>
+					<Column app:p13nKey="column.repository" visible="false" minScreenWidth="Tablet"
+						demandPopin="true">
+						<Text text="{i18n>column.repository}" />
+					</Column>
+					<Column app:p13nKey="column.team" visible="false" minScreenWidth="Tablet"
+						demandPopin="true">
+						<Text text="{i18n>column.team}" />
+					</Column>
+					<Column app:p13nKey="column.owner" visible="false" minScreenWidth="Tablet"
+						demandPopin="true">
+						<Text text="{i18n>column.owner}" />
+					</Column>
+
+				</columns>
+				<items>
+					<ColumnListItem type="Navigation" vAlign="Middle" press=".onTableItemPress">
+						<cells>
+							<VBox justifyContent="Center" class="sapUiTinyMarginTopBottom">
+								<ObjectIdentifier title="{name}" visible="{= !${HasDraftEntity}}" />
+								<ObjectIdentifier title="{name}" visible="{HasDraftEntity}" />
+								<Link class="sapUiTinyMarginTop" text="Draft" visible="{HasDraftEntity}" />
+							</VBox>
+							<Text text="{platform/name}" />
+							<RatingIndicator maxValue="5" value="{cleanCoreRating_code}" editable="false" />
+							<RatingIndicator maxValue="5" value="{codeQualityRating_code}" editable="false" />
+							<ObjectStatus text="{solutionStatus/descr}"
+								state="{
+								path: 'solutionStatus/criticalityLevel',
+								formatter: 'formatter.formatSoftwareStatus'
+							}"
+								icon="{
+								path: 'solutionStatus/criticalityLevel',
+								formatter: 'formatter.formatSoftwareStatusIcon'
+							}"
+								inverted="true" />
+							<Text text="{costCenter}" />
+							<ObjectStatus tooltip="{businessCriticality/descr}"
+								icon="{
+								path: 'businessCriticality/code',
+								formatter: 'formatter.formatBusinessCriticalityLevelIcon'
+							}"
+								state="{
+								path: 'businessCriticality/code',
+								formatter: 'formatter.formatBusinessCriticalityLevelState'
+							}"
+								text="{
+								path: 'businessCriticality/code',
+								formatter: 'formatter.formatBusinessCriticalityLevelText'
+							}" />
+
+							<!-- Columns not visible by default -->
+							<Text text="{description}" />
+							<Text text="{createdAt}" />
+							<Text text="{createdBy}" />
+							<Text text="{modifiedAt}" />
+							<Text text="{modifiedBy}" />
+							<Text text="{packageNamespace}" />
+							<Text text="{repository}" />
+							<Text text="{team/teamName}" />
+							<Text text="{owner/fullName}" />
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</f:content>
+	</f:DynamicPage>
+
+</mvc:View>

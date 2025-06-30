@@ -1,0 +1,47 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:forms="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+
+	<!-- Displaying active version -->
+	<forms:SimpleForm visible="{IsActiveEntity}"
+		columnsM="2"
+		columnsL="3"
+		columnsXL="4"
+		editable="false" layout="ColumnLayout">
+		<Label text="{i18n>column.packageNamespace}" />
+		<Text text="{= ${packageNamespace} ? ${packageNamespace} : '–'}" />
+
+		<Label text="{i18n>column.repository}" />
+		<Link text="{= ${repository} ? ${repository} : '–'}" press=".onLinkPress" />
+
+		<Label text="{i18n>column.documentationUrl}" />
+		<Link text="{= ${documentationUrl} ? ${documentationUrl} : '–'}"
+			press=".onLinkPress" />
+
+		<Label text="{i18n>column.sapVersion}" />
+
+		<!-- TODO: Updated SAP version to proper binding -->
+		<Text text="{= ${activeVersion/sapVersion_code} ? ${activeVersion/sapVersion/name} : '–'}" />
+	</forms:SimpleForm>
+
+	<!-- Editing draft version -->
+	<forms:SimpleForm visible="{= !${IsActiveEntity}}"
+		columnsM="2"
+		columnsL="3"
+		columnsXL="4"
+		editable="false" layout="ColumnLayout">
+		<Label text="{i18n>column.packageNamespace}" />
+		<Input value="{packageNamespace}" />
+
+		<Label text="{i18n>column.repository}" />
+		<Input value="{repository}" />
+
+		<Label text="{i18n>column.documentationUrl}" />
+		<Input value="{documentationUrl}" />
+
+		<Label text="{i18n>column.sapVersion}" />
+		<!-- TODO: Updated SAP version to proper binding -->
+		<Text text="{= ${activeVersion/sapVersion_code} ? ${activeVersion/sapVersion/name} : '–'}" />
+	</forms:SimpleForm>
+</core:FragmentDefinition>

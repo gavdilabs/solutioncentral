@@ -1,0 +1,136 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:plugins="sap.m.plugins"
+	xmlns:columnmenu="sap.m.table.columnmenu"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:core="sap.ui.core"
+	core:require="{
+		formatter: 'com/gavdilabs/techtransmgt/solutioncentral/model/formatter'
+	}">
+	<Table id="versionsTable"
+		mode="{= ${path: 'IsActiveEntity', targetType: 'any'} === true ? 'None': 'MultiSelect'}"
+		growing="true"
+		backgroundDesign="Transparent"
+		selectionChange="onTableSelect($event, 'versionsTableConfig')"
+		items="{path: '/SolutionVersion', suspended: true, parameters: { $$updateGroupId: 'solutionVersionGroup'}}">
+		<dependents>
+			<plugins:ColumnResizer />
+			<columnmenu:Menu id="versionsQuickMenu"
+				beforeOpen=".beforeOpenColumnMenu($event, 'versionsPersonalization')"
+				showTableSettingsButton="true"
+				tableSettingsPressed=".onPressTableSettings($event, 'versionsPersonalization')">
+				<columnmenu:QuickSort change=".onSort($event, 'versionsPersonalization')">
+					<columnmenu:items>
+						<columnmenu:QuickSortItem></columnmenu:QuickSortItem>
+					</columnmenu:items>
+				</columnmenu:QuickSort>
+				<columnmenu:QuickGroup change=".onGroup($event, 'versionsPersonalization')">
+					<columnmenu:items>
+						<columnmenu:QuickGroupItem></columnmenu:QuickGroupItem>
+					</columnmenu:items>
+				</columnmenu:QuickGroup>
+			</columnmenu:Menu>
+		</dependents>
+		<columns>
+			<Column app:p13nKey="column.versionVersion" headerMenu="versionsQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Label required="{= !${IsActiveEntity}}" text="{i18n>column.versionVersion}" />
+			</Column>
+			<Column app:p13nKey="column.versionStatus" headerMenu="versionsQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Label required="{= !${IsActiveEntity}}" text="{i18n>column.versionStatus}" />
+			</Column>
+			<Column app:p13nKey="column.versionReleaseDate" headerMenu="versionsQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.versionReleaseDate}" />
+			</Column>
+
+			<!-- Columns not visible by default -->
+			<Column app:p13nKey="column.versionCreatedOn" headerMenu="versionsQuickMenu" visible="false"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.versionCreatedOn}" />
+			</Column>
+			<Column app:p13nKey="column.versionCreatedBy" headerMenu="versionsQuickMenu" visible="false"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.versionCreatedBy}" />
+			</Column>
+			<Column app:p13nKey="column.versionLastModified" headerMenu="versionsQuickMenu"
+				visible="false"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.versionLastModified}" />
+			</Column>
+			<Column app:p13nKey="column.versionLastModified" headerMenu="versionsQuickMenu"
+				visible="false"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.versionLastModifiedBy}" />
+			</Column>
+			<Column app:p13nKey="column.versionID" headerMenu="versionsQuickMenu" visible="false"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.versionID}" />
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem type="Navigation" vAlign="Middle" press=".onVersionTableItemPress">
+				<cells>
+					<VBox width="100%">
+						<ObjectIdentifier title="{version}"
+							visible="{= !${appConfig>/softwareSolutionEditMode}}" />
+						<Input id="SoftwareSolutionVersionsInput" value="{version}"
+							required="true"
+							visible="{appConfig>/softwareSolutionEditMode}">
+							<customData>
+								<core:CustomData key="customDataVersion"
+									value="{i18n>label.version} - {i18n>column.versionVersion}" />
+							</customData>
+						</Input>
+					</VBox>
+					<VBox width="100%">
+						<ObjectStatus visible="{= !${appConfig>/softwareSolutionEditMode}}"
+							text="{status/descr}"
+							state="{
+								path: 'status/criticalityLevel',
+								formatter: 'formatter.formatSoftwareStatus'
+							}"
+							icon="{
+								path: 'status/criticalityLevel',
+								formatter: 'formatter.formatSoftwareStatusIcon'
+							}"
+							inverted="false" />
+						<Select width="100%"
+							id="softwareSolutionVersionStatusSelect"
+							required="true"
+							items="{path: '/SoftwareStatus', templateShareable: true}"
+							visible="{appConfig>/softwareSolutionEditMode}"
+							selectedKey="{status_code}"
+							forceSelection="false">
+							<core:ListItem key="{code}" text="{name}" />
+							<customData>
+								<core:CustomData key="customDataVersionStatus"
+									value="{i18n>label.version} - {i18n>column.versionStatus}" />
+							</customData>
+						</Select>
+					</VBox>
+					<VBox width="100%">
+						<Text text="{releaseDate}" visible="{= !${appConfig>/softwareSolutionEditMode}}" />
+						<DatePicker value="{releaseDate}" visible="{appConfig>/softwareSolutionEditMode}" />
+					</VBox>
+
+
+					<Text text="{createdAt}" />
+					<Text text="{createdBy}" />
+					<Text text="{modifiedAt}" />
+					<Text text="{modifiedBy}" />
+					<Text text="{ID}" />
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</core:FragmentDefinition>

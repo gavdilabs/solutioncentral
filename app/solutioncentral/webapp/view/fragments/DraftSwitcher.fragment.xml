@@ -1,0 +1,22 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+
+	<Popover
+		id="draftSwitcherPopover"
+		showHeader="false"
+		contentWidth="15rem"
+		placement="Bottom">
+		<content>
+			<List
+				id="versionList"
+				mode="SingleSelectMaster"
+				selectionChange=".onVersionSelect">
+				<items>
+					<StandardListItem id="draftItem" title="{i18n>button.draft}" />
+					<StandardListItem id="savedItem" title="{i18n>button.savedVersion}" />
+				</items>
+			</List>
+		</content>
+	</Popover>
+</core:FragmentDefinition>

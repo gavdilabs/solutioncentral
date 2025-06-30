@@ -1,0 +1,17 @@
+meta {
+  name: GET SolutionVersion
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{HOST}}/SolutionVersion(ID={{ID}},solution_ID={{SOL_ID}},IsActiveEntity={{IS_ACTIVE}})
+  body: none
+  auth: inherit
+}
+
+vars:pre-request {
+  ID: 101735b2-c055-4c39-a8c9-c51ebd97290c
+  SOL_ID: 756a6afd-3a2d-4eee-aae1-85c5557e43e0
+  IS_ACTIVE: true
+}

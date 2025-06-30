@@ -1,0 +1,98 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:columnmenu="sap.m.table.columnmenu"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:core="sap.ui.core"
+	xmlns:plugins="sap.m.plugins"
+	core:require="{
+		formatter: 'com/gavdilabs/techtransmgt/solutioncentral/model/formatter'
+	}">
+	<Table id="activeTechnologiesTable"
+		mode="None"
+		growing="true"
+		backgroundDesign="Transparent"
+		items="{path: 'activeVersion/technologies', parameters: { $expand: 'softwareVersion'}}">
+		<dependents>
+			<plugins:ColumnResizer />
+			<columnmenu:Menu id="activeTechnologiesQuickMenu"
+				beforeOpen=".beforeOpenColumnMenu($event, 'activeTechnologiesPerso')"
+				showTableSettingsButton="true"
+				tableSettingsPressed=".onPressTableSettings($event, 'activeTechnologiesPerso')">
+				<columnmenu:QuickSort change=".onSort($event, 'activeTechnologiesPerso')">
+					<columnmenu:items>
+						<columnmenu:QuickSortItem></columnmenu:QuickSortItem>
+					</columnmenu:items>
+				</columnmenu:QuickSort>
+				<columnmenu:QuickGroup change=".onGroup($event, 'activeTechnologiesPerso')">
+					<columnmenu:items>
+						<columnmenu:QuickGroupItem></columnmenu:QuickGroupItem>
+					</columnmenu:items>
+				</columnmenu:QuickGroup>
+			</columnmenu:Menu>
+		</dependents>
+		<columns>
+			<Column app:p13nKey="column.technoName" width="30rem" headerMenu="activeTechnologiesQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.technoName}" />
+			</Column>
+			<Column app:p13nKey="column.technoDescr" headerMenu="activeTechnologiesQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.technoDescr}" />
+			</Column>
+			<Column app:p13nKey="column.technoVersion" headerMenu="activeTechnologiesQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Label text="{i18n>column.technoVersion}" />
+			</Column>
+
+			<!-- Columns not visible by default -->
+			<Column app:p13nKey="column.technoCreatedOn" visible="false"
+				headerMenu="activeTechnologiesQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.technoCreatedOn}" />
+			</Column>
+			<Column app:p13nKey="column.technoCreatedBy" visible="false"
+				headerMenu="activeTechnologiesQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.technoCreatedBy}" />
+			</Column>
+			<Column app:p13nKey="column.technoLastModifiedBy" visible="false"
+				headerMenu="activeTechnologiesQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.technoLastModifiedBy}" />
+			</Column>
+			<Column app:p13nKey="column.technoLastModified" visible="false"
+				headerMenu="activeTechnologiesQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.technoLastModified}" />
+			</Column>
+			<Column app:p13nKey="column.technoID" visible="false" headerMenu="activeTechnologiesQuickMenu"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="{i18n>column.technoID}" />
+			</Column>
+
+		</columns>
+		<items>
+			<ColumnListItem vAlign="Middle">
+				<cells>
+					<ObjectIdentifier title="{technology/name}" />
+					<Text text="{technology/description}" />
+					<Text text="{version}" />
+					<!-- Columns not visible by default -->
+					<Text text="{technology/createdAt}" />
+					<Text text="{technology/createdBy}" />
+					<Text text="{technology/modifiedBy}" />
+					<Text text="{technology/modifiedAt}" />
+					<Text text="{technology/ID}" />
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</core:FragmentDefinition>

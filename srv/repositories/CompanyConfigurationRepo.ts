@@ -14,8 +14,8 @@ export default class CompanyConfigurationRepo {
   public async getConfiguration(): Promise<CompanyConfiguration | undefined> {
     this.logger.debug("Loading company configuration");
     const query = SELECT.from(CompanyConfiguration.name).limit(1);
-    const result: CompanyConfiguration[] = await cds.run(query);
 
+    const result: CompanyConfiguration[] = await cds.run(query);
     return !result || result.length <= 0 ? undefined : result[0];
   }
 }

@@ -356,3 +356,15 @@ annotate RadarService.SolutionVersion with @restrict: [
     to   : ['Admin']
   }
 ];
+
+annotate RadarService.ActiveSolutionVersion with @(restrict: [{
+  grant: ['READ'],
+  to   : [
+    'View',
+    'Developer',
+    'Reviewer',
+    'Maintainer',
+    'Approver',
+    'Admin'
+  ]
+}]);

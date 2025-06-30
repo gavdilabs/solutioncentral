@@ -1,0 +1,24 @@
+meta {
+  name: Create SoftwareTechnology
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{HOST}}/SoftwareTechnology
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "softwareVersion_solution_ID": "954ea007-d275-4a11-a5bf-d2398556a075",
+    "technology_ID": "1c448326-5f44-11ec-bf63-0242ac130006",
+    "version": ">=9"
+  }
+}
+
+vars:pre-request {
+  ID: 435c8961-3168-4b30-b812-19e352a7404c
+  SOL_ID: 954ea007-d275-4a11-a5bf-d2398556a075
+}

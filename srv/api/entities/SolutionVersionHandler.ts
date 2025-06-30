@@ -14,10 +14,12 @@ import {
   BeforeCreate,
   AfterUpdate,
   AfterRead,
+  AfterDelete,
 } from "@dxfrontier/cds-ts-dispatcher";
 import { Logger, LoggerFactory } from "@gavdi/caplog";
 import SolutionVersionService from "../../services/SolutionVersionService";
 import RequestsService from "../../services/RequestsService";
+import SoftwareTechnologyService from "../../services/SoftwareTechnologyService";
 
 @EntityHandler(SolutionVersion)
 export default class SolutionVersionHandler {
@@ -28,6 +30,9 @@ export default class SolutionVersionHandler {
 
   @Inject(RequestsService)
   private readonly requestsService: RequestsService;
+
+  @Inject(SoftwareTechnologyService)
+  private readonly softwareTechnologyService: SoftwareTechnologyService;
 
   constructor() {
     this.logger = LoggerFactory.createLogger("solution-version-handler");
@@ -80,7 +85,9 @@ export default class SolutionVersionHandler {
         return;
       }
 
-      const { solution_ID, ID, version } = result[0];
+      const { solution_ID, ID, version } = Array.isArray(result)
+        ? result[0]
+        : result;
       if (!solution_ID || !ID || !version) {
         this.logger.warn(
           "Invalid data for SolutionVersion post-processing, skipping...",
@@ -115,7 +122,9 @@ export default class SolutionVersionHandler {
         return;
       }
 
-      const { status_code, solution_ID, version } = result[0];
+      const { status_code, solution_ID, version } = Array.isArray(result)
+        ? result[0]
+        : result;
       if (!status_code) {
         this.logger.warn("No status code available, skipping check");
         return;
@@ -138,6 +147,20 @@ export default class SolutionVersionHandler {
         e,
       );
       return req.error(500, "Error occured during post-processing data");
+    }
+  }
+
+  @AfterDelete()
+  public async afterDeleted(@Req() req: Request): Promise<unknown> {
+    try {
+      this.logger.info("After Delete hit");
+      await this.softwareTechnologyService.deleteSoftwareTechnologies(req);
+    } catch (e) {
+      this.logger.error(
+        "Error thrown while post-processing SoftwareSolution delete",
+        e,
+      );
+      return req.error(500, "Unexpected error occured while post-processing");
     }
   }
 

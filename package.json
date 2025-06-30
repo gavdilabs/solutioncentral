@@ -10,8 +10,7 @@
     "@dxfrontier/cds-ts-dispatcher": "^3.2.6",
     "@gavdi/caplog": "^2.5.0",
     "@sap/cds": "^8.9.4",
-    "express": "^4",
-    "npm": "^10.9.2"
+    "express": "^4"
   },
   "devDependencies": {
     "@cap-js/cds-typer": "^0.35.0",
@@ -49,7 +48,6 @@
     "generate:types": "npx @cap-js/cds-typer '*' --outputDirectory @cds-models",
     "generate:types:windows": "npx @cap-js/cds-typer * --outputDirectory @cds-models",
     "prepare": "husky",
-    "watch-solutioncockpit": "cds watch --open com.gavdilabs.solutioncockpit/index.html?sap-ui-xx-viewCache=false --livereload false",
     "postinstall": "test -L node_modules/@types/sap__cds || ln -s ../@cap-js/cds-types node_modules/@types/sap__cds"
   },
   "lint-staged": {
@@ -121,8 +119,5 @@
   },
   "workspaces": [
     "app/*"
-  ],
-  "sapux": [
-    "app/solutioncockpit"
   ]
 }
