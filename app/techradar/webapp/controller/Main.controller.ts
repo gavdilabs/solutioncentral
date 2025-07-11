@@ -149,14 +149,14 @@ export default class Main extends BaseController {
 		const oDraggedListItem = oInfo.getParameter("draggedControl") as GridListItem;
 		const oContext = oDraggedListItem.getBindingContext() as Context;
 
-		await oContext.setProperty("maturityStatus_code", iMaturityStatusCode);
+		void oContext.setProperty("maturityStatus_code", iMaturityStatusCode);
 		const oModel = this.getView().getModel() as ODataModel;
 		await oModel.submitBatch("techUpdateGroup");
-		//oModel.refresh();
+		oModel.refresh();
 
-		//const oGridList = this.getView().byId("TechGrid") as GridContainer;
-		//oGridList.getBinding("items").refresh();
-		//(this.getView().getModel() as ODataModel).refresh();
+		// const oGridList = this.getView().byId("TechGrid") as GridContainer;
+		// oGridList.getBinding("items").refresh();
+		// (this.getView().getModel() as ODataModel).refresh();
 	}
 
 	public async onPressAddTechnology() : Promise<void> {
