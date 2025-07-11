@@ -2,6 +2,9 @@
 	xmlns="sap.m"
 	xmlns:tnt="sap.tnt"
 	xmlns:form="sap.ui.layout.form"
+	core:require="{
+		formatter: 'com/gavdilabs/techradar/model/formatter'
+	}"
 	xmlns:core="sap.ui.core">
 	<Dialog title="{appConfig>/techDialogTitle}" contentWidth="1024px">
 		<content>
@@ -74,13 +77,21 @@
 				<!-- <StandardListItem title="{softwareVersion/solution/name} v.{softwareVersion/version}" -->
 				<!-- 	description="{softwareVersion/solution/description}"/> -->
 				<CustomListItem>
-					<HBox class="sapUiSmallMargin">
+					<HBox justifyContent="SpaceBetween" class="sapUiSmallMargin">
 						<VBox>
 							<Title text="{softwareVersion/solution/name}" class="sapUiTinyMarginBottom" />
 							<Label text="{softwareVersion/solution/description}" />
 						</VBox>
-						<tnt:InfoLabel class="sapUiMediumMarginBegin" text="{softwareVersion/version}"
-							colorScheme="6" />
+						<HBox>
+							<tnt:InfoLabel class="sapUiTinyMarginEnd" text="{i18n>lblActiveVersion}"
+								visible="{= ${path: 'softwareVersion/solution/activeVersion/version', targetType: 'any'} === ${path: 'softwareVersion/version', targetType: 'any'}}"
+								colorScheme="7" />
+							<tnt:InfoLabel text="{softwareVersion/status/name}"
+								class="sapUiTinyMarginEnd"
+								colorScheme="{path: 'softwareVersion/status/criticalityLevel', formatter: 'formatter.formatSolutionVersionStatus'}" />
+							<tnt:InfoLabel text="{softwareVersion/version}"
+								colorScheme="6" />
+						</HBox>
 					</HBox>
 				</CustomListItem>
 			</List>

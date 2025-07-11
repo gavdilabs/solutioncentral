@@ -18,7 +18,7 @@ import Select from "sap/m/Select";
 import MessageBox from "sap/m/MessageBox";
 import { FilterBar$ClearEvent } from "sap/ui/comp/filterbar/FilterBar";
 import { List$ItemDeleteEvent } from "sap/ui/webc/main/List";
-import SelectDialog, { SelectDialog$ConfirmEvent } from "sap/m/SelectDialog";
+import SelectDialog, { SelectDialog$ConfirmEvent, SelectDialog$SearchEvent } from "sap/m/SelectDialog";
 import List from "sap/m/List";
 import ListItem from "sap/ui/core/ListItem";
 import JSONModel from "sap/ui/model/json/JSONModel";
@@ -198,14 +198,27 @@ export default class Main extends BaseController {
 		const oSelectDialog = Fragment.byId("SoftwareDialog","SoftwareSelect") as SelectDialog;
 		const oListBinding = oSelectDialog.getBinding("items") as ODataListBinding;
 		const aSorter = [];
-		aSorter.push(new Sorter({ path: 'solution/name', descending: false, group: true}));
+		aSorter.push(new Sorter({ path: 'solution/name', descending: false, group: false}));
 		aSorter.push(new Sorter({path: 'version', descending: true}));
 		oListBinding.sort(aSorter);
 		this._SoftwareDialog.open("");
 	}
 
-	public onSearchSolutions() {
+	public onSearchSolutions(event: SelectDialog$SearchEvent) {
+		const value = event.getParameter('value');
+		const filter = new Filter({
+			filters: [
+					new Filter({path: "solution/name", operator: FilterOperator.Contains, value1: value, caseSensitive: false}),
+					new Filter({path: "solution/description", operator: FilterOperator.Contains, value1: value, caseSensitive: false}),
+					new Filter({path: "status/name", operator: FilterOperator.Contains, value1: value, caseSensitive: false}),
+					new Filter({path: "version", operator: FilterOperator.Contains, value1: value, caseSensitive: false})
+			],
+			and: false
+		}
+		)
 
+		const binding = event.getParameter("itemsBinding") as ODataListBinding;
+		binding.filter(filter);
 	}
 
 	public async onConfirmSolution(oEvent: SelectDialog$ConfirmEvent) {
@@ -215,6 +228,9 @@ export default class Main extends BaseController {
 		const sName = oItem.getBindingContext().getProperty("solution/name") as string;
 		const sDescription = oItem.getBindingContext().getProperty("solution/description") as string;
 		const sVersion = oItem.getBindingContext().getProperty("version") as string;
+		const sStatusName = oItem.getBindingContext().getProperty("status/name") as string;
+		const sCriticalityLevel = oItem.getBindingContext().getProperty("status/criticalityLevel") as number;
+		const sActiveVersion = oItem.getBindingContext().getProperty("solution/activeVersion/version") as string;
 
 		const oList = Fragment.byId("TechnologyDialog","TechnologySolutions") as List;
 		const oBinding = oList.getBinding("items") as ODataListBinding;
@@ -224,6 +240,10 @@ export default class Main extends BaseController {
 		await oContext.setProperty("softwareVersion/solution/name", sName);
 		await oContext.setProperty("softwareVersion/solution/description", sDescription);
 		await oContext.setProperty("softwareVersion/version", sVersion);
+
+		await oContext.setProperty("softwareVersion/status/name", sStatusName);
+		await oContext.setProperty("softwareVersion/status/criticalityLevel", sCriticalityLevel);
+		await oContext.setProperty("softwareVersion/solution/activeVersion/version", sActiveVersion);
 	}
 
 	public async openTechnologyDialog(oContext: Context) : Promise<void> {

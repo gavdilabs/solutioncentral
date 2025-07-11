@@ -1,18 +1,21 @@
 <core:FragmentDefinition
 	xmlns="sap.m"
 	xmlns:tnt="sap.tnt"
+	core:require="{
+		formatter: 'com/gavdilabs/techradar/model/formatter'
+	}"
 	xmlns:core="sap.ui.core">
 	<SelectDialog
-		contentWidth="35rem"
-		contentHeight="40rem"
+		contentWidth="50rem"
+		contentHeight="45rem"
 		id="SoftwareSelect"
 		noDataText="{i18n>txtNoSolutions}"
 		title="{i18n>lblSelectSolution}"
-		search=".onSearchSolutions"
+		liveChange=".onSearchSolutions"
 		confirm=".onConfirmSolution"
 		items="{
 			path: '/SolutionVersion',
-			parameters: { $expand: 'solution'}
+			parameters: { $expand: 'solution,status'}
 		}">
 		<CustomListItem type="Active">
 			<HBox class="sapUiSmallMargin" justifyContent="SpaceBetween">
@@ -20,9 +23,16 @@
 					<Title text="{solution/name}" class="sapUiTinyMarginBottom" />
 					<Label text="{solution/description}" />
 				</VBox>
-				<tnt:InfoLabel class="sapUiMediumMarginBegin"
-					text="{= ${version} ? ${version} : '–'}"
-					colorScheme="6" />
+				<HBox>
+					<tnt:InfoLabel class="sapUiTinyMarginEnd" text="{i18n>lblActiveVersion}"
+						visible="{= ${path: 'solution/activeVersion/version', targetType: 'any'} === ${path: 'version', targetType: 'any'}}"
+						colorScheme="7" />
+					<tnt:InfoLabel text="{status/name}"
+						class="sapUiTinyMarginEnd"
+						colorScheme="{path: 'status/criticalityLevel', formatter: 'formatter.formatSolutionVersionStatus'}" />
+					<tnt:InfoLabel text="{version}"
+						colorScheme="6" />
+				</HBox>
 			</HBox>
 		</CustomListItem>
 		<!-- <StandardListItem -->
