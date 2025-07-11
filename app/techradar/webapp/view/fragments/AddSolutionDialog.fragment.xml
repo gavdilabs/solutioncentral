@@ -1,20 +1,35 @@
 <core:FragmentDefinition
 	xmlns="sap.m"
+	xmlns:tnt="sap.tnt"
 	xmlns:core="sap.ui.core">
-	<SelectDialog	
-		id="SoftwareSelect"	
+	<SelectDialog
+		contentWidth="35rem"
+		contentHeight="40rem"
+		id="SoftwareSelect"
 		noDataText="{i18n>txtNoSolutions}"
 		title="{i18n>lblSelectSolution}"
 		search=".onSearchSolutions"
-		confirm=".onConfirmSolution"		
+		confirm=".onConfirmSolution"
 		items="{
-			path: '/SoftwareSolution'
+			path: '/SolutionVersion',
+			parameters: { $expand: 'solution'}
 		}">
-		<StandardListItem
-			title="{name}"
-			description="{description}"			
-			iconDensityAware="false"
-			iconInset="false"
-			type="Active" />
+		<CustomListItem type="Active">
+			<HBox class="sapUiSmallMargin" justifyContent="SpaceBetween">
+				<VBox>
+					<Title text="{solution/name}" class="sapUiTinyMarginBottom" />
+					<Label text="{solution/description}" />
+				</VBox>
+				<tnt:InfoLabel class="sapUiMediumMarginBegin"
+					text="{= ${version} ? ${version} : '–'}"
+					colorScheme="6" />
+			</HBox>
+		</CustomListItem>
+		<!-- <StandardListItem -->
+		<!-- 	title="{name}" -->
+		<!-- 	description="{description}"			 -->
+		<!-- 	iconDensityAware="false" -->
+		<!-- 	iconInset="false" -->
+		<!-- 	type="Active" /> -->
 	</SelectDialog>
 </core:FragmentDefinition>
