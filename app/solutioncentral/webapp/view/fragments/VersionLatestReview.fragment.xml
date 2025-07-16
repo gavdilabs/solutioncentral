@@ -1,0 +1,27 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:forms="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+
+	<forms:SimpleForm
+		columnsM="2"
+		columnsL="3"
+		columnsXL="4"
+		editable="false" layout="ColumnLayout">
+
+		<Label text="{i18n>label.latestReviewDate}" />
+		<Text text="{latestReview/reviewDate}" />
+
+		<Label text="{i18n>column.codeQualityLevel}" />
+		<RatingIndicator editable="false" maxValue="5"
+			value="{latestReview/codeQualityRating_code}" />
+
+		<Label text="{i18n>column.cleanCoreLevel}" />
+		<RatingIndicator editable="false" maxValue="5"
+			value="{latestReview/cleanCoreRating_code}" />
+
+		<Label text="{i18n>column.reasonNotCleanCore}" />
+		<Text
+			text="{= ${latestReview/reasonNoCleanCore} ? ${latestReview/reasonNoCleanCore} : '–'}" />
+	</forms:SimpleForm>
+</core:FragmentDefinition>

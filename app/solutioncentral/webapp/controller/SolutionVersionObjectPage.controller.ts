@@ -30,6 +30,8 @@ import Breadcrumbs from "sap/m/Breadcrumbs";
 import { MenuBase$BeforeOpenEvent } from "sap/m/table/columnmenu/MenuBase";
 import Menu from "sap/m/table/columnmenu/Menu";
 import MessageToast from "sap/m/MessageToast";
+import Dialog from "sap/m/Dialog";
+import { ReviewTypes, ReviewUtils } from "../lib/utils/reviewUtils";
 
 /**
  * @namespace com.gavdilabs.techtransmgt.solutioncentral.controller
@@ -42,6 +44,7 @@ export default class SolutionVersionObjectPage extends BaseController {
 	private validator: Validator;
 	private i18nBundle: ResourceBundle;
 	private breadCrumbHandler: BreadcrumbsHandler;
+	private reviewUtils: ReviewUtils;
 
 	private readonly personalizationInstances = new Map<
 		string,
@@ -91,6 +94,12 @@ export default class SolutionVersionObjectPage extends BaseController {
 						);
 						this.setBreadcrumbs();
 						this.initTablePersonalizations();
+						this.reviewUtils = new ReviewUtils(
+							this.getView(),
+							ReviewTypes.VERSION_REVIEW,
+							this.i18nBundle,
+							this.messageHandler,
+						);
 					},
 				},
 			});
@@ -392,5 +401,9 @@ export default class SolutionVersionObjectPage extends BaseController {
 			.catch((e) => {
 				console.log("Failed to approve solution", e);
 			});
+	}
+
+	public onReviewVersionPress(): void {
+		this.reviewUtils.openDialog();
 	}
 }

@@ -5,7 +5,7 @@
 		formatter: 'com/gavdilabs/techtransmgt/solutioncentral/model/formatter'
 	}">
 	<ObjectPageLayout id="softwareSolutionObjectPage" useIconTabBar="false"
-		showFooter="{= !${IsActiveEntity} || ${IsActiveEntity} &amp;&amp; ${path: 'solutionStatus_code', targetType: 'any'} === 0}"
+		showFooter="{= !${IsActiveEntity}}"
 		showTitleInHeaderContent="true"
 		headerContentPinnable="{= ${IsActiveEntity} ? true : false}"
 		showHeaderContent="{= ${IsActiveEntity} ? true : false}"
@@ -34,6 +34,16 @@
 				</snappedContent>
 
 				<actions>
+					<m:Button text="{i18n>button.approve}" icon="sap-icon://accept" press=".onApproveSolution"
+						type="Accept"
+						visible="{= ${IsActiveEntity} &amp;&amp; ${path: 'solutionStatus_code', targetType: 'any'} === 0 }" />
+					<m:Button text="{i18n>button.reject}" icon="sap-icon://decline" press=".onRejectSolution"
+						type="Reject"
+						visible="{= ${IsActiveEntity} &amp;&amp; ${path: 'solutionStatus_code', targetType: 'any'} === 0 }" />
+					<m:Button text="{i18n>button.reviewLatest}" icon="sap-icon://favorite" type="Ghost"
+						press=".onReviewSolutionPress"
+						enabled="{= ${path: 'activeVersion/ID', targetType: 'any' } !== null}"
+						visible="{= ${IsActiveEntity} &amp;&amp; !${HasDraftEntity}}" />
 					<m:Button
 						text="{= ${path: 'IsActiveEntity', targetType: 'any'} === true ? ${i18n>button.savedVersion} : ${i18n>button.draft}}"
 						press=".onDraftSwitcherPress" type="Ghost" icon="sap-icon://navigation-down-arrow"
@@ -67,6 +77,21 @@
 					<m:ObjectStatus text="{= ${platform_code} ? ${platform/name} : '–'}" state="None"
 						class="sapMObjectStatusLarge" />
 				</m:VBox>
+
+				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+					<m:Title text="{i18n>label.businessCriticality}" class="sapUiSmallMarginBottom" />
+					<m:ObjectStatus
+						text="{= ${businessCriticality_code} ? ${businessCriticality/name} : '–'}"
+						icon="{
+								path: 'businessCriticality/code',
+								formatter: 'formatter.formatBusinessCriticalityLevelIcon'
+							}"
+						state="{
+								path: 'businessCriticality/code',
+								formatter: 'formatter.formatBusinessCriticalityLevelState'
+							}"
+						class="sapMObjectStatusLarge" />
+				</m:VBox>
 			</m:FlexBox>
 		</headerContent>
 
@@ -96,16 +121,6 @@
 					<ObjectPageSubSection title="{i18n>title.owner}">
 						<core:Fragment
 							fragmentName="com.gavdilabs.techtransmgt.solutioncentral.view.fragments.OwnerInformation"
-							type="XML" />
-					</ObjectPageSubSection>
-				</subSections>
-			</ObjectPageSection>
-
-			<ObjectPageSection title="{i18n>title.rating}">
-				<subSections>
-					<ObjectPageSubSection title="{i18n>title.rating}">
-						<core:Fragment
-							fragmentName="com.gavdilabs.techtransmgt.solutioncentral.view.fragments.RatingInformation"
 							type="XML" />
 					</ObjectPageSubSection>
 				</subSections>
@@ -179,6 +194,16 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
+
+			<ObjectPageSection title="{i18n>title.latestReview}">
+				<subSections>
+					<ObjectPageSubSection title="{i18n>title.latestReview}">
+						<core:Fragment
+							fragmentName="com.gavdilabs.techtransmgt.solutioncentral.view.fragments.LatestReviewInfo"
+							type="XML" />
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
 		</sections>
 		<footer>
 			<m:OverflowToolbar>
@@ -195,11 +220,13 @@
 					visible="{= !${HasActiveEntity} &amp;&amp; !${IsActiveEntity}}" />
 				<m:Button text="{i18n>button.discardDraft}" visible="{= !${IsActiveEntity}}"
 					type="Transparent" press=".onDiscardDraftPress" />
-				<m:Button text="{i18n>button.approve}" press=".onApproveSolution"
-					type="Accept"
-					visible="{= ${IsActiveEntity} &amp;&amp; ${path: 'solutionStatus_code', targetType: 'any'} === 0 }" />
-				<m:Button text="{i18n>button.reject}" press=".onRejectSolution" type="Reject"
-					visible="{= ${IsActiveEntity} &amp;&amp; ${path: 'solutionStatus_code', targetType: 'any'} === 0 }" />
+				<!-- <m:Button text="{i18n>button.approve}" press=".onApproveSolution" -->
+				<!-- 	type="Accept" -->
+				<!-- 	visible="{= ${IsActiveEntity} &amp;&amp; ${path: 'solutionStatus_code', targetType:
+				'any'} === 0 }" /> -->
+				<!-- <m:Button text="{i18n>button.reject}" press=".onRejectSolution" type="Reject" -->
+				<!-- 	visible="{= ${IsActiveEntity} &amp;&amp; ${path: 'solutionStatus_code', targetType:
+				'any'} === 0 }" /> -->
 			</m:OverflowToolbar>
 		</footer>
 	</ObjectPageLayout>

@@ -1,0 +1,42 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:plugins="sap.m.plugins"
+	xmlns:columnmenu="sap.m.table.columnmenu"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:core="sap.ui.core"
+	core:require="{
+		formatter: 'com/gavdilabs/techtransmgt/solutioncentral/model/formatter'
+	}">
+	<Table id="versionReviewsTable"
+		growing="true"
+		backgroundDesign="Transparent"
+		items="{path: 'reviews', sorter: { path: 'reviewDate', descending: true}}">
+		<columns>
+			<Column>
+				<Label text="{i18n>column.reviewDate}" />
+			</Column>
+			<Column>
+				<Label text="{i18n>column.reviewCodeQualityLvl}" />
+			</Column>
+			<Column>
+				<Label text="{i18n>column.reviewCleanCoreLvl}" />
+			</Column>
+			<Column>
+				<Label text="{i18n>column.reviewReasonNoCleanCore}" />
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem>
+				<cells>
+					<Text text="{reviewDate}" />
+					<RatingIndicator editable="false" maxValue="5"
+						value="{cleanCoreRating_code}" iconSize="18px" />
+					<RatingIndicator editable="false" iconSize="18px" maxValue="5"
+						value="{codeQualityRating_code}" />
+					<Text text="{= ${reasonNoCleanCore} ? ${reasonNoCleanCore} : '–'}" />
+
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</core:FragmentDefinition>

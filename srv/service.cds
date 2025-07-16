@@ -20,13 +20,19 @@ service RadarService {
 
   extend projection SoftwareSolution with {
     virtual null as isApprover : Boolean,
-    activeVersion              : Association to ActiveSolutionVersion on activeVersion.solution = $self
+    activeVersion              : Association to ActiveSolutionVersion on activeVersion.solution = $self,
   }
 
   entity SolutionVersion          as projection on core.SolutionVersion;
+  entity SolutionReview           as projection on core.SolutionReview;
+
+  extend projection SolutionReview with {
+    DATE(createdAt) as reviewDate : Date
+  }
 
   extend projection SolutionVersion with {
-    virtual null as isApprover : Boolean
+    virtual null as isApprover : Boolean,
+    latestReview               : Association to LatestSolutionReview on latestReview.solutionVersion = $self
   }
 
   extend SolutionVersion with actions {
@@ -100,4 +106,27 @@ service RadarService {
           and status.code    =      5
           and sv.releaseDate is not null
       );
+
+  view LatestSolutionReview as
+    select from SolutionReview as review
+    where
+          review.solutionVersion.status.code =      5
+      and review.createdAt                   =      (
+        select max(
+          sr.createdAt
+        ) from SolutionReview as sr
+      )
+      and review.solutionVersion.releaseDate is not null
+      and review.solutionVersion.releaseDate =      (
+        select max(
+          sv.releaseDate
+        ) from SolutionVersion as sv
+        inner join SoftwareStatus as status
+          on sv.status = status
+        where
+              sv.solution.ID =      review.solutionVersion.solution.ID
+          and status.code    =      5
+          and sv.releaseDate is not null
+      );
+
 }

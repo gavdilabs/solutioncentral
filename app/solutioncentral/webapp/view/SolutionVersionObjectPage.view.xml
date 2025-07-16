@@ -7,7 +7,7 @@
 	}">
 	<ObjectPageLayout id="solutionVersionObjectPage" useIconTabBar="false"
 		showTitleInHeaderContent="true"
-		showFooter="{= ${appConfig>/versionViewEditMode} || !${appConfig>/versionViewEditMode} &amp;&amp; ${path: 'status_code', targetType: 'any'} === 0}"
+		showFooter="{= ${appConfig>/versionViewEditMode}}"
 		headerContentPinnable="{= !${appConfig>/versionViewEditMode} ? true : false}"
 		showHeaderContent="{= !${appConfig>/versionViewEditMode}}"
 		upperCaseAnchorBar="false">
@@ -33,6 +33,15 @@
 				</snappedContent>
 
 				<actions>
+					<m:Button text="{i18n>button.approve}" icon="sap-icon://accept"
+						press=".onApproveSolutionVersion"
+						type="Accept"
+						visible="{= !${appConfig>/versionViewEditMode} &amp;&amp; ${path: 'status_code', targetType: 'any'} === 0 }" />
+					<m:Button text="{i18n>button.reject}" icon="sap-icon://decline"
+						press=".onRejectSolutionVersion" type="Reject"
+						visible="{= !${appConfig>/versionViewEditMode} &amp;&amp; ${path: 'status_code', targetType: 'any'} === 0 }" />
+					<m:Button text="{i18n>button.reviewVersion}" icon="sap-icon://favorite" type="Ghost"
+						visible="{= !${appConfig>/versionViewEditMode}}" press=".onReviewVersionPress" />
 					<m:Button text="{i18n>button.edit}"
 						visible="{= ${path: 'status_code', targetType: 'any'} !== 5 &amp;&amp; !${appConfig>/versionViewEditMode}}"
 						type="Emphasized" press=".onEditSolutionVersion" />
@@ -127,6 +136,28 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
+
+			<ObjectPageSection title="{i18n>title.latestReview}">
+				<subSections>
+					<ObjectPageSubSection title="{i18n>title.latestReview}">
+						<core:Fragment
+							fragmentName="com.gavdilabs.techtransmgt.solutioncentral.view.fragments.VersionLatestReview"
+							type="XML" />
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="{i18n>title.reviews}">
+				<subSections>
+					<ObjectPageSubSection title="{i18n>title.reviews}">
+						<core:Fragment
+							fragmentName="com.gavdilabs.techtransmgt.solutioncentral.view.fragments.VersionReviewTable"
+							type="XML" />
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+
 		</sections>
 		<footer>
 			<m:OverflowToolbar>
@@ -140,11 +171,13 @@
 					visible="{appConfig>/versionViewEditMode}" />
 				<m:Button text="{i18n>default.discard}" visible="{appConfig>/versionViewEditMode}"
 					type="Transparent" press=".onCancelVersionEdit" />
-				<m:Button text="{i18n>button.approve}" press=".onApproveSolutionVersion"
-					type="Accept"
-					visible="{= !${appConfig>/versionViewEditMode} &amp;&amp; ${path: 'status_code', targetType: 'any'} === 0 }" />
-				<m:Button text="{i18n>button.reject}" press=".onRejectSolutionVersion" type="Reject"
-					visible="{= !${appConfig>/versionViewEditMode} &amp;&amp; ${path: 'status_code', targetType: 'any'} === 0 }" />
+				<!-- <m:Button text="{i18n>button.approve}" press=".onApproveSolutionVersion" -->
+				<!-- 	type="Accept" -->
+				<!-- 	visible="{= !${appConfig>/versionViewEditMode} &amp;&amp; ${path: 'status_code',
+				targetType: 'any'} === 0 }" /> -->
+				<!-- <m:Button text="{i18n>button.reject}" press=".onRejectSolutionVersion" type="Reject" -->
+				<!-- 	visible="{= !${appConfig>/versionViewEditMode} &amp;&amp; ${path: 'status_code',
+				targetType: 'any'} === 0 }" /> -->
 			</m:OverflowToolbar>
 		</footer>
 	</ObjectPageLayout>
