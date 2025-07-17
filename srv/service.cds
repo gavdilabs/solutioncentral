@@ -16,6 +16,7 @@ service RadarService {
     action requestSunset(description : String, sunsetDate : DateTime);
     action approveSolution();
     action rejectSolution();
+    action submitReview(codeQuality : Integer, cleanCore : Integer, reasonNotCleanCore : String);
   }
 
   extend projection SoftwareSolution with {
@@ -26,18 +27,15 @@ service RadarService {
   entity SolutionVersion          as projection on core.SolutionVersion;
   entity SolutionReview           as projection on core.SolutionReview;
 
-  extend projection SolutionReview with {
-    DATE(createdAt) as reviewDate : Date
-  }
-
   extend projection SolutionVersion with {
     virtual null as isApprover : Boolean,
-    latestReview               : Association to LatestSolutionReview on latestReview.solutionVersion = $self
+    latestReview               : Association to LatestVersionReview on latestReview.solutionVersion = $self
   }
 
   extend SolutionVersion with actions {
     action approveVersion();
     action rejectVersion();
+    action submitReview(codeQuality : Integer, cleanCore : Integer, reasonNotCleanCore : String);
   }
 
   entity SoftwareTeam             as projection on core.SoftwareTeam;
@@ -107,26 +105,14 @@ service RadarService {
           and sv.releaseDate is not null
       );
 
-  view LatestSolutionReview as
+  view LatestVersionReview as
     select from SolutionReview as review
     where
-          review.solutionVersion.status.code =      5
-      and review.createdAt                   =      (
-        select max(
-          sr.createdAt
-        ) from SolutionReview as sr
-      )
-      and review.solutionVersion.releaseDate is not null
-      and review.solutionVersion.releaseDate =      (
-        select max(
-          sv.releaseDate
-        ) from SolutionVersion as sv
-        inner join SoftwareStatus as status
-          on sv.status = status
+          createdAt is not null
+      and createdAt =      (
+        select max(createdAt) from SolutionReview as sv
         where
-              sv.solution.ID =      review.solutionVersion.solution.ID
-          and status.code    =      5
-          and sv.releaseDate is not null
+              review.solutionVersion.ID          = sv.solutionVersion.ID
+          and review.solutionVersion.solution.ID = sv.solutionVersion.solution.ID
       );
-
 }

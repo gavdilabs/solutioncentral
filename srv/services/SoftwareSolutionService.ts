@@ -1,9 +1,14 @@
-import { SoftwareSolution, SolutionVersion } from "#cds-models/RadarService";
+import {
+  SoftwareSolution,
+  SolutionReview,
+  SolutionVersion,
+} from "#cds-models/RadarService";
 import {
   Request,
   ActionRequest,
   Inject,
   ServiceLogic,
+  ActionReturn,
 } from "@dxfrontier/cds-ts-dispatcher";
 import { Logger, LoggerFactory } from "@gavdi/caplog";
 import SoftwareSolutionRepo from "../repositories/SoftwareSolutionRepo";
@@ -15,6 +20,7 @@ import CompanyConfigurationRepo from "../repositories/CompanyConfigurationRepo";
 import SolutionVersionRepo from "../repositories/SoftwareVersionRepo";
 import RequestsService from "./RequestsService";
 import cds from "@sap/cds";
+import SolutionReviewRepo from "../repositories/SolutionReviewRepo";
 
 @ServiceLogic()
 export default class SoftwareSolutionService {
@@ -28,6 +34,9 @@ export default class SoftwareSolutionService {
 
   @Inject(SolutionVersionRepo)
   private readonly solutionVersionRepo: SolutionVersionRepo;
+
+  @Inject(SolutionReviewRepo)
+  private readonly solutionReviewRepo: SolutionReviewRepo;
 
   @Inject(RequestsService)
   private readonly requestsService: RequestsService;
@@ -200,5 +209,30 @@ export default class SoftwareSolutionService {
     }
 
     return solution;
+  }
+
+  public async handleSubmitReviewLogic(
+    req: ActionRequest<typeof SoftwareSolution.actions.submitReview>,
+  ): Promise<void> {
+    const keys = req.params[0] as Record<string, string>;
+    const solutionID = keys?.ID;
+
+    const activeSolutionVersion =
+      await this.solutionVersionRepo.getActiveSolutionVersion(solutionID);
+
+    if (!activeSolutionVersion) {
+      req.error(400, "Invalid request. No active version for solution");
+      return;
+    }
+
+    const reviewData: SolutionReview = {
+      solutionVersion_ID: activeSolutionVersion.ID,
+      solutionVersion_solution_ID: solutionID,
+      cleanCoreRating_code: req.data.cleanCore || 0,
+      codeQualityRating_code: req.data.codeQuality || 0,
+      reasonNoCleanCore: req.data.reasonNotCleanCore || undefined,
+    };
+
+    return await this.solutionReviewRepo.createReview(reviewData);
   }
 }

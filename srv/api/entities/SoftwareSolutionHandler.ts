@@ -194,4 +194,16 @@ export default class SoftwareSolutionHandler {
       return req.error(500, "Failed to reject solution due to internal error");
     }
   }
+
+  @OnBoundAction(SoftwareSolution.actions.submitReview)
+  public async onSubmitReview(
+    @Req() req: ActionRequest<typeof SoftwareSolution.actions.submitReview>,
+  ): ActionReturn<typeof SoftwareSolution.actions.submitReview> {
+    try {
+      await this.softwareSolutionService.handleSubmitReviewLogic(req);
+    } catch (e) {
+      this.logger.error("Failed to submit review", e);
+      return req.error(500, "Failed to submit review due to internal error");
+    }
+  }
 }

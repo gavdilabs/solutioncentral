@@ -57,4 +57,22 @@ export default class SolutionVersionRepo {
 
     return await cds.run(query);
   }
+
+  public async getActiveSolutionVersion(
+    solutionID: string,
+  ): Promise<SolutionVersion> {
+    const query = SELECT.from(SolutionVersion.name)
+      .where({
+        solution_ID: solutionID,
+        status_code: 5,
+      })
+      .columns((el: any) => {
+        el.ID, el.releaseDate;
+      })
+      .orderBy("releaseDate desc")
+      .limit(1);
+
+    const res = await cds.run(query);
+    return res[0];
+  }
 }

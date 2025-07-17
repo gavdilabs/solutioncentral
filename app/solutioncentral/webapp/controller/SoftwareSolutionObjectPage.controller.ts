@@ -690,6 +690,6 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 	}
 
 	public onReviewSolutionPress(): void {
-		this.reviewUtils.openDialog();
+		this.reviewUtils.openDialog(this.getView().getBindingContext() as Context);
 	}
 }

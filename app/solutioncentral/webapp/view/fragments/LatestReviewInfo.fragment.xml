@@ -10,7 +10,7 @@
 		editable="false" layout="ColumnLayout">
 
 		<Label text="{i18n>label.latestReviewDate}" />
-		<Text text="{activeVersion/latestReview/reviewDate}" />
+		<Text text="{activeVersion/latestReview/createdAt}" />
 
 		<Label text="{i18n>column.codeQualityLevel}" />
 		<RatingIndicator editable="false" maxValue="5"

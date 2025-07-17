@@ -404,6 +404,6 @@ export default class SolutionVersionObjectPage extends BaseController {
 	}
 
 	public onReviewVersionPress(): void {
-		this.reviewUtils.openDialog();
+		this.reviewUtils.openDialog(this.getView().getBindingContext() as Context);
 	}
 }

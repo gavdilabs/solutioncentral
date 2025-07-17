@@ -1,4 +1,4 @@
-import { SolutionVersion } from "#cds-models/RadarService";
+import { SolutionReview, SolutionVersion } from "#cds-models/RadarService";
 import {
   Request,
   ActionRequest,
@@ -12,6 +12,7 @@ import {
   DefaultSoftwareStatus,
 } from "../lib/utils/defaults";
 import CompanyConfigurationRepo from "../repositories/CompanyConfigurationRepo";
+import SolutionReviewRepo from "../repositories/SolutionReviewRepo";
 
 @ServiceLogic()
 export default class SolutionVersionService {
@@ -19,6 +20,9 @@ export default class SolutionVersionService {
 
   @Inject(SolutionVersionRepo)
   private readonly solutionVersionRepo: SolutionVersionRepo;
+
+  @Inject(SolutionReviewRepo)
+  private readonly solutionReviewRepo: SolutionReviewRepo;
 
   @Inject(CompanyConfigurationRepo)
   private readonly companyConfigRepo: CompanyConfigurationRepo;
@@ -159,5 +163,23 @@ export default class SolutionVersionService {
     }
 
     return solutionVersion;
+  }
+
+  public async handleSubmitReviewLogic(
+    req: ActionRequest<typeof SolutionVersion.actions.submitReview>,
+  ): Promise<void> {
+    const keys = req.params[0] as Record<string, string>;
+    const solutionVersion_ID = keys?.ID;
+    const solution_ID = keys?.solution_ID;
+
+    const versionReviewData: SolutionReview = {
+      solutionVersion_ID: solutionVersion_ID,
+      solutionVersion_solution_ID: solution_ID,
+      cleanCoreRating_code: req.data.cleanCore || 0,
+      codeQualityRating_code: req.data.codeQuality || 0,
+      reasonNoCleanCore: req.data.reasonNotCleanCore || undefined,
+    };
+
+    return await this.solutionReviewRepo.createReview(versionReviewData);
   }
 }

@@ -10,7 +10,7 @@
 	<Table id="versionReviewsTable"
 		growing="true"
 		backgroundDesign="Transparent"
-		items="{path: 'reviews', sorter: { path: 'reviewDate', descending: true}}">
+		items="{path: 'reviews', sorter: { path: 'createdAt', descending: true}}">
 		<columns>
 			<Column>
 				<Label text="{i18n>column.reviewDate}" />
@@ -28,11 +28,11 @@
 		<items>
 			<ColumnListItem>
 				<cells>
-					<Text text="{reviewDate}" />
+					<Text text="{createdAt}" />
 					<RatingIndicator editable="false" maxValue="5"
-						value="{cleanCoreRating_code}" iconSize="18px" />
+						value="{codeQualityRating_code}" iconSize="18px" />
 					<RatingIndicator editable="false" iconSize="18px" maxValue="5"
-						value="{codeQualityRating_code}" />
+						value="{cleanCoreRating_code}" />
 					<Text text="{= ${reasonNoCleanCore} ? ${reasonNoCleanCore} : '–'}" />
 
 				</cells>

@@ -44,8 +44,8 @@ export function createMessagingButtonFromController(
 		path: "message>/",
 		formatter: (messages: Message[]) => {
 			return messages && messages.length > 0
-				? "sap-icon://error"
-				: "sap-icon://sys-enter-2";
+				? IconPool.getIconURI("error")
+				: IconPool.getIconURI("sys-enter-2");
 		},
 	});
 
