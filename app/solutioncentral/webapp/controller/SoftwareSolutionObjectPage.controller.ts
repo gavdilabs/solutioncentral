@@ -163,11 +163,14 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 						);
 
 						this.filterVersionsTable();
+						const companyConfig =
+							await this.getOwnerComponent().getCompanyConfiguration();
 						this.reviewUtils = new ReviewUtils(
 							this.getView(),
 							ReviewTypes.SOLUTION_REVIEW,
 							this.i18nBundle,
 							this.messageHandler,
+							companyConfig,
 						);
 					},
 				},

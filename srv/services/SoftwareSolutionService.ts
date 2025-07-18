@@ -225,6 +225,22 @@ export default class SoftwareSolutionService {
       return;
     }
 
+    const companyConfig = await this.companyConfigRepo.getConfiguration();
+
+    if (!req.data.reasonNotCleanCore || req.data.reasonNotCleanCore === "") {
+      if (
+        companyConfig?.expectedMinimalCleanCoreValue_code &&
+        req.data.cleanCore &&
+        req.data.cleanCore < companyConfig.expectedMinimalCleanCoreValue_code
+      ) {
+        req.error(
+          400,
+          "Missing reason for not clean core. Clean Core Level is lower than minimum expected clean core level config.",
+        );
+        return;
+      }
+    }
+
     const reviewData: SolutionReview = {
       solutionVersion_ID: activeSolutionVersion.ID,
       solutionVersion_solution_ID: solutionID,

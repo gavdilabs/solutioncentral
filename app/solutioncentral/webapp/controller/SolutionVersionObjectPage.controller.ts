@@ -94,11 +94,15 @@ export default class SolutionVersionObjectPage extends BaseController {
 						);
 						this.setBreadcrumbs();
 						this.initTablePersonalizations();
+
+						const companyConfig =
+							await this.getOwnerComponent().getCompanyConfiguration();
 						this.reviewUtils = new ReviewUtils(
 							this.getView(),
 							ReviewTypes.VERSION_REVIEW,
 							this.i18nBundle,
 							this.messageHandler,
+							companyConfig,
 						);
 					},
 				},

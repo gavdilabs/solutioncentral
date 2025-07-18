@@ -26,6 +26,7 @@ import Icon, { Icon$PressEvent } from "sap/ui/core/Icon";
 import Popover from "sap/m/Popover";
 import FormattedText from "sap/m/FormattedText";
 import IconPool from "sap/ui/core/IconPool";
+import { CompanyConfiguration } from "../types";
 
 export enum ReviewTypes {
 	SOLUTION_REVIEW = "SoftwareSolution",
@@ -47,13 +48,14 @@ export class ReviewUtils {
 	private cleanCoreRating: RatingIndicator;
 
 	private static readonly dialogs = new Map<string, Dialog>();
-	private static reviewModel: JSONModel;
+	private static companyConfig: CompanyConfiguration;
 
 	constructor(
 		view: View,
 		reviewType: ReviewTypes,
 		i18nBundle: ResourceBundle,
 		messagingUtils: MessagingUtils,
+		companyConfig: CompanyConfiguration,
 	) {
 		this.view = view;
 		this.reviewType = reviewType;
@@ -61,8 +63,8 @@ export class ReviewUtils {
 		this.messagingHandler = messagingUtils;
 		this.validator = new Validator();
 
-		if (!ReviewUtils.reviewModel) {
-			ReviewUtils.reviewModel = this.view.getModel("reviewModel") as JSONModel;
+		if (!ReviewUtils.companyConfig) {
+			ReviewUtils.companyConfig = companyConfig;
 		}
 
 		if (!ReviewUtils.dialogs.has(this.reviewType)) {
@@ -171,8 +173,27 @@ export class ReviewUtils {
 							],
 						}),
 
-						ReviewUtils.reasonLabel.addStyleClass("sapUiSmallMarginTop"),
-						this.reasonTextArea,
+						new VBox({
+							items: [
+								new HBox({
+									items: [
+										ReviewUtils.reasonLabel,
+										new Icon({
+											src: IconPool.getIconURI("information"),
+											color: "Marker",
+											press: (event: Icon$PressEvent) => {
+												const text = this.i18nBundle.getText(
+													"msg.infoPOReasonNotCleanCore",
+												);
+
+												this.openInfoPopover(event.getSource(), text);
+											},
+										}).addStyleClass("sapUiSmallMarginBegin"),
+									],
+								}).addStyleClass("sapUiSmallMarginTop"),
+								this.reasonTextArea,
+							],
+						}),
 					],
 				}),
 			],
@@ -200,7 +221,9 @@ export class ReviewUtils {
 
 	private onCleanCoreLevelChange(event: RatingIndicator$ChangeEvent) {
 		const value =
-			!event.getSource().getValue() || event.getSource().getValue() <= 0
+			!event.getSource().getValue() ||
+			event.getSource().getValue() <
+				ReviewUtils.companyConfig.expectedMinimalCleanCoreValue_code
 				? true
 				: false;
 		this.setReasonRequired(value);
@@ -227,13 +250,15 @@ export class ReviewUtils {
 		this.cleanCoreRating.setValue(0);
 		this.codeQualityRating.setValue(0);
 		this.reasonTextArea.setRequired(true);
+		ReviewUtils.reasonLabel.setRequired(true);
 		this.reasonTextArea.setValue(null);
 	}
 
 	private openInfoPopover(src: Icon, infoText: string): void {
 		const popover = new Popover({
-			placement: "HorizontalPreferedRight",
+			placement: "VerticalPreferedBottom",
 			showHeader: false,
+			contentWidth: "20rem",
 			content: new FormattedText({ htmlText: infoText }),
 		}).addStyleClass("sapUiContentPadding");
 
@@ -257,6 +282,7 @@ export class ReviewUtils {
 
 	private handleCancel(): void {
 		this.messagingHandler.clearAllMessages();
+		this.resetFields();
 		ReviewUtils.dialogs.get(this.reviewType).close();
 	}
 

@@ -12,16 +12,16 @@
 		backgroundDesign="Transparent"
 		items="{path: 'reviews', sorter: { path: 'createdAt', descending: true}}">
 		<columns>
-			<Column>
+			<Column minScreenWidth="Tablet" demandPopin="true">
 				<Label text="{i18n>column.reviewDate}" />
 			</Column>
-			<Column>
+			<Column minScreenWidth="Tablet" demandPopin="true">
 				<Label text="{i18n>column.reviewCodeQualityLvl}" />
 			</Column>
-			<Column>
+			<Column minScreenWidth="Tablet" demandPopin="true">
 				<Label text="{i18n>column.reviewCleanCoreLvl}" />
 			</Column>
-			<Column>
+			<Column minScreenWidth="Tablet" demandPopin="true">
 				<Label text="{i18n>column.reviewReasonNoCleanCore}" />
 			</Column>
 		</columns>
