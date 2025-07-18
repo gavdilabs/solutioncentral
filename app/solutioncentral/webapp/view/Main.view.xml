@@ -133,7 +133,7 @@
 			<Table id="solutionCatalogueTable"
 				mode="MultiSelect"
 				growing="true"
-				selectionChange="onTableSelect"
+				selectionChange=".onTableSelect"
 				items="{
 				path: '/SoftwareSolution',
 				parameters: {

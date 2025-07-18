@@ -11,7 +11,7 @@
 		mode="{= ${appConfig>/versionViewEditMode} ? 'MultiSelect': 'None'}"
 		growing="true"
 		backgroundDesign="Transparent"
-		selectionChange="onTableSelect($event, 'technologiesTableConfig')"
+		selectionChange=".onTableSelect($event, 'technologiesTableConfig')"
 		items="{path: 'technologies', parameters: { $$updateGroupId: 'solutionVersionGroup'}}">
 		<dependents>
 			<plugins:ColumnResizer />
