@@ -172,6 +172,8 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 							this.messageHandler,
 							companyConfig,
 						);
+
+						await this.reviewUtils.initDialog();
 					},
 				},
 			});

@@ -1,12 +1,8 @@
 import ResourceBundle from "sap/base/i18n/ResourceBundle";
 import Button from "sap/m/Button";
 import Dialog from "sap/m/Dialog";
-import Label from "sap/m/Label";
 import { ButtonType } from "sap/m/library";
 import OverflowToolbar from "sap/m/OverflowToolbar";
-import RatingIndicator, {
-	RatingIndicator$ChangeEvent,
-} from "sap/m/RatingIndicator";
 import TextArea from "sap/m/TextArea";
 import ToolbarSpacer from "sap/m/ToolbarSpacer";
 import View from "sap/ui/core/mvc/View";
@@ -15,22 +11,31 @@ import {
 	MessagingUtils,
 } from "./messagingUtils";
 import Validator from "learnin/ui5/validator/Validator";
-import MessageStrip, { MessageStrip$CloseEvent } from "sap/m/MessageStrip";
 import ODataModel from "sap/ui/model/odata/v4/ODataModel";
 import Context from "sap/ui/model/odata/v4/Context";
 import MessageToast from "sap/m/MessageToast";
-import JSONModel from "sap/ui/model/json/JSONModel";
-import HBox from "sap/m/HBox";
 import VBox from "sap/m/VBox";
-import Icon, { Icon$PressEvent } from "sap/ui/core/Icon";
+import { Icon$PressEvent } from "sap/ui/core/Icon";
 import Popover from "sap/m/Popover";
 import FormattedText from "sap/m/FormattedText";
-import IconPool from "sap/ui/core/IconPool";
 import { CompanyConfiguration } from "../types";
+import List from "sap/m/List";
+import JSONModel from "sap/ui/model/json/JSONModel";
+import Fragment from "sap/ui/core/Fragment";
+import { ListBase$SelectionChangeEvent } from "sap/m/ListBase";
 
 export enum ReviewTypes {
 	SOLUTION_REVIEW = "SoftwareSolution",
 	VERSION_REVIEW = "SolutionVersion",
+}
+
+export const REVIEW_MODEL_NAME = "reviewModel";
+export enum ReviewModelProperties {
+	CLEAN_CORE_LEVEL = "/cleanCoreLevel",
+	CODE_QUALITY_LEVEL = "/codeQualityLevel",
+	REASON_NOT_CLEAN_CORE = "/reasonNotCleanCore",
+	REASON_REQUIRED = "/reasonRequired",
+	INFO_STRIP_VISIBLE = "/infoStripVisible",
 }
 
 export class ReviewUtils {
@@ -40,12 +45,6 @@ export class ReviewUtils {
 	private messagingHandler: MessagingUtils;
 	private messagingBtn: Button;
 	private validator: Validator;
-
-	private static reasonLabel: Label;
-	private static infoStrip: MessageStrip;
-	private reasonTextArea: TextArea;
-	private codeQualityRating: RatingIndicator;
-	private cleanCoreRating: RatingIndicator;
 
 	private static readonly dialogs = new Map<string, Dialog>();
 	private static companyConfig: CompanyConfiguration;
@@ -66,178 +65,73 @@ export class ReviewUtils {
 		if (!ReviewUtils.companyConfig) {
 			ReviewUtils.companyConfig = companyConfig;
 		}
+	}
 
+	public async initDialog(): Promise<void> {
 		if (!ReviewUtils.dialogs.has(this.reviewType)) {
-			const dialog = this.createReviewDialog();
+			const dialog = await this.createReviewDialogNew();
 			ReviewUtils.dialogs.set(this.reviewType, dialog);
 		}
 	}
 
-	private createReviewDialog(): Dialog {
+	private async createReviewDialogNew() {
+		const dialog = (await Fragment.load({
+			name: "com.gavdilabs.techtransmgt.solutioncentral.view.fragments.ReviewDialog",
+			controller: this,
+		})) as Dialog;
+		this.view.addDependent(dialog);
+
+		dialog.setTitle(
+			this.reviewType === ReviewTypes.SOLUTION_REVIEW
+				? this.i18nBundle.getText("title.reviewSolution")
+				: this.i18nBundle.getText("title.reviewVersion"),
+		);
+
+		const footerToolbar = this.createDialogFooter();
+		dialog.setFooter(footerToolbar);
+		return dialog;
+	}
+
+	private getListControlsFromDialog(initDialog?: Dialog): List[] {
+		const dialog = initDialog || ReviewUtils.dialogs.get(this.reviewType);
+		const codeQualityList = (
+			dialog.getContent()[1] as VBox
+		).getItems()[1] as List;
+		const cleanCoreList = (
+			dialog.getContent()[2] as VBox
+		).getItems()[1] as List;
+
+		return [codeQualityList, cleanCoreList];
+	}
+
+	private createDialogFooter(): OverflowToolbar {
 		this.messagingBtn = createMessagingButtonFromController(
 			this.reviewType + "MessagingBtn",
 			this.messagingHandler,
 		);
 
-		ReviewUtils.reasonLabel = new Label({
-			required: true,
-			text: this.i18nBundle.getText("column.reasonNotCleanCore"),
-		});
-
-		this.reasonTextArea = new TextArea({
-			rows: 3,
-			width: "100%",
-			required: true,
-		});
-
-		this.codeQualityRating = new RatingIndicator({
-			editable: true,
-			maxValue: 5,
-			value: 0,
-		});
-
-		this.cleanCoreRating = new RatingIndicator({
-			editable: true,
-			maxValue: 5,
-			value: 0,
-			change: (event: RatingIndicator$ChangeEvent) =>
-				this.onCleanCoreLevelChange(event),
-		});
-
-		ReviewUtils.infoStrip = new MessageStrip({
-			showIcon: true,
-			showCloseButton: true,
-			text: this.i18nBundle.getText("msg.reviewSolutionInfo"),
-			type: "Information",
-			close: (event: MessageStrip$CloseEvent) => {
-				event.getSource().setVisible(false);
-			},
-		});
-
-		const dialog = new Dialog({
-			draggable: true,
-			title:
-				this.reviewType === ReviewTypes.SOLUTION_REVIEW
-					? this.i18nBundle.getText("title.reviewSolution")
-					: this.i18nBundle.getText("title.reviewVersion"),
-			contentWidth: "30rem",
+		return new OverflowToolbar({
 			content: [
-				new VBox({
-					width: "100%",
-					items: [
-						ReviewUtils.infoStrip,
-						new VBox({
-							items: [
-								new HBox({
-									items: [
-										new Label({
-											text: this.i18nBundle.getText("column.codeQualityLevel"),
-										}),
-										new Icon({
-											src: IconPool.getIconURI("information"),
-											color: "Marker",
-											press: (event: Icon$PressEvent) => {
-												const text = this.i18nBundle.getText(
-													"msg.infoPOCodeQualityLevel",
-												);
-
-												this.openInfoPopover(event.getSource(), text);
-											},
-										}).addStyleClass("sapUiSmallMarginBegin"),
-									],
-								}).addStyleClass("sapUiSmallMarginTop"),
-								this.codeQualityRating,
-							],
-						}),
-						new VBox({
-							items: [
-								new HBox({
-									items: [
-										new Label({
-											text: this.i18nBundle.getText("column.cleanCoreLevel"),
-										}),
-										new Icon({
-											src: IconPool.getIconURI("information"),
-											color: "Marker",
-											press: (event: Icon$PressEvent) => {
-												const text = this.i18nBundle.getText(
-													"msg.infoPOCleanCoreLevel",
-												);
-
-												this.openInfoPopover(event.getSource(), text);
-											},
-										}).addStyleClass("sapUiSmallMarginBegin"),
-									],
-								}).addStyleClass("sapUiSmallMarginTop"),
-								this.cleanCoreRating,
-							],
-						}),
-
-						new VBox({
-							items: [
-								new HBox({
-									items: [
-										ReviewUtils.reasonLabel,
-										new Icon({
-											src: IconPool.getIconURI("information"),
-											color: "Marker",
-											press: (event: Icon$PressEvent) => {
-												const text = this.i18nBundle.getText(
-													"msg.infoPOReasonNotCleanCore",
-												);
-
-												this.openInfoPopover(event.getSource(), text);
-											},
-										}).addStyleClass("sapUiSmallMarginBegin"),
-									],
-								}).addStyleClass("sapUiSmallMarginTop"),
-								this.reasonTextArea,
-							],
-						}),
-					],
+				this.messagingBtn,
+				new ToolbarSpacer(),
+				new Button({
+					text: this.i18nBundle.getText("button.submit"),
+					type: ButtonType.Emphasized,
+					press: this.handleSubmit.bind(this),
+				}),
+				new Button({
+					text: this.i18nBundle.getText("button.cancel"),
+					type: ButtonType.Transparent,
+					press: this.handleCancel.bind(this),
 				}),
 			],
-			footer: new OverflowToolbar({
-				content: [
-					this.messagingBtn,
-					new ToolbarSpacer(),
-					new Button({
-						text: this.i18nBundle.getText("button.submit"),
-						type: ButtonType.Emphasized,
-						press: this.handleSubmit.bind(this),
-					}),
-					new Button({
-						text: this.i18nBundle.getText("button.cancel"),
-						type: ButtonType.Transparent,
-						press: this.handleCancel.bind(this),
-					}),
-				],
-			}),
-		}).addStyleClass("sapUiContentPadding");
-
-		this.view.addDependent(dialog);
-		return dialog;
-	}
-
-	private onCleanCoreLevelChange(event: RatingIndicator$ChangeEvent) {
-		const value =
-			!event.getSource().getValue() ||
-			event.getSource().getValue() <
-				ReviewUtils.companyConfig.expectedMinimalCleanCoreValue_code
-				? true
-				: false;
-		this.setReasonRequired(value);
-		this.messagingHandler.clearMessagesByControl(this.reasonTextArea.getId());
-		this.reasonTextArea.setValueState("None");
-	}
-
-	private setReasonRequired(required: boolean) {
-		ReviewUtils.reasonLabel.setRequired(required);
-		this.reasonTextArea.setRequired(required);
+		});
 	}
 
 	public openDialog(context: Context) {
-		ReviewUtils.infoStrip.setVisible(
+		const reviewModel = this.view.getModel(REVIEW_MODEL_NAME) as JSONModel;
+		reviewModel.setProperty(
+			ReviewModelProperties.INFO_STRIP_VISIBLE,
 			this.reviewType === ReviewTypes.SOLUTION_REVIEW,
 		);
 
@@ -247,19 +141,25 @@ export class ReviewUtils {
 	}
 
 	private resetFields() {
-		this.cleanCoreRating.setValue(0);
-		this.codeQualityRating.setValue(0);
-		this.reasonTextArea.setRequired(true);
-		ReviewUtils.reasonLabel.setRequired(true);
-		this.reasonTextArea.setValue(null);
+		const reviewModel = this.view.getModel("reviewModel") as JSONModel;
+		reviewModel.setProperty("/cleanCoreLevel", 0);
+		reviewModel.setProperty("/codeQualityLevel", 0);
+		reviewModel.setProperty("/reasonNotCleanCore", null);
+		reviewModel.setProperty("/reasonRequired", true);
+		reviewModel.setProperty("/infoStripVisible", false);
+
+		const lists = this.getListControlsFromDialog();
+		lists.forEach((list) => list.removeSelections(true));
 	}
 
-	private openInfoPopover(src: Icon, infoText: string): void {
+	public openInfoPopover(event: Icon$PressEvent, textId: string): void {
+		const src = event.getSource();
+		const text = this.i18nBundle.getText(textId);
 		const popover = new Popover({
-			placement: "VerticalPreferedBottom",
+			placement: "HorizontalPreferedRight",
 			showHeader: false,
 			contentWidth: "20rem",
-			content: new FormattedText({ htmlText: infoText }),
+			content: new FormattedText({ htmlText: text }),
 		}).addStyleClass("sapUiContentPadding");
 
 		popover.openBy(src, true);
@@ -287,9 +187,16 @@ export class ReviewUtils {
 	}
 
 	private async handleReviewSubmit(): Promise<void> {
-		const codeQualityRating = this.codeQualityRating.getValue();
-		const cleanCoreLevel = this.cleanCoreRating.getValue();
-		const reasonNotCleanCore = this.reasonTextArea.getValue();
+		const reviewModel = this.view.getModel(REVIEW_MODEL_NAME) as JSONModel;
+		const codeQualityRating = reviewModel.getProperty(
+			ReviewModelProperties.CODE_QUALITY_LEVEL,
+		) as number;
+		const cleanCoreLevel = reviewModel.getProperty(
+			ReviewModelProperties.CLEAN_CORE_LEVEL,
+		) as number;
+		const reasonNotCleanCore = reviewModel.getProperty(
+			ReviewModelProperties.REASON_NOT_CLEAN_CORE,
+		) as string;
 
 		const model = ReviewUtils.dialogs
 			.get(this.reviewType)
@@ -313,5 +220,77 @@ export class ReviewUtils {
 			.catch((e) => {
 				throw new Error("Failed to submit review. Error: " + e);
 			});
+	}
+
+	public onListSelectionChange(
+		event: ListBase$SelectionChangeEvent,
+		prop: ReviewModelProperties,
+	) {
+		const list = event.getSource();
+		const selectedItem = event.getParameter("listItem");
+		const selected = event.getParameter("selected");
+
+		const allItems = list.getItems();
+		const selectedIndex = allItems.indexOf(selectedItem);
+		if (selected) {
+			list.removeSelections(true);
+			const itemsToSelect = allItems.slice(0, selectedIndex + 1);
+			itemsToSelect.forEach((item) => {
+				list.setSelectedItem(item, true);
+			});
+		} else {
+			list.removeSelections(true);
+
+			if (selectedIndex > 0) {
+				const itemsToSelect = allItems.slice(0, selectedIndex);
+				itemsToSelect.forEach((item) => {
+					list.setSelectedItem(item, true);
+				});
+			}
+		}
+
+		const selectedItems = list.getSelectedItems();
+		let highestIndex = -1;
+		if (selectedItems.length > 0) {
+			selectedItems.forEach((item) => {
+				const itemIndex = allItems.indexOf(item);
+				if (itemIndex > highestIndex) {
+					highestIndex = itemIndex;
+				}
+			});
+		}
+
+		this.updateSelectedPropLevel(highestIndex, prop);
+
+		if (prop === ReviewModelProperties.CLEAN_CORE_LEVEL) {
+			this.setReasonNotCleanCoreRequired(highestIndex);
+		}
+	}
+
+	private updateSelectedPropLevel(index: number, prop: ReviewModelProperties) {
+		const level = index === -1 ? 0 : index + 1;
+		const reviewModel = this.view.getModel(REVIEW_MODEL_NAME) as JSONModel;
+		reviewModel.setProperty(prop, level);
+	}
+
+	private setReasonNotCleanCoreRequired(index: number) {
+		const level = index === -1 ? 0 : index + 1;
+		const required =
+			level < ReviewUtils.companyConfig.expectedMinimalCleanCoreValue_code
+				? true
+				: false;
+		const reviewModel = this.view.getModel(REVIEW_MODEL_NAME) as JSONModel;
+		reviewModel.setProperty(ReviewModelProperties.REASON_REQUIRED, required);
+
+		this.resetTextAreaValueState();
+	}
+
+	private resetTextAreaValueState(): void {
+		const dialog = ReviewUtils.dialogs.get(this.reviewType);
+		const textArea = (
+			(dialog.getContent()[2] as VBox).getItems()[2] as VBox
+		).getItems()[1] as TextArea;
+		textArea.setValueState("None");
+		this.messagingHandler.clearMessagesByControl(textArea.getId());
 	}
 }

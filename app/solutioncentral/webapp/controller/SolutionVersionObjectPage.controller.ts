@@ -104,6 +104,8 @@ export default class SolutionVersionObjectPage extends BaseController {
 							this.messageHandler,
 							companyConfig,
 						);
+
+						await this.reviewUtils.initDialog();
 					},
 				},
 			});
