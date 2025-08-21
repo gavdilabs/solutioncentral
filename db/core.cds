@@ -180,9 +180,16 @@ entity SoftwareTeamUser {
 }
 
 entity SoftwareTechnology : cuid, managed {
-  version         : String(255);
-  softwareVersion : Association to SolutionVersion;
-  technology      : Association to Technology;
+  version                     : String(255);
+  softwareVersion_ID          : UUID;
+  softwareVersion_solution_ID : UUID;
+
+  //Added core computed annotation to ignore this from create request
+  @Core.Computed
+  softwareVersion             : Association to SolutionVersion
+                                  on  softwareVersion.ID          = softwareVersion_ID
+                                  and softwareVersion.solution.ID = softwareVersion_solution_ID;
+  technology                  : Association to Technology;
 }
 
 @cds.search: {name}

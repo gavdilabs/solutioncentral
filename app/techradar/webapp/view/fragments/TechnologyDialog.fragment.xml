@@ -1,86 +1,110 @@
 <core:FragmentDefinition
 	xmlns="sap.m"
-    xmlns:form="sap.ui.layout.form"
-    xmlns:core="sap.ui.core">
-   <Dialog title="{appConfig>/techDialogTitle}" contentWidth="1024px">
+	xmlns:tnt="sap.tnt"
+	xmlns:form="sap.ui.layout.form"
+	core:require="{
+		formatter: 'com/gavdilabs/techradar/model/formatter'
+	}"
+	xmlns:core="sap.ui.core">
+	<Dialog title="{appConfig>/techDialogTitle}" contentWidth="1024px">
 		<content>
 			<form:SimpleForm editable="true"
-                fieldGroupIds="TechnologyGroup"
-                layout="ResponsiveGridLayout"
-                labelSpanXL="4"
-                labelSpanL="4"
-                title="{i18n>lblDetails}"
-                labelSpanM="12"
-                labelSpanS="12"
-                adjustLabelSpan="false"
-                emptySpanXL="0"
-                emptySpanL="0"
-                emptySpanM="0"
-                emptySpanS="0"
-                columnsXL="2"
-                columnsL="2"
-                columnsM="2"
-                singleContainerFullSize="false" >
-                <form:content>
-                    <core:Title text="" />
-                    <Label text="{i18n>lblName}" required="true"/>
-                    <Input value="{name}" required="true"/>		
-                    <Label text="{i18n>lblMaturityStatus}" required="true"/>
-                    <Select forceSelection="false" selectedKey="{maturityStatus_code}" required="true"
-                        items="{ path: '/TechnologyStatus' }">
-                        <core:Item key="{code}" text="{descr}"/>   
-                    </Select>
-                    <Label text="{i18n>lblMaturityLevel}" />
-                    <RatingIndicator iconSize="16px" value="{maturityLevel}"/>
+				fieldGroupIds="TechnologyGroup"
+				layout="ResponsiveGridLayout"
+				labelSpanXL="4"
+				labelSpanL="4"
+				title="{i18n>lblDetails}"
+				labelSpanM="12"
+				labelSpanS="12"
+				adjustLabelSpan="false"
+				emptySpanXL="0"
+				emptySpanL="0"
+				emptySpanM="0"
+				emptySpanS="0"
+				columnsXL="2"
+				columnsL="2"
+				columnsM="2"
+				singleContainerFullSize="false">
+				<form:content>
+					<core:Title text="" />
+					<Label text="{i18n>lblName}" required="true" />
+					<Input value="{name}" required="true" />
+					<Label text="{i18n>lblMaturityStatus}" required="true" />
+					<Select forceSelection="false" selectedKey="{maturityStatus_code}" required="true"
+						items="{ path: '/TechnologyStatus' }">
+						<core:Item key="{code}" text="{descr}" />
+					</Select>
+					<Label text="{i18n>lblMaturityLevel}" />
+					<RatingIndicator iconSize="16px" value="{maturityLevel}" />
 
-                    <core:Title text="" />                    
-                    <Label text="{i18n>lblDescription}" />
-                    <TextArea rows="3" value="{description}"/>	
-                    <Label text="{i18n>lblAlternatives}" />
-                    <MultiComboBox id="TechAlternatives" selectionChange="changeTechAlternatives"
-                        items="{ path: '/Technology' }" >
-					    <core:Item key="{ID}" text="{name}" />                       
-                    </MultiComboBox>
-                    <Label text="Tag"/>
-                    <Select forceSelection="false" selectedKey="{group_code}"
-                        items="{ path: '/TechnologyGroup' }">
-                        <core:Item key="{code}" text="{name}"/>
-                    </Select>
-                </form:content>
+					<core:Title text="" />
+					<Label text="{i18n>lblDescription}" />
+					<TextArea rows="3" value="{description}" />
+					<Label text="{i18n>lblAlternatives}" />
+					<MultiComboBox id="TechAlternatives" selectionChange="changeTechAlternatives"
+						items="{ path: '/Technology' }">
+						<core:Item key="{ID}" text="{name}" />
+					</MultiComboBox>
+					<Label text="Tag" />
+					<Select forceSelection="false" selectedKey="{group_code}"
+						items="{ path: '/TechnologyGroup' }">
+						<core:Item key="{code}" text="{name}" />
+					</Select>
+				</form:content>
 			</form:SimpleForm>
 
-           <List id="TechnologySolutions" 
-                class="sapUiTinyMarginTop"
-                mode="Delete"
-		        delete="onDeleteSolution"
-                noDataText="{i18n>txtNoSoftware}"
-                items="{
-                    path: 'Solutions',                    
+			<List id="TechnologySolutions"
+				class="sapUiTinyMarginTop"
+				mode="Delete"
+				delete="onDeleteSolution"
+				noDataText="{i18n>txtNoSoftware}"
+				items="{
+                    path: 'Solutions',
                     parameters: {
                         $$updateGroupId : 'techUpdateGroup'
                     }
                 }">
-                <headerToolbar>
-                    <OverflowToolbar>
-                        <content>
-                            <Title text="{i18n>lblSolutions}"/>
-                            <ToolbarSpacer />
-                            <Button text="{i18n>btnAddSolution}" icon="sap-icon://add" press="onAddSoftwareSolution"/>
-                        </content>
-                    </OverflowToolbar>
-                </headerToolbar>      
-                <StandardListItem title="{software/name}" description="{software/description}"/>                                 
-            </List>
+				<headerToolbar>
+					<OverflowToolbar>
+						<content>
+							<Title text="{i18n>lblSolutions}" />
+							<ToolbarSpacer />
+							<Button text="{i18n>btnAddSolution}" icon="sap-icon://add"
+								press="onAddSoftwareSolution" />
+						</content>
+					</OverflowToolbar>
+				</headerToolbar>
+				<!-- <StandardListItem title="{softwareVersion/solution/name} v.{softwareVersion/version}" -->
+				<!-- 	description="{softwareVersion/solution/description}"/> -->
+				<CustomListItem>
+					<HBox justifyContent="SpaceBetween" class="sapUiSmallMargin">
+						<VBox>
+							<Title text="{softwareVersion/solution/name}" class="sapUiTinyMarginBottom" />
+							<Label text="{softwareVersion/solution/description}" />
+						</VBox>
+						<HBox>
+							<tnt:InfoLabel class="sapUiTinyMarginEnd" text="{i18n>lblActiveVersion}"
+								visible="{= ${path: 'softwareVersion/solution/activeVersion/version', targetType: 'any'} === ${path: 'softwareVersion/version', targetType: 'any'}}"
+								colorScheme="7" />
+							<tnt:InfoLabel text="{softwareVersion/status/name}"
+								class="sapUiTinyMarginEnd"
+								colorScheme="{path: 'softwareVersion/status/criticalityLevel', formatter: 'formatter.formatSolutionVersionStatus'}" />
+							<tnt:InfoLabel text="{softwareVersion/version}"
+								colorScheme="6" />
+						</HBox>
+					</HBox>
+				</CustomListItem>
+			</List>
 		</content>
-        <buttons>		   
-            <Button
-                icon="sap-icon://alert"
-                text="{= ${message>/}.length }"
-                visible="{= ${message>/}.length > 0 }"
-                type="Emphasized"
-                press="onMessagePopoverPress" />  
-            <Button text="{i18n>btnCancel}" press="onCancelTechnology"/>
-			<Button text="{i18n>btnSave}" press="onSaveTechnology"/>               
-		</buttons>      
+		<buttons>
+			<Button
+				icon="sap-icon://alert"
+				text="{= ${message>/}.length }"
+				visible="{= ${message>/}.length > 0 }"
+				type="Emphasized"
+				press="onMessagePopoverPress" />
+			<Button text="{i18n>btnCancel}" press="onCancelTechnology" />
+			<Button text="{i18n>btnSave}" press="onSaveTechnology" />
+		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

@@ -1,7 +1,30 @@
 ID,name,description,maturityStatus_code,maturityLevel,group_code
-1c448326-5f44-11ec-bf63-0242ac130002,ABAP,Good old fashion ABAP,3,3,1
-1c448326-5f44-11ec-bf63-0242ac130003,SAPUI5,Fiori Web Development,5,1,
+1c448326-5f44-11ec-bf63-0242ac130002,Classic ABAP,Good old fashion ABAP,2,3,1
+1c448326-5f44-11ec-bf63-0242ac130003,SAPUI5,Fiori Web Development,3,1,,
 1c448326-5f44-11ec-bf63-0242ac130004,WebDynpro,WDA,2,4,6
-1c448326-5f44-11ec-bf63-0242ac130005,IE,Internet Explorer,1,3,5
-1c448326-5f44-11ec-bf63-0242ac130006,CAP,Cloud Application Programming,5,1,
-1c448326-5f44-11ec-bf63-0242ac130007,Workzone,SAP Build Workzone,3,3,
+1c448326-5f44-11ec-bf63-0242ac130005,Internet Explorer,Internet Explorer,1,3,5
+1c448326-5f44-11ec-bf63-0242ac130006,CAP Node,Cloud Application Programming,3,1,,
+1c448326-5f44-11ec-bf63-0242ac130007,Workzone,SAP Build Workzone,3,3,,
+9fd8708c-4e30-47d5-8035-33aec2174e82,BSP,Business Server Pages,1,1,,
+41cc6820-25e0-44cc-894f-09bf6a0016e9,Visual Composer, Visual Composer,1,1,,
+a8ebc681-efdc-4498-a1b4-4f0ed9d6f715,WDJ,WedDynpro for JAVA,1,1,,
+4770db71-8ab6-4802-9436-a4801fc23151,OData V2,OData Version 2.0,2,1,,
+2d2df7ac-e47e-42c7-a010-c6c7d95035e6,SAPscript,SAPscript,2,1,,
+ca12c7a5-5e4c-4933-ab50-2f4de434461f,IDocs,Intermediate Document,2,1,,
+6bdeb8f7-322f-49c7-8821-cd644d412969,OData V4,OData Version 4.0,3,1,,
+2bed8ec6-e051-49ca-935a-bee409c2cb05,RAP,ABAP RESTful Application Programming Model,3,1,,
+1b7723b3-fa7b-4bc0-86dd-2d5a16108b34,ABAP Objects,ABAP Objects,3,1,,
+e678cdc6-e451-4d21-98df-b6dc0f1b8702,Fiori Elements,SAP Fiori Elements,3,1,,
+a5d5de24-0ced-4000-8f36-6de29792da31,SAP BPA,SAP Build Process Automation,3,1,,
+1ca2f795-c0e8-46d0-8060-bf6294ab3dbc,SAP Build,SAP Build,3,1,,
+0112a096-fe5b-4d1c-b067-cff432dfcd8c,SAP HANA,SAP HANA,3,1,,
+518f4178-6edc-4f76-a85e-c7e425b32b0b,In-App Extensibility,SAP S/4HANA In-App Extensibility,3,1,,
+a3c8dceb-4c41-486e-8f2f-e3f0758ebdc4,Cloud Foundry,Cloud Foundry,3,1,,
+92b45a6e-e68f-4871-a8c1-63f0ef756487,MCP,Model Context Protocol,4,1,,
+68e5fa05-9ee7-4d99-970f-9b8b4df63b14,UI5 WebComponents,UI5 WebComponents,4,1,,
+abf6b582-d259-4a39-be2d-bea3e4f0b63b,BTP ABAP Environment,BTP ABAP Environment,4,1,,
+60cd9273-5a25-4e65-b882-47e339a3825e,Advanced Event Mesh,SAP Advanced Event Mesh,4,1,,
+09e08877-b095-46d6-a34d-8fbf1e9da4d7,Kyma,Kubernetes-based platform,4,1,,
+0a8b4b7a-1176-4f4e-ad9a-3f5429ca9d27,SAP Analytics Cloud,SAP Analytics Cloud,4,1,,
+665e5b44-148c-416b-8b04-b4e7ec3d20c9,Joule,SAP AI copilot,5,1,,
+1e4ad5c8-cd58-4bf5-adbb-6565b17702f4,Business Data Cloud,SAP Business Data Cloud,5,1,,
