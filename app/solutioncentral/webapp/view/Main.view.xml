@@ -133,7 +133,7 @@
 			<Table id="solutionCatalogueTable"
 				mode="MultiSelect"
 				growing="true"
-				selectionChange="onTableSelect"
+				selectionChange=".onTableSelect"
 				items="{
 				path: '/SoftwareSolution',
 				parameters: {
@@ -257,8 +257,10 @@
 								<Link class="sapUiTinyMarginTop" text="Draft" visible="{HasDraftEntity}" />
 							</VBox>
 							<Text text="{platform/name}" />
-							<RatingIndicator maxValue="5" value="{cleanCoreRating_code}" editable="false" />
-							<RatingIndicator maxValue="5" value="{codeQualityRating_code}" editable="false" />
+							<RatingIndicator maxValue="5"
+								value="{activeVersion/latestReview/cleanCoreRating_code}" editable="false" />
+							<RatingIndicator maxValue="5"
+								value="{activeVersion/latestReview/codeQualityRating_code}" editable="false" />
 							<ObjectStatus text="{solutionStatus/descr}"
 								state="{
 								path: 'solutionStatus/criticalityLevel',

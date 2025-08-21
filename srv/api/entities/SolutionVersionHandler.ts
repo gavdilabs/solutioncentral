@@ -199,4 +199,16 @@ export default class SolutionVersionHandler {
       );
     }
   }
+
+  @OnBoundAction(SolutionVersion.actions.submitReview)
+  public async onSubmitReview(
+    @Req() req: ActionRequest<typeof SolutionVersion.actions.submitReview>,
+  ): ActionReturn<typeof SolutionVersion.actions.submitReview> {
+    try {
+      await this.solutionVersionService.handleSubmitReviewLogic(req);
+    } catch (e) {
+      this.logger.error("Failed to submit review", e);
+      return req.error(500, "Failed to submit review due to internal error");
+    }
+  }
 }

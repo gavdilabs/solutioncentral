@@ -11,7 +11,7 @@
 		mode="{= ${path: 'IsActiveEntity', targetType: 'any'} === true ? 'None': 'MultiSelect'}"
 		growing="true"
 		backgroundDesign="Transparent"
-		selectionChange="onTableSelect($event, 'versionsTableConfig')"
+		selectionChange=".onTableSelect($event, 'versionsTableConfig')"
 		items="{path: '/SolutionVersion', suspended: true, parameters: { $$updateGroupId: 'solutionVersionGroup'}}">
 		<dependents>
 			<plugins:ColumnResizer />

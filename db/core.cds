@@ -131,6 +131,8 @@ entity SolutionVersion : cuid, managed {
       sapVersion   : Association to SAPVersion;
       technologies : Association to many SoftwareTechnology
                        on technologies.softwareVersion = $self;
+      reviews      : Association to many SolutionReview
+                       on reviews.solutionVersion = $self;
 }
 
 @cds.search: {name}
@@ -156,6 +158,13 @@ entity SoftwareSolution : cuid, managed {
                               dependentSoftwareSolution : Association to SoftwareSolution @mandatory;
                               softwareType              : Association to DependencyType   @mandatory;
                         };
+}
+
+entity SolutionReview : cuid, managed {
+  reasonNoCleanCore : String;
+  cleanCoreRating   : Association to CleanCoreLevel;
+  codeQualityRating : Association to CodeQualityLevel;
+  solutionVersion   : Association to SolutionVersion;
 }
 
 @cds.search: {teamName}

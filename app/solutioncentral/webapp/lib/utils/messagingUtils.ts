@@ -1,6 +1,6 @@
 import Bar from "sap/m/Bar";
-import Button from "sap/m/Button";
-import { PlacementType } from "sap/m/library";
+import Button, { Button$PressEvent } from "sap/m/Button";
+import { ButtonType, PlacementType } from "sap/m/library";
 import MessageItem from "sap/m/MessageItem";
 import MessageView, {
 	MessageView$ActiveTitlePressEvent,
@@ -17,7 +17,56 @@ import { CustomControlType, CustomMessageType } from "../types";
 import { ValueState } from "sap/ui/core/library";
 import Table from "sap/ui/table/Table";
 import JSONModel from "sap/ui/model/json/JSONModel";
-import CustomData from "sap/ui/core/CustomData";
+
+/**
+ * Generic function for creating messaging open button from controller
+ * @param {string} id
+ * @returns {button}
+ */
+export function createMessagingButtonFromController(
+	id: string,
+	messagingHandler: MessagingUtils,
+): Button {
+	const button = new Button({
+		id: id,
+		press: (event: Button$PressEvent) =>
+			messagingHandler.handleMessageViewOpen(event.getSource()),
+	});
+
+	button.bindProperty("text", {
+		path: "message>/",
+		formatter: (messages: Message[]) => {
+			return messages ? messages.length : 0;
+		},
+	});
+
+	button.bindProperty("icon", {
+		path: "message>/",
+		formatter: (messages: Message[]) => {
+			return messages && messages.length > 0
+				? IconPool.getIconURI("error")
+				: IconPool.getIconURI("sys-enter-2");
+		},
+	});
+
+	button.bindProperty("type", {
+		path: "message>/",
+		formatter: function (messages: Message[]) {
+			return messages && messages.length > 0
+				? ButtonType.Negative
+				: ButtonType.Ghost;
+		},
+	});
+
+	button.bindProperty("enabled", {
+		path: "message>/",
+		formatter: function (messages: Message[]) {
+			return messages && messages.length > 0;
+		},
+	});
+
+	return button;
+}
 
 /**
  * Message Handler class for SAPUI5 application

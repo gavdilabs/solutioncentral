@@ -45,6 +45,7 @@ import { BreadcrumbsHandler } from "../lib/utils/breadcrumbsUtils";
 import FilterOperator from "sap/ui/model/FilterOperator";
 import Filter from "sap/ui/model/Filter";
 import Validator from "learnin/ui5/validator/Validator";
+import { ReviewTypes, ReviewUtils } from "../lib/utils/reviewUtils";
 
 export enum DraftSwitchIndex {
 	DRAFT = 0,
@@ -67,6 +68,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 	private messageHandler: MessagingUtils;
 	private i18nBundle: ResourceBundle;
 	private validator: Validator;
+	private reviewUtils: ReviewUtils;
 
 	private defaultSearchColumns: JSONModel | undefined;
 
@@ -161,6 +163,17 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 						);
 
 						this.filterVersionsTable();
+						const companyConfig =
+							await this.getOwnerComponent().getCompanyConfiguration();
+						this.reviewUtils = new ReviewUtils(
+							this.getView(),
+							ReviewTypes.SOLUTION_REVIEW,
+							this.i18nBundle,
+							this.messageHandler,
+							companyConfig,
+						);
+
+						await this.reviewUtils.initDialog();
 					},
 				},
 			});
@@ -679,5 +692,9 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 				}
 			},
 		});
+	}
+
+	public onReviewSolutionPress(): void {
+		this.reviewUtils.openDialog(this.getView().getBindingContext() as Context);
 	}
 }

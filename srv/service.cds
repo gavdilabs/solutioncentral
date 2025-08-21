@@ -16,22 +16,26 @@ service RadarService {
     action requestSunset(description : String, sunsetDate : DateTime);
     action approveSolution();
     action rejectSolution();
+    action submitReview(codeQuality : Integer, cleanCore : Integer, reasonNotCleanCore : String);
   }
 
   extend projection SoftwareSolution with {
     virtual null as isApprover : Boolean,
-    activeVersion              : Association to ActiveSolutionVersion on activeVersion.solution = $self
+    activeVersion              : Association to ActiveSolutionVersion on activeVersion.solution = $self,
   }
 
   entity SolutionVersion          as projection on core.SolutionVersion;
+  entity SolutionReview           as projection on core.SolutionReview;
 
   extend projection SolutionVersion with {
-    virtual null as isApprover : Boolean
+    virtual null as isApprover : Boolean,
+    latestReview               : Association to LatestVersionReview on latestReview.solutionVersion = $self
   }
 
   extend SolutionVersion with actions {
     action approveVersion();
     action rejectVersion();
+    action submitReview(codeQuality : Integer, cleanCore : Integer, reasonNotCleanCore : String);
   }
 
   entity SoftwareTeam             as projection on core.SoftwareTeam;
@@ -99,5 +103,16 @@ service RadarService {
               sv.solution.ID =      version.solution.ID
           and status.code    =      5
           and sv.releaseDate is not null
+      );
+
+  view LatestVersionReview as
+    select from SolutionReview as review
+    where
+          createdAt is not null
+      and createdAt =      (
+        select max(createdAt) from SolutionReview as sv
+        where
+              review.solutionVersion.ID          = sv.solutionVersion.ID
+          and review.solutionVersion.solution.ID = sv.solutionVersion.solution.ID
       );
 }

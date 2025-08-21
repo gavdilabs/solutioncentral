@@ -1,0 +1,70 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+	<Dialog
+		draggable="true"
+		contentWidth="50rem"
+		class="sapUiContentPadding">
+		<content>
+			<MessageStrip showIcon="true" visible="{reviewModel>/infoStripVisible}" showCloseButton="true"
+				text="{i18n>msg.reviewSolutionInfo}"
+				type="Information" class="sapUiSmallMarginBottom" />
+			<VBox width="100%" class="sapUiSmallMarginBottom">
+				<Toolbar width="100%">
+					<Title text="{i18n>title.codeQualityLevel}" />
+					<core:Icon src="sap-icon://information" color="Marker"
+						press=".openInfoPopover($event, 'msg.infoPOCodeQualityLevel')" />
+					<ToolbarSpacer />
+					<RatingIndicator editable="false" value="{reviewModel>/codeQualityLevel}" maxValue="5" />
+				</Toolbar>
+				<List
+					mode="MultiSelect"
+					selectionChange=".onListSelectionChange($event, '/codeQualityLevel')"
+					items="{
+						path: '/CodeQualityLevel',
+						sorter: {
+						 path: 'code',
+						descending: false
+						}
+					}">
+					<StandardListItem title="{code}. {descr}" />
+				</List>
+			</VBox>
+
+
+			<VBox width="100%">
+				<Toolbar width="100%">
+					<Title text="{i18n>title.cleanCoreLevel}" />
+					<core:Icon src="sap-icon://information" color="Marker"
+						press=".openInfoPopover($event, 'msg.infoPOCleanCoreLevel')" />
+					<ToolbarSpacer />
+					<RatingIndicator editable="false" value="{reviewModel>/cleanCoreLevel}" maxValue="5" />
+				</Toolbar>
+				<List
+					mode="MultiSelect"
+					selectionChange=".onListSelectionChange($event, '/cleanCoreLevel')"
+					items="{
+						path: '/CleanCoreLevel',
+						sorter: {
+						 path: 'code',
+						descending: false
+						}
+					}">
+					<StandardListItem title="{code}. {descr}" />
+				</List>
+				<VBox class="sapUiTinyMargin sapUiSmallMarginTop">
+					<HBox>
+						<Label required="{reviewModel>/reasonRequired}" text="{i18n>title.reasonNotCleanCore}" />
+						<core:Icon
+							src="sap-icon://information" color="Marker"
+							press=".openInfoPopover($event, 'msg.infoPOReasonNotCleanCore')"
+							class="sapUiTinyMarginBegin" />
+					</HBox>
+					<TextArea required="{reviewModel>/reasonRequired}" width="100%" rows="5"
+						value="{reviewModel>/reasonNotCleanCore}" />
+				</VBox>
+			</VBox>
+		</content>
+	</Dialog>
+</core:FragmentDefinition>
