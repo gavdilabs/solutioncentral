@@ -158,6 +158,15 @@ entity SoftwareSolution : cuid, managed {
                               dependentSoftwareSolution : Association to SoftwareSolution @mandatory;
                               softwareType              : Association to DependencyType   @mandatory;
                         };
+  hybridToLinks       : Association to many SolutionHybrid
+                          on hybridToLinks.solution = $self;
+  hybridFromLinks     : Association to many SolutionHybrid
+                          on hybridFromLinks.hybridSolution = $self;
+}
+
+entity SolutionHybrid {
+  key solution       : Association to SoftwareSolution;
+  key hybridSolution : Association to SoftwareSolution;
 }
 
 entity SolutionReview : cuid, managed {

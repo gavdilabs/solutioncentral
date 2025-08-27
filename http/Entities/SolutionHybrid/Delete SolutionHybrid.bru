@@ -1,0 +1,16 @@
+meta {
+  name: Delete SolutionHybrid
+  type: http
+  seq: 3
+}
+
+delete {
+  url: {{HOST}}/SolutionHybrid(solution_ID={{KEY}},hybridSolution_ID={{KEY2}})
+  body: none
+  auth: inherit
+}
+
+vars:pre-request {
+  KEY: 954ea007-d275-4a11-a5bf-d2398556a075
+  KEY2: ce429b97-5d31-4423-ae67-c0ec62dab62c
+}

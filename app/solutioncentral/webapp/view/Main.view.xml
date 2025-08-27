@@ -138,7 +138,8 @@
 				path: '/SoftwareSolution',
 				parameters: {
 					$count: true,
-					$select: 'HasDraftEntity,HasActiveEntity'
+					$select: 'HasDraftEntity,HasActiveEntity',
+					$expand: 'hybridToLinks'
 				},
 				suspended: true
 			}">
@@ -252,8 +253,17 @@
 					<ColumnListItem type="Navigation" vAlign="Middle" press=".onTableItemPress">
 						<cells>
 							<VBox justifyContent="Center" class="sapUiTinyMarginTopBottom">
-								<ObjectIdentifier title="{name}" visible="{= !${HasDraftEntity}}" />
-								<ObjectIdentifier title="{name}" visible="{HasDraftEntity}" />
+								<HBox alignItems="Center" justifyContent="SpaceBetween">
+									<HBox>
+										<ObjectIdentifier title="{name}" visible="{= !${HasDraftEntity}}" />
+										<ObjectIdentifier title="{name}" visible="{HasDraftEntity}" />
+									</HBox>
+									<GenericTag text="{i18n>label.hybrid}"
+										visible="{= ${path: 'hybridToLinks', targetType: 'any'}.length > 0}"
+										design="StatusIconHidden"
+										status="Warning"
+										class="sapUiSmallMarginBegin" />
+								</HBox>
 								<Link class="sapUiTinyMarginTop" text="Draft" visible="{HasDraftEntity}" />
 							</VBox>
 							<Text text="{platform/name}" />

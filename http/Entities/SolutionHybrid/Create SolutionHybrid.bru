@@ -1,0 +1,22 @@
+meta {
+  name: Create SolutionHybrid
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{HOST}}/SolutionHybrid
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "solution_ID": "954ea007-d275-4a11-a5bf-d2398556a075",
+    "hybridSolution_ID": "ce429b97-5d31-4423-ae67-c0ec62dab62c"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

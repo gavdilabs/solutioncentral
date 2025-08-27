@@ -1,6 +1,8 @@
 <mvc:View
+	xmlns:html="http://www.w3.org/1999/xhtml"
 	controllerName="com.gavdilabs.techtransmgt.solutioncentral.controller.softwareSolutionObjectPage"
 	xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.uxap"
+	xmlns:webc="@ui5/webcomponents/dist"
 	core:require="{
 		formatter: 'com/gavdilabs/techtransmgt/solutioncentral/model/formatter'
 	}">
@@ -57,40 +59,52 @@
 			</ObjectPageDynamicHeaderTitle>
 		</headerTitle>
 		<headerContent>
-			<m:FlexBox wrap="Wrap" fitContainer="true">
-				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
-					<m:Title text="{i18n>label.status}" class="sapUiSmallMarginBottom" />
-					<m:ObjectStatus text="{= ${solutionStatus_code} ? ${solutionStatus/descr} : '–'}"
-						state="{
+			<m:FlexBox wrap="Wrap" justifyContent="SpaceBetween" fitContainer="true">
+				<m:HBox>
+					<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+						<m:Title text="{i18n>label.status}" class="sapUiSmallMarginBottom" />
+						<m:ObjectStatus text="{= ${solutionStatus_code} ? ${solutionStatus/descr} : '–'}"
+							state="{
 								path: 'solutionStatus/criticalityLevel',
 								formatter: 'formatter.formatSoftwareStatus'
 							}"
-						icon="{
+							icon="{
 								path: 'solutionStatus/criticalityLevel',
 								formatter: 'formatter.formatSoftwareStatusIcon'
 							}"
-						class="sapMObjectStatusLarge" />
-				</m:VBox>
+							class="sapMObjectStatusLarge" />
+					</m:VBox>
 
-				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
-					<m:Title text="{i18n>label.platform}" class="sapUiSmallMarginBottom" />
-					<m:ObjectStatus text="{= ${platform_code} ? ${platform/name} : '–'}" state="None"
-						class="sapMObjectStatusLarge" />
-				</m:VBox>
+					<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+						<m:Title text="{i18n>label.platform}" class="sapUiSmallMarginBottom" />
+						<m:ObjectStatus text="{= ${platform_code} ? ${platform/name} : '–'}" state="None"
+							class="sapMObjectStatusLarge" />
+					</m:VBox>
 
-				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
-					<m:Title text="{i18n>label.businessCriticality}" class="sapUiSmallMarginBottom" />
-					<m:ObjectStatus
-						text="{= ${businessCriticality_code} ? ${businessCriticality/name} : '–'}"
-						icon="{
+					<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+						<m:Title text="{i18n>label.businessCriticality}" class="sapUiSmallMarginBottom" />
+						<m:ObjectStatus
+							text="{= ${businessCriticality_code} ? ${businessCriticality/name} : '–'}"
+							icon="{
 								path: 'businessCriticality/code',
 								formatter: 'formatter.formatBusinessCriticalityLevelIcon'
 							}"
-						state="{
+							state="{
 								path: 'businessCriticality/code',
 								formatter: 'formatter.formatBusinessCriticalityLevelState'
 							}"
-						class="sapMObjectStatusLarge" />
+							class="sapMObjectStatusLarge" />
+					</m:VBox>
+				</m:HBox>
+
+				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+					<m:Title class="sapUiSmallMarginBottom" />
+					<m:GenericTag text="{i18n>label.hybrid}"
+						visible="{= ${path: 'hybridToLinks', targetType: 'any'}.length > 0}"
+						design="StatusIconHidden"
+						status="Warning"
+						press=".onHybridTagPress"
+						class="sapUiSmallMarginBegin customTagZoom" />
 				</m:VBox>
 			</m:FlexBox>
 		</headerContent>
