@@ -106,6 +106,14 @@ entity DependencyType : sap.common.CodeList {
   key code : softwareDependencyType
 }
 
+entity BusinessCaseRating : sap.common.CodeList {
+  key code  : Integer @assert.range: [
+        1,
+        5
+      ];
+      descr : String;
+}
+
 // Entities
 entity User : managed {
   key username      : String;
@@ -151,6 +159,8 @@ entity SoftwareSolution : cuid, managed {
                           on versions.solution = $self;
   reasonNoCleanCore   : String;
   costCenter          : String;
+  businessCases       : Association to many SolutionBusinessCase
+                          on businessCases.solution = $self;
   owner               : Association to User          @mandatory  @assert.target;
   team                : Association to SoftwareTeam  @mandatory  @assert.target  @title: 'TESTING TITLE';
   Dependents          : Composition of many {
@@ -165,6 +175,13 @@ entity SolutionReview : cuid, managed {
   cleanCoreRating   : Association to CleanCoreLevel;
   codeQualityRating : Association to CodeQualityLevel;
   solutionVersion   : Association to SolutionVersion;
+}
+
+entity SolutionBusinessCase : cuid, managed {
+  key solution    : Association to SoftwareSolution;
+      title       : String;
+      description : LargeString;
+      rating      : Association to BusinessCaseRating;
 }
 
 @cds.search: {teamName}

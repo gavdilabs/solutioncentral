@@ -126,6 +126,21 @@
 				</subSections>
 			</ObjectPageSection>
 
+			<ObjectPageSection title="{i18n>title.businessCases}">
+				<subSections>
+					<ObjectPageSubSection title="{i18n>title.businessCases}">
+						<actions>
+							<m:Button text="{i18n>button.create}" press=".onCreateNewBusinessCase"
+								type="Transparent"
+								visible="{= !${IsActiveEntity}}" />
+						</actions>
+						<core:Fragment
+							fragmentName="com.gavdilabs.techtransmgt.solutioncentral.view.fragments.BusinessCasesInformation"
+							type="XML" />
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
 
 			<ObjectPageSection title="{i18n>title.versions}">
 				<subSections>

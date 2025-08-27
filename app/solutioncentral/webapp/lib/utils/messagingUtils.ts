@@ -342,7 +342,7 @@ export class MessagingUtils {
 	private getAdditionalTextForTableEntries(
 		controlId: string,
 	): string | undefined {
-		if (!this.view.byId(controlId).getId().includes("clone")) return undefined;
+		if (!this.view.byId(controlId)?.getId().includes("clone")) return undefined;
 
 		const customData = this.view.byId(controlId).getCustomData() as unknown[];
 		if (!customData) return undefined;

@@ -73,6 +73,9 @@
 					"autoExpandSelect": true,
 					"earlyRequests": true,
 					"groupProperties": {
+						"businessCaseGroup": {
+							"submit": "API"
+						},
 						"solutionVersionGroup": {
 							"submit": "API"
 						}

@@ -15,7 +15,10 @@ import Event from "sap/ui/base/Event";
 import Popover from "sap/m/Popover";
 import Fragment from "sap/ui/core/Fragment";
 import List from "sap/m/List";
-import { ListBase$SelectionChangeEvent } from "sap/m/ListBase";
+import {
+	ListBase$DeleteEvent,
+	ListBase$SelectionChangeEvent,
+} from "sap/m/ListBase";
 import StandardListItem from "sap/m/StandardListItem";
 import MessageBox from "sap/m/MessageBox";
 import { Link$PressEvent } from "sap/m/Link";
@@ -33,7 +36,10 @@ import { QuickSort$ChangeEvent } from "sap/m/table/columnmenu/QuickSort";
 import { QuickGroup$ChangeEvent } from "sap/m/table/columnmenu/QuickGroup";
 import { MessagingUtils } from "../lib/utils/messagingUtils";
 import { CustomControlType } from "../lib/types";
-import { ListItemBase$PressEvent } from "sap/m/ListItemBase";
+import {
+	ListItemBase$DetailPressEvent,
+	ListItemBase$PressEvent,
+} from "sap/m/ListItemBase";
 import Breadcrumbs from "sap/m/Breadcrumbs";
 import ResourceBundle from "sap/base/i18n/ResourceBundle";
 import { SearchField$SearchEvent } from "sap/m/SearchField";
@@ -46,10 +52,19 @@ import FilterOperator from "sap/ui/model/FilterOperator";
 import Filter from "sap/ui/model/Filter";
 import Validator from "learnin/ui5/validator/Validator";
 import { ReviewTypes, ReviewUtils } from "../lib/utils/reviewUtils";
+import Dialog from "sap/m/Dialog";
+import GridList from "sap/f/GridList";
 
 export enum DraftSwitchIndex {
 	DRAFT = 0,
 	SAVED = 1,
+}
+
+export interface BusinessCase {
+	solution_ID: string;
+	title: string;
+	description: string;
+	rating_code: number;
 }
 
 /**
@@ -69,6 +84,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 	private i18nBundle: ResourceBundle;
 	private validator: Validator;
 	private reviewUtils: ReviewUtils;
+	private businessCaseDialog: Dialog;
 
 	private defaultSearchColumns: JSONModel | undefined;
 
@@ -163,6 +179,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 						);
 
 						this.filterVersionsTable();
+						this.filterBusinessCasesList();
 						const companyConfig =
 							await this.getOwnerComponent().getCompanyConfiguration();
 						this.reviewUtils = new ReviewUtils(
@@ -178,6 +195,22 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 				},
 			});
 		}
+	}
+
+	private filterBusinessCasesList() {
+		const list = this.getView().byId("idBusinessCasesList") as GridList;
+		const binding = list.getBinding("items") as ODataListBinding;
+
+		const filter = new Filter(
+			"solution_ID",
+			FilterOperator.EQ,
+			this.getView().getBindingContext().getProperty("ID"),
+		);
+
+		binding.filter(filter);
+		if (binding.isSuspended()) {
+			binding.resume();
+		} else binding.refresh();
 	}
 
 	private filterVersionsTable() {
@@ -313,6 +346,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 		const softwareSolutionId = context.getProperty("ID") as string;
 		const model = this.getView().getModel() as ODataModel;
 		model.resetChanges("solutionVersionGroup");
+		model.resetChanges("businessCaseGroup");
 		discardDraft(context)
 			.then((hasActiveEntity: boolean) => {
 				MessageToast.show(this.i18nBundle.getText("default.draftDiscarded"), {
@@ -390,6 +424,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 
 		draftActivate(context, model)
 			.then(async () => {
+				await model.submitBatch("businessCaseGroup");
 				await model.submitBatch("solutionVersionGroup");
 				MessageToast.show(this.i18nBundle.getText("default.objectSaved"), {
 					closeOnBrowserNavigation: false,
@@ -696,5 +731,102 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 
 	public onReviewSolutionPress(): void {
 		this.reviewUtils.openDialog(this.getView().getBindingContext() as Context);
+	}
+
+	private async createBusinessCaseDialog(context: Context): Promise<void> {
+		if (!this.businessCaseDialog) {
+			this.businessCaseDialog = (await Fragment.load({
+				id: "BusinessCaseDialog",
+				name: "com.gavdilabs.techtransmgt.solutioncentral.view.fragments.BusinessCaseDialog",
+				controller: this,
+			})) as Dialog;
+
+			this.businessCaseDialog.setBindingContext(context);
+			this.getView().addDependent(this.businessCaseDialog);
+		}
+	}
+
+	public async onBusinessCaseEdit(event: ListItemBase$DetailPressEvent) {
+		const context = event.getSource().getBindingContext() as Context;
+		if (!this.businessCaseDialog) {
+			await this.createBusinessCaseDialog(context);
+		} else {
+			this.businessCaseDialog.setBindingContext(context);
+		}
+
+		this.businessCaseDialog.open();
+	}
+
+	public async onCreateNewBusinessCase(event: ListItemBase$DetailPressEvent) {
+		const businessCaseList = this.getView().byId(
+			"idBusinessCasesList",
+		) as GridList;
+		const binding = businessCaseList.getBinding("items") as ODataListBinding;
+		const context = binding.create({
+			solution_ID: this.getView()
+				.getBindingContext()
+				.getProperty("ID") as string,
+		} as BusinessCase) as Context;
+
+		context.created().catch((e) => {
+			if (!(e as Record<string, unknown>).canceled) {
+				throw e;
+			}
+		});
+
+		if (!this.businessCaseDialog) {
+			await this.createBusinessCaseDialog(context);
+		} else {
+			this.businessCaseDialog.setBindingContext(context);
+		}
+
+		this.businessCaseDialog.open();
+	}
+
+	public async onDeleteBusinessCase(
+		event: ListBase$DeleteEvent,
+	): Promise<void> {
+		const context = event
+			.getParameter("listItem")
+			.getBindingContext() as Context;
+		await context.delete("businessCaseGroup").catch((e) => {
+			if (!(e as Record<string, unknown>).canceled) {
+				throw e;
+			}
+		});
+	}
+
+	public async handleBusinessCaseCancel(): Promise<void> {
+		const context = this.businessCaseDialog.getBindingContext() as Context;
+		if (context.isTransient()) {
+			await context.delete("auto");
+		}
+
+		this.businessCaseDialog.close();
+	}
+
+	public async handleBusinessCaseConfirm(): Promise<void> {
+		const context = this.businessCaseDialog.getBindingContext() as Context;
+		this.messageHandler.clearAllMessages();
+		this.validator.removeErrors(this.getView());
+		this.getOwnerComponent().removeAllTechnicalMessages();
+
+		if (
+			!this.validator.validate(this.businessCaseDialog, {
+				isDoConstraintsValidation: true,
+			}) ||
+			this.getOwnerComponent().hasErrorMessages()
+		) {
+			this.messageHandler.removeDuplicateMessagesByTarget();
+			this.messageHandler.handleMessageViewOpen(
+				Fragment.byId(
+					"BusinessCaseDialog",
+					"businessCaseDialogMsgBtn",
+				) as Button,
+			);
+			return;
+		} else {
+			this.businessCaseDialog.close();
+		}
 	}
 }
