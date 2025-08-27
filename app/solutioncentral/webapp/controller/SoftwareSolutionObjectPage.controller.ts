@@ -800,6 +800,8 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 		const context = this.businessCaseDialog.getBindingContext() as Context;
 		if (context.isTransient()) {
 			await context.delete("auto");
+		} else {
+			await context.resetChanges();
 		}
 
 		this.businessCaseDialog.close();
