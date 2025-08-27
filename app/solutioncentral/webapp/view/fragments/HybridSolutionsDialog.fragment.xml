@@ -1,0 +1,49 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:tnt="sap.tnt"
+	core:require="{
+	formatter: 'com/gavdilabs/techtransmgt/solutioncentral/model/formatter'
+	}"
+	xmlns:core="sap.ui.core">
+	<Dialog
+		id="hybridSolutionsPopover"
+		contentWidth="35rem"
+		title="{i18n>title.hybridSolutions}"
+	>
+		<List
+			class="sapUiTinyMarginTop"
+			mode="None"
+			id="idHybridSolutionsList"
+			noDataText="{i18n>text.noSoftware}"
+			items="{hybridToLinks}">
+			<CustomListItem type="Navigation" press=".onNavToHybridSolution">
+				<HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiSmallMargin">
+					<VBox>
+						<Title text="{hybridSolution/name}" class="sapUiTinyMarginBottom" />
+						<Label text="{hybridSolution/description}" />
+					</VBox>
+					<ObjectStatus text="{hybridSolution/solutionStatus/descr}"
+						state="{
+			 path: 'hybridSolution/solutionStatus/criticalityLevel',
+								formatter: 'formatter.formatSoftwareStatus'
+							}"
+						icon="{
+			 path: 'hybridSolution/solutionStatus/criticalityLevel',
+								formatter: 'formatter.formatSoftwareStatusIcon'
+							}"
+						inverted="true" />
+				</HBox>
+			</CustomListItem>
+		</List>
+		<footer>
+			<OverflowToolbar>
+				<ToolbarSpacer />
+				<!-- <Button visible="{= !${IsActiveEntity}}" text="{i18n>button.addSolution}" -->
+				<!-- 	icon="sap-icon://add" -->
+				<!-- 	press=".onAddHybridSoftwareSolution" type="Emphasized" /> -->
+				<Button text="{i18n>button.close}" type="Ghost" press=".onCloseHybridSolutions" />
+			</OverflowToolbar>
+		</footer>
+	</Dialog>
+</core:FragmentDefinition>
+

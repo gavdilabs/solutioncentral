@@ -14,6 +14,7 @@ import TechnologyReplacementHandler from "./api/entities/TechnologyReplacementHa
 import UserHandler from "./api/entities/UserHandler";
 import EventHandler from "./api/events";
 import SolutionVersionHandler from "./api/entities/SolutionVersionHandler";
+import SolutionHybridHandler from "./api/entities/SolutionHybridHandler";
 
 export default new CDSDispatcher([
   // Entities
@@ -29,6 +30,7 @@ export default new CDSDispatcher([
   TechnologyHandler,
   TechnologyReplacementHandler,
   UserHandler,
+  SolutionHybridHandler,
   // Actions / Functions
   ActionImportHandler,
   FunctionImportHandler,
