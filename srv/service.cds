@@ -27,6 +27,7 @@ service RadarService {
 
   entity SolutionVersion          as projection on core.SolutionVersion;
   entity SolutionReview           as projection on core.SolutionReview;
+  entity SolutionBusinessCase     as projection on core.SolutionBusinessCase;
 
   extend projection SolutionVersion with {
     virtual null as isApprover : Boolean,
@@ -77,6 +78,9 @@ service RadarService {
 
   @readonly
   entity BusinessCriticalityLevel as projection on core.BusinessCriticalityLevel;
+
+  @readonly
+  entity BusinessCaseRating       as projection on core.BusinessCaseRating;
 
   @readonly
   entity DependencyTypes          as projection on core.DependencyType;

@@ -16,6 +16,7 @@ import Popover from "sap/m/Popover";
 import Fragment from "sap/ui/core/Fragment";
 import List from "sap/m/List";
 import {
+	ListBase$DeleteEvent,
 	ListBase$ItemPressEvent,
 	ListBase$ItemPressEventParameters,
 	ListBase$SelectionChangeEvent,
@@ -37,7 +38,10 @@ import { QuickSort$ChangeEvent } from "sap/m/table/columnmenu/QuickSort";
 import { QuickGroup$ChangeEvent } from "sap/m/table/columnmenu/QuickGroup";
 import { MessagingUtils } from "../lib/utils/messagingUtils";
 import { CustomControlType } from "../lib/types";
-import { ListItemBase$PressEvent } from "sap/m/ListItemBase";
+import {
+	ListItemBase$DetailPressEvent,
+	ListItemBase$PressEvent,
+} from "sap/m/ListItemBase";
 import Breadcrumbs from "sap/m/Breadcrumbs";
 import ResourceBundle from "sap/base/i18n/ResourceBundle";
 import { SearchField$SearchEvent } from "sap/m/SearchField";
@@ -50,17 +54,22 @@ import FilterOperator from "sap/ui/model/FilterOperator";
 import Filter from "sap/ui/model/Filter";
 import Validator from "learnin/ui5/validator/Validator";
 import { ReviewTypes, ReviewUtils } from "../lib/utils/reviewUtils";
-import { GenericTag$PressEvent } from "sap/m/GenericTag";
 import Dialog from "sap/m/Dialog";
-import Sorter from "sap/ui/model/Sorter";
+import GridList from "sap/f/GridList";
 import SelectDialog from "sap/m/SelectDialog";
-import MultiComboBox, {
-	MultiComboBox$SelectionChangeEvent,
-} from "sap/m/MultiComboBox";
+import Sorter from "sap/ui/model/Sorter";
+import MultiComboBox, { MultiComboBox$SelectionChangeEvent } from "sap/m/MultiComboBox";
 
 export enum DraftSwitchIndex {
 	DRAFT = 0,
 	SAVED = 1,
+}
+
+export interface BusinessCase {
+	solution_ID: string;
+	title: string;
+	description: string;
+	rating_code: number;
 }
 
 export interface SolutionHybrid {
@@ -85,6 +94,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 	private i18nBundle: ResourceBundle;
 	private validator: Validator;
 	private reviewUtils: ReviewUtils;
+	private businessCaseDialog: Dialog;
 	private _hybridSolutionsDialog: Dialog;
 	private _addHybridSolDialog: SelectDialog;
 
@@ -185,6 +195,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 						);
 
 						this.filterVersionsTable();
+						this.filterBusinessCasesList();
 						const companyConfig =
 							await this.getOwnerComponent().getCompanyConfiguration();
 						this.reviewUtils = new ReviewUtils(
@@ -201,6 +212,22 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 				},
 			});
 		}
+	}
+
+	private filterBusinessCasesList() {
+		const list = this.getView().byId("idBusinessCasesList") as GridList;
+		const binding = list.getBinding("items") as ODataListBinding;
+
+		const filter = new Filter(
+			"solution_ID",
+			FilterOperator.EQ,
+			this.getView().getBindingContext().getProperty("ID"),
+		);
+
+		binding.filter(filter);
+		if (binding.isSuspended()) {
+			binding.resume();
+		} else binding.refresh();
 	}
 
 	private filterVersionsTable() {
@@ -336,6 +363,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 		const softwareSolutionId = context.getProperty("ID") as string;
 		const model = this.getView().getModel() as ODataModel;
 		model.resetChanges("solutionVersionGroup");
+		model.resetChanges("businessCaseGroup");
 		model.resetChanges("solutionHybridGroup");
 		discardDraft(context)
 			.then((hasActiveEntity: boolean) => {
@@ -414,6 +442,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 
 		draftActivate(context, model)
 			.then(async () => {
+				await model.submitBatch("businessCaseGroup");
 				await model.submitBatch("solutionVersionGroup");
 				await model.submitBatch("solutionHybridGroup");
 				MessageToast.show(this.i18nBundle.getText("default.objectSaved"), {
@@ -721,6 +750,104 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 
 	public onReviewSolutionPress(): void {
 		this.reviewUtils.openDialog(this.getView().getBindingContext() as Context);
+	}
+
+	private async createBusinessCaseDialog(context: Context): Promise<void> {
+		if (!this.businessCaseDialog) {
+			this.businessCaseDialog = (await Fragment.load({
+				id: "BusinessCaseDialog",
+				name: "com.gavdilabs.techtransmgt.solutioncentral.view.fragments.BusinessCaseDialog",
+				controller: this,
+			})) as Dialog;
+
+			this.businessCaseDialog.setBindingContext(context);
+			this.getView().addDependent(this.businessCaseDialog);
+		}
+	}
+
+	public async onBusinessCaseEdit(event: ListItemBase$DetailPressEvent) {
+		const context = event.getSource().getBindingContext() as Context;
+		if (!this.businessCaseDialog) {
+			await this.createBusinessCaseDialog(context);
+		} else {
+			this.businessCaseDialog.setBindingContext(context);
+		}
+
+		this.businessCaseDialog.open();
+	}
+
+	public async onCreateNewBusinessCase(event: ListItemBase$DetailPressEvent) {
+		const businessCaseList = this.getView().byId(
+			"idBusinessCasesList",
+		) as GridList;
+		const binding = businessCaseList.getBinding("items") as ODataListBinding;
+		const context = binding.create({
+			solution_ID: this.getView()
+				.getBindingContext()
+				.getProperty("ID") as string,
+		} as BusinessCase) as Context;
+
+		context.created().catch((e) => {
+			if (!(e as Record<string, unknown>).canceled) {
+				throw e;
+			}
+		});
+
+		if (!this.businessCaseDialog) {
+			await this.createBusinessCaseDialog(context);
+		} else {
+			this.businessCaseDialog.setBindingContext(context);
+		}
+
+		this.businessCaseDialog.open();
+	}
+
+	public async onDeleteBusinessCase(
+		event: ListBase$DeleteEvent,
+	): Promise<void> {
+		const context = event
+			.getParameter("listItem")
+			.getBindingContext() as Context;
+		await context.delete("businessCaseGroup").catch((e) => {
+			if (!(e as Record<string, unknown>).canceled) {
+				throw e;
+			}
+		});
+	}
+
+	public async handleBusinessCaseCancel(): Promise<void> {
+		const context = this.businessCaseDialog.getBindingContext() as Context;
+		if (context.isTransient()) {
+			await context.delete("auto");
+		} else {
+			await context.resetChanges();
+		}
+
+		this.businessCaseDialog.close();
+	}
+
+	public handleBusinessCaseConfirm(): Promise<void> {
+		this.messageHandler.clearAllMessages();
+		this.validator.removeErrors(this.getView());
+		this.getOwnerComponent().removeAllTechnicalMessages();
+
+		if (
+			!this.validator.validate(this.businessCaseDialog, {
+				isDoConstraintsValidation: true,
+			}) ||
+			this.getOwnerComponent().hasErrorMessages()
+		) {
+			this.messageHandler.removeDuplicateMessagesByTarget();
+			this.messageHandler.handleMessageViewOpen(
+				Fragment.byId(
+					"BusinessCaseDialog",
+					"businessCaseDialogMsgBtn",
+				) as Button,
+			);
+			return;
+		} else {
+			this.businessCaseDialog.close();
+		}
 	}
 
 	public async onHybridTagPress(event: GenericTag$PressEvent): Promise<void> {

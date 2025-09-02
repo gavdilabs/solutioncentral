@@ -1,0 +1,38 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:forms="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+
+	<Dialog id="BusinessCaseDialog"
+		draggable="true"
+		contentWidth="30rem"
+		class="sapUiContentPadding"
+		title="{i18n>title.businessCase}">
+		<content>
+			<forms:SimpleForm>
+				<Label required="true" text="{i18n>label.title}" />
+				<Input id="businessCaseTitleInput" value="{title}" required="true" />
+
+				<Label required="true" text="{i18n>label.description}" />
+				<TextArea id="businessCaseDescrInput" required="true" width="100%" rows="8"
+					value="{description}" />
+
+				<Label text="{i18n>label.businessCaseRating}" />
+				<RatingIndicator value="{rating_code}" maxValue="5" />
+
+			</forms:SimpleForm>
+		</content>
+		<footer>
+			<OverflowToolbar>
+				<Button id="businessCaseDialogMsgBtn" press=".openMessageView"
+					text="{= ${message>/}.length}"
+					icon="{= ${message>/}.length > 0 ? 'sap-icon://error' : 'sap-icon://sys-enter-2'}"
+					type="{= ${message>/}.length > 0 ? 'Negative' : 'Ghost'}"
+					enabled="{= ${message>/}.length > 0}" />
+				<ToolbarSpacer />
+				<Button text="{i18n>button.confirm}" type="Emphasized" press=".handleBusinessCaseConfirm" />
+				<Button text="{i18n>button.cancel}" type="Transparent" press=".handleBusinessCaseCancel" />
+			</OverflowToolbar>
+		</footer>
+	</Dialog>
+</core:FragmentDefinition>

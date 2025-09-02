@@ -1,0 +1,34 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:f="sap.f"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:core="sap.ui.core">
+
+	<f:GridList id="idBusinessCasesList"
+		items="{path: '/SolutionBusinessCase', suspended: true, parameters: {$$updateGroupId: 'businessCaseGroup'}}"
+		mode="{= ${appConfig>/softwareSolutionEditMode} ? 'Delete' : 'None'}"
+		delete=".onDeleteBusinessCase"
+		class="sapUiResponsiveContentPadding">
+		<f:customLayout>
+			<grid:GridBasicLayout
+				gridTemplateColumns="repeat(auto-fit, minmax(20rem, 20rem))"
+				gridGap="1rem" />
+		</f:customLayout>
+		<f:GridListItem
+			detailPress="onBusinessCaseEdit"
+			type="{= ${appConfig>/softwareSolutionEditMode} ? 'Detail' : 'Inactive'}">
+			<VBox>
+				<Title text="{title}" class="sapUiSmallMargin" />
+				<VBox class="sapUiSmallMarginBottom sapUiSmallMarginBeginEnd">
+					<Label text="{i18n>label.description}:" />
+					<ExpandableText class="sapUiTinyMarginBottom" text="{description}"
+						overflowMode="InPlace" />
+					<HBox justifyContent="Begin" alignItems="Center">
+						<Label text="Provided value:" class="sapUiSmallMarginEnd" />
+						<RatingIndicator editable="false" iconSize="18px" maxValue="5" value="{rating_code}" />
+					</HBox>
+				</VBox>
+			</VBox>
+		</f:GridListItem>
+	</f:GridList>
+</core:FragmentDefinition>
