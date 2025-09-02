@@ -17,6 +17,8 @@ import Fragment from "sap/ui/core/Fragment";
 import List from "sap/m/List";
 import {
 	ListBase$DeleteEvent,
+	ListBase$ItemPressEvent,
+	ListBase$ItemPressEventParameters,
 	ListBase$SelectionChangeEvent,
 } from "sap/m/ListBase";
 import StandardListItem from "sap/m/StandardListItem";
@@ -54,6 +56,9 @@ import Validator from "learnin/ui5/validator/Validator";
 import { ReviewTypes, ReviewUtils } from "../lib/utils/reviewUtils";
 import Dialog from "sap/m/Dialog";
 import GridList from "sap/f/GridList";
+import SelectDialog from "sap/m/SelectDialog";
+import Sorter from "sap/ui/model/Sorter";
+import MultiComboBox, { MultiComboBox$SelectionChangeEvent } from "sap/m/MultiComboBox";
 
 export enum DraftSwitchIndex {
 	DRAFT = 0,
@@ -65,6 +70,11 @@ export interface BusinessCase {
 	title: string;
 	description: string;
 	rating_code: number;
+}
+
+export interface SolutionHybrid {
+	solution_ID: string;
+	hybridSolution_ID: string;
 }
 
 /**
@@ -85,8 +95,12 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 	private validator: Validator;
 	private reviewUtils: ReviewUtils;
 	private businessCaseDialog: Dialog;
+	private _hybridSolutionsDialog: Dialog;
+	private _addHybridSolDialog: SelectDialog;
 
 	private defaultSearchColumns: JSONModel | undefined;
+	private initialSolutionHybrids: SolutionHybrid[];
+	private hybridSolutions: Context[];
 
 	private readonly personalizationInstances = new Map<
 		string,
@@ -141,8 +155,10 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 			this.getView().bindElement({
 				path: `/SoftwareSolution(${key})`,
 				parameters: {
-					$select: "HasActiveEntity,HasDraftEntity",
-					$expand: "solutionStatus,versions,activeVersion,Dependents",
+					$select:
+						"HasActiveEntity,HasDraftEntity,hybridToLinks/hybridSolution_ID",
+					$expand:
+						"solutionStatus,versions,activeVersion,Dependents,hybridToLinks,hybridFromLinks",
 				},
 				events: {
 					dataReceived: async () => {
@@ -190,6 +206,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 							companyConfig,
 						);
 
+						await this.loadSelectedHybridSolutions();
 						await this.reviewUtils.initDialog();
 					},
 				},
@@ -347,6 +364,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 		const model = this.getView().getModel() as ODataModel;
 		model.resetChanges("solutionVersionGroup");
 		model.resetChanges("businessCaseGroup");
+		model.resetChanges("solutionHybridGroup");
 		discardDraft(context)
 			.then((hasActiveEntity: boolean) => {
 				MessageToast.show(this.i18nBundle.getText("default.draftDiscarded"), {
@@ -426,6 +444,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 			.then(async () => {
 				await model.submitBatch("businessCaseGroup");
 				await model.submitBatch("solutionVersionGroup");
+				await model.submitBatch("solutionHybridGroup");
 				MessageToast.show(this.i18nBundle.getText("default.objectSaved"), {
 					closeOnBrowserNavigation: false,
 				});
@@ -807,8 +826,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 		this.businessCaseDialog.close();
 	}
 
-	public async handleBusinessCaseConfirm(): Promise<void> {
-		const context = this.businessCaseDialog.getBindingContext() as Context;
+	public handleBusinessCaseConfirm(): Promise<void> {
 		this.messageHandler.clearAllMessages();
 		this.validator.removeErrors(this.getView());
 		this.getOwnerComponent().removeAllTechnicalMessages();
@@ -829,6 +847,173 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 			return;
 		} else {
 			this.businessCaseDialog.close();
+		}
+	}
+
+	public async onHybridTagPress(event: GenericTag$PressEvent): Promise<void> {
+		const tag = event.getSource();
+		const context = this.getView().getBindingContext();
+
+		if (!this._hybridSolutionsDialog) {
+			this._hybridSolutionsDialog ??= (await Fragment.load({
+				id: "HybridSolutionsDialog",
+				name: "com.gavdilabs.techtransmgt.solutioncentral.view.fragments.HybridSolutionsDialog",
+				controller: this,
+			})) as Dialog;
+			this.getView().addDependent(this._hybridSolutionsDialog);
+			this._hybridSolutionsDialog.addStyleClass(
+				this.getOwnerComponent().getContentDensityClass(),
+			);
+		}
+
+		this._hybridSolutionsDialog.setBindingContext(context);
+		this._hybridSolutionsDialog.open();
+	}
+
+	public onCloseHybridSolutions(): void {
+		this._hybridSolutionsDialog.close();
+	}
+
+	public onNavToHybridSolution(event: ListItemBase$PressEvent): void {
+		const context = event.getSource().getBindingContext();
+		const softwareSolutionId = context.getProperty(
+			"hybridSolution_ID",
+		) as string;
+
+		const currentViewKey = this.breadCrumbHandler.getKeyFromContextPath(
+			this.getView().getBindingContext().getPath(),
+		);
+
+		this.breadCrumbHandler.createObjectPageLink(
+			this.getView().getBindingContext().getProperty("name") as string,
+			currentViewKey,
+		);
+		this._hybridSolutionsDialog.close();
+
+		this.getRouter().navTo(PageKeys.SOFTWARE_SOLUTION_OBJECT_PAGE, {
+			key: `ID=${softwareSolutionId},IsActiveEntity=true`,
+		});
+	}
+
+	public async onAddHybridSoftwareSolution() {
+		const filters: Filter[] = [];
+		const softwareSolutionId = this.getView()
+			.getBindingContext()
+			.getProperty("ID") as string;
+		filters.push(new Filter("ID", FilterOperator.NE, softwareSolutionId));
+
+		if (!this._addHybridSolDialog) {
+			this._addHybridSolDialog ??= (await Fragment.load({
+				id: "AddHybridSolutionDialog",
+				name: "com.gavdilabs.techtransmgt.solutioncentral.view.fragments.AddHybridSolutionDialog",
+				controller: this,
+			})) as SelectDialog;
+			this.getView().addDependent(this._addHybridSolDialog);
+			this._addHybridSolDialog.addStyleClass(
+				this.getOwnerComponent().getContentDensityClass(),
+			);
+		}
+		const selectDialog = Fragment.byId(
+			"AddHybridSolutionDialog",
+			"SoftwareSelect",
+		) as SelectDialog;
+		const listBinding = selectDialog.getBinding("items") as ODataListBinding;
+		const sorter: Sorter[] = [];
+		sorter.push(new Sorter({ path: "name", descending: false, group: false }));
+		listBinding.filter(filters);
+		listBinding.sort(sorter);
+		this._addHybridSolDialog.open("");
+	}
+
+	public onAddHybridSolutionConfirm(event: ListBase$ItemPressEvent) {
+		const context = event
+			.getParameter("selectedItem" as keyof ListBase$ItemPressEventParameters)
+			.getBindingContext();
+		const hybridSolutionList = Fragment.byId(
+			"HybridSolutionsDialog",
+			"idHybridSolutionsList",
+		) as List;
+		const binding = hybridSolutionList.getBinding("items") as ODataListBinding;
+		const newContext = binding.create({
+			IsActiveEntity: false,
+			up__ID: this.getView().getBindingContext().getProperty("ID") as string,
+			softwareSolution_ID: context.getProperty("ID") as string,
+		});
+
+		newContext.created().catch((e) => {
+			if (!(e as Record<string, unknown>).canceled) {
+				throw e;
+			}
+		});
+	}
+
+	private async getSelectedHybridSolutions(
+		solutionId: string,
+	): Promise<string[]> {
+		const hybridSolutionKeys: string[] = [];
+		const model = this.getView().getModel() as ODataModel;
+		const aFilters: Filter[] = [];
+		aFilters.push(new Filter("solution_ID", FilterOperator.EQ, solutionId));
+
+		const list = model.bindList("/SolutionHybrid", null, null, aFilters, {
+			$$updateGroupId: "solutionHybridGroup",
+		});
+		this.hybridSolutions = await list.requestContexts();
+		this.hybridSolutions.forEach((context) => {
+			hybridSolutionKeys.push(
+				context.getProperty("hybridSolution_ID") as string,
+			);
+		});
+
+		return hybridSolutionKeys;
+	}
+
+	private async loadSelectedHybridSolutions(): Promise<void> {
+		const multiBox = this.getView().byId(
+			"hybridSolutionsSelectionBox",
+		) as MultiComboBox;
+		const sourceId = this.getView()
+			.getBindingContext()
+			.getProperty("ID") as string;
+		const selectedKeys = await this.getSelectedHybridSolutions(sourceId);
+		const filter = new Filter("ID", FilterOperator.NE, sourceId);
+		(multiBox.getBinding("items") as ODataListBinding).filter(filter);
+		multiBox.setSelectedKeys(selectedKeys);
+	}
+
+	public async handleHybridSolutionsSelectionChange(
+		event: MultiComboBox$SelectionChangeEvent,
+	): Promise<void> {
+		const item = event.getParameter("changedItem");
+		const selected = event.getParameter("selected");
+		const target = item.getBindingContext().getProperty("ID") as string;
+		const sourceId = this.getView()
+			.getBindingContext()
+			.getProperty("ID") as string;
+
+		if (!selected) {
+			for (const context of this.hybridSolutions) {
+				if (target === context.getProperty("hybridSolution_ID")) {
+					await context.delete("solutionHybridGroup");
+				}
+			}
+		} else {
+			const model = this.getView().getModel() as ODataModel;
+			const binding = model.bindList("/SolutionHybrid", null, null, null, {
+				$$updateGroupId: "solutionHybridGroup",
+			});
+			const context = binding.create({
+				solution_ID: sourceId,
+				hybridSolution_ID: target,
+			} as SolutionHybrid);
+
+			context.created().catch((e) => {
+				if (!(e as Record<string, unknown>).canceled) {
+					throw e;
+				}
+			});
+
+			this.hybridSolutions.push(context);
 		}
 	}
 }

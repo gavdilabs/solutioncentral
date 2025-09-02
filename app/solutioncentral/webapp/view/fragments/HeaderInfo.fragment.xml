@@ -33,5 +33,13 @@
 			items="{/BusinessCriticalityLevel}">
 			<core:ListItem key="{code}" text="{name}" />
 		</Select>
+
+		<Label text="{i18n>title.hybridSolutions}" />
+		<MultiComboBox
+			id="hybridSolutionsSelectionBox"
+			selectionChange=".handleHybridSolutionsSelectionChange"
+			items="{/SoftwareSolution}">
+			<core:Item key="{ID}" text="{name}" />
+		</MultiComboBox>
 	</forms:SimpleForm>
 </core:FragmentDefinition>

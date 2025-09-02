@@ -78,6 +78,9 @@
 						},
 						"solutionVersionGroup": {
 							"submit": "API"
+						},
+						"solutionHybridGroup": {
+							"submit": "API"
 						}
 					}
 				}
