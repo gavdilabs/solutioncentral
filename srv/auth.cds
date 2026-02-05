@@ -368,3 +368,28 @@ annotate RadarService.ActiveSolutionVersion with @(restrict: [{
     'Admin'
   ]
 }]);
+
+annotate RadarService.Tags with @(restrict: [
+  {
+    grant: ['READ'],
+    to   : [
+      'View',
+      'Developer',
+      'Reviewer',
+      'Maintainer',
+      'Approver',
+      'Admin'
+    ]
+  },
+  {
+    grant: [
+      'CREATE',
+      'UPDATE',
+      'DELETE'
+    ],
+    to   : [
+      'Maintainer',
+      'Admin'
+    ]
+  }
+]);

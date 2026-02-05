@@ -32,6 +32,13 @@ type deploymentTypes        : String enum {
   Cloud
 }
 
+type tagTypes               : String enum {
+  Solution;
+  BusinessCase;
+  Version;
+  Review;
+}
+
 // CodeLists
 entity SoftwareStatus : sap.common.CodeList {
   key code             : Integer @assert.range: [
@@ -114,6 +121,12 @@ entity BusinessCaseRating : sap.common.CodeList {
       descr : String;
 }
 
+entity Tag : sap.common.CodeList {
+  key code  : String;
+      descr : String;
+      type  : tagTypes;
+}
+
 // Entities
 entity User : managed {
   key username      : String;
@@ -133,7 +146,7 @@ entity User : managed {
 entity SolutionVersion : cuid, managed {
   key solution     : Association to SoftwareSolution;
       status       : Association to SoftwareStatus  @mandatory  @assert.target;
-      version      : String(100) @mandatory;
+      version      : String(100)                    @mandatory;
       releaseNotes : LargeString;
       releaseDate  : Date default null;
       sapVersion   : Association to SAPVersion;
@@ -145,7 +158,7 @@ entity SolutionVersion : cuid, managed {
 
 @cds.search: {name}
 entity SoftwareSolution : cuid, managed {
-  name                : String @mandatory;
+  name                : String                       @mandatory;
   description         : String;
   solutionStatus      : Association to SoftwareStatus;
   platform            : Association to Platform;
@@ -172,11 +185,18 @@ entity SoftwareSolution : cuid, managed {
                           on hybridToLinks.solution = $self;
   hybridFromLinks     : Association to many SolutionHybrid
                           on hybridFromLinks.hybridSolution = $self;
+  solutionTags        : Association to many SolutionTags
+                          on solutionTags.solution = $self;
 }
 
 entity SolutionHybrid {
   key solution       : Association to SoftwareSolution;
   key hybridSolution : Association to SoftwareSolution;
+}
+
+entity SolutionTags {
+  key solution : Association to SoftwareSolution;
+  key tag      : Association to Tag;
 }
 
 entity SolutionReview : cuid, managed {
