@@ -7,6 +7,8 @@ import Messaging from "sap/ui/core/Messaging";
 import Message from "sap/ui/core/message/Message";
 import MessageType from "sap/ui/core/message/MessageType";
 import MessageModel from "sap/ui/model/message/MessageModel";
+import ODataContextBinding from "sap/ui/model/odata/v4/ODataContextBinding";
+import JSONModel from "sap/ui/model/json/JSONModel";
 
 /**
  * @namespace com.gavdilabs.techtransmgt.solutioncentral
@@ -34,6 +36,7 @@ export default class Component extends UIComponent {
 
 		// create the views based on the url/hash
 		this.getRouter().initialize();
+		this.loadLoggedUsed();
 	}
 
 	/**
@@ -88,5 +91,23 @@ export default class Component extends UIComponent {
 			Messaging.getMessageModel().getProperty("/") as Message[]
 		).filter((message) => message.getTechnical());
 		Messaging.removeMessages(aTechnicalMessages);
+	}
+
+	public async loadLoggedUsed() {
+		let activeUserCtx = this.getModel().bindContext(
+			"/getActiveUser(...)",
+		) as ODataContextBinding;
+		await activeUserCtx.invoke().then(
+			async () => {
+				const activeUser = await activeUserCtx.requestObject();
+
+				const loggedUserModel = this.getModel("activeUserModel") as JSONModel;
+				loggedUserModel.setData(activeUser);
+				loggedUserModel.refresh();
+			},
+			(err) => {
+				//TODO: add proper error handling
+			},
+		);
 	}
 }

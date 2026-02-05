@@ -58,7 +58,9 @@ import Dialog from "sap/m/Dialog";
 import GridList from "sap/f/GridList";
 import SelectDialog from "sap/m/SelectDialog";
 import Sorter from "sap/ui/model/Sorter";
-import MultiComboBox, { MultiComboBox$SelectionChangeEvent } from "sap/m/MultiComboBox";
+import MultiComboBox, {
+	MultiComboBox$SelectionChangeEvent,
+} from "sap/m/MultiComboBox";
 
 export enum DraftSwitchIndex {
 	DRAFT = 0,
@@ -101,6 +103,8 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 	private defaultSearchColumns: JSONModel | undefined;
 	private initialSolutionHybrids: SolutionHybrid[];
 	private hybridSolutions: Context[];
+	private solutionTags: Context[];
+	private createTagDialog: Dialog;
 
 	private readonly personalizationInstances = new Map<
 		string,
@@ -158,7 +162,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 					$select:
 						"HasActiveEntity,HasDraftEntity,hybridToLinks/hybridSolution_ID",
 					$expand:
-						"solutionStatus,versions,activeVersion,Dependents,hybridToLinks,hybridFromLinks",
+						"solutionStatus,versions,activeVersion,Dependents,hybridToLinks,hybridFromLinks,solutionTags",
 				},
 				events: {
 					dataReceived: async () => {
@@ -207,6 +211,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 						);
 
 						await this.loadSelectedHybridSolutions();
+						await this.loadSelectedSolutionTags();
 						await this.reviewUtils.initDialog();
 					},
 				},
@@ -365,6 +370,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 		model.resetChanges("solutionVersionGroup");
 		model.resetChanges("businessCaseGroup");
 		model.resetChanges("solutionHybridGroup");
+		model.resetChanges("solutionTagGroup");
 		discardDraft(context)
 			.then((hasActiveEntity: boolean) => {
 				MessageToast.show(this.i18nBundle.getText("default.draftDiscarded"), {
@@ -445,6 +451,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 				await model.submitBatch("businessCaseGroup");
 				await model.submitBatch("solutionVersionGroup");
 				await model.submitBatch("solutionHybridGroup");
+				await model.submitBatch("solutionTagGroup");
 				MessageToast.show(this.i18nBundle.getText("default.objectSaved"), {
 					closeOnBrowserNavigation: false,
 				});
@@ -1015,5 +1022,126 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 
 			this.hybridSolutions.push(context);
 		}
+	}
+
+	private async loadSelectedSolutionTags(): Promise<void> {
+		const multiBox = this.getView().byId(
+			"solutionTagsSelectionBox",
+		) as MultiComboBox;
+		const sourceId = this.getView()
+			.getBindingContext()
+			.getProperty("ID") as string;
+		const selectedKeys = await this.getSelectedSolutionTags(sourceId);
+		multiBox.setSelectedKeys(selectedKeys);
+	}
+
+	private async getSelectedSolutionTags(solutionId: string): Promise<string[]> {
+		const solutionTags: string[] = [];
+		const model = this.getView().getModel() as ODataModel;
+		const filters: Filter[] = [];
+		filters.push(new Filter("externalCode", FilterOperator.EQ, solutionId));
+
+		const list = model.bindList("/Entity2Tags", null, null, filters, {
+			$$updateGroupId: "solutionTags",
+		});
+		this.solutionTags = await list.requestContexts();
+		this.solutionTags.forEach((context) => {
+			solutionTags.push(context.getProperty("tag_code") as string);
+		});
+		return solutionTags;
+	}
+
+	public async handleSolutionTagSelectionChange(
+		event: MultiComboBox$SelectionChangeEvent,
+	): Promise<void> {
+		const item = event.getParameter("changedItem");
+		const selected = event.getParameter("selected");
+		const target = item.getBindingContext().getProperty("code") as string;
+		const sourceId = this.getView()
+			.getBindingContext()
+			.getProperty("ID") as string;
+
+		if (!selected) {
+			for (const context of this.solutionTags) {
+				if (target === context.getProperty("tag_code")) {
+					await context.delete("solutionTagGroup");
+				}
+			}
+		} else {
+			const model = this.getView().getModel() as ODataModel;
+			const binding = model.bindList("/Entity2Tags", null, null, null, {
+				$$updateGroupId: "solutionTagGroup",
+			});
+
+			const context = binding.create({
+				externalCode: sourceId,
+				tag_code: target,
+			});
+
+			context.created().catch((e) => {
+				if (!(e as Record<string, unknown>).canceled) {
+					throw e;
+				}
+			});
+
+			this.solutionTags.push(context);
+		}
+	}
+
+	public async onAddSolutionTag(): Promise<void> {
+		const multiBox = this.getView().byId(
+			"solutionTagsSelectionBox",
+		) as MultiComboBox;
+		const itemBinding = multiBox.getBinding("items") as ODataListBinding;
+
+		const context = itemBinding.create() as Context;
+
+		context.created().catch((e) => {
+			if (!(e as Record<string, unknown>).canceled) {
+				throw e;
+			}
+		});
+
+		this.openCreateTagDialog(context);
+	}
+
+	private async openCreateTagDialog(context: Context): Promise<void> {
+		if (!this.createTagDialog) {
+			this.createTagDialog ??= (await Fragment.load({
+				id: "CreateTagDialog",
+				name: "com.gavdilabs.techtransmgt.solutioncentral.view.fragments.CreateTagDialog",
+				controller: this,
+			})) as Dialog;
+
+			this.createTagDialog.setBindingContext(context);
+			this.getView().addDependent(this.createTagDialog);
+		}
+
+		this.createTagDialog.setBindingContext(context);
+		this.createTagDialog.open();
+	}
+
+	public handleCreateTagCancel(event: Button$PressEvent): void {
+		const context = event.getSource().getBindingContext() as Context;
+		this.createTagDialog.close();
+		context.delete("$auto");
+	}
+
+	public async handleCreateTagConfirm() {
+		this.messageHandler.clearAllMessages();
+		const model = this.getView().getModel() as ODataModel;
+
+		if (
+			!this.validator.validate(this.createTagDialog, {
+				isDoConstraintsValidation: true,
+			}) ||
+			this.getOwnerComponent().hasErrorMessages()
+		) {
+			this.messageHandler.removeDuplicateMessagesByTarget();
+			return;
+		}
+
+		await model.submitBatch("tagsGroup");
+		this.createTagDialog.close();
 	}
 }

@@ -23,12 +23,21 @@ export default class UserService {
       user,
     );
 
+    this.logger.info("User Roles: " + JSON.stringify(req.user.roles));
     return user
       ? {
           username: user.username,
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
+          roles: {
+            isAdmin: req.user.is("Admin"),
+            isReviewer: req.user.is("Reviewer"),
+            isView: req.user.is("View"),
+            isDeveloper: req.user.is("Developer"),
+            isMaintainer: req.user.is("Maintainer"),
+            isApprover: req.user.is("Approver"),
+          },
         }
       : undefined;
   }

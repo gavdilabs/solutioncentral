@@ -10,19 +10,22 @@ service RadarService {
   entity User                     as projection on core.User;
   entity SoftwareSolution         as projection on core.SoftwareSolution;
   entity SolutionHybrid           as projection on core.SolutionHybrid;
+  entity Entity2Tags              as projection on core.Entity2Tags;
+
   annotate SoftwareSolution with @odata.draft.enabled;
 
   extend SoftwareSolution with actions {
-    action requestReview(description : String);
-    action requestSunset(description : String, sunsetDate : DateTime);
+    action requestReview(description: String);
+    action requestSunset(description: String, sunsetDate: DateTime);
     action approveSolution();
     action rejectSolution();
-    action submitReview(codeQuality : Integer, cleanCore : Integer, reasonNotCleanCore : String);
+    action submitReview(codeQuality: Integer, cleanCore: Integer, reasonNotCleanCore: String);
   }
 
   extend projection SoftwareSolution with {
     virtual null as isApprover : Boolean,
-    activeVersion              : Association to ActiveSolutionVersion on activeVersion.solution = $self,
+    activeVersion              : Association to ActiveSolutionVersion
+                                   on activeVersion.solution = $self,
   }
 
   entity SolutionVersion          as projection on core.SolutionVersion;
@@ -31,29 +34,30 @@ service RadarService {
 
   extend projection SolutionVersion with {
     virtual null as isApprover : Boolean,
-    latestReview               : Association to LatestVersionReview on latestReview.solutionVersion = $self
+    latestReview               : Association to LatestVersionReview
+                                   on latestReview.solutionVersion = $self
   }
 
   extend SolutionVersion with actions {
     action approveVersion();
     action rejectVersion();
-    action submitReview(codeQuality : Integer, cleanCore : Integer, reasonNotCleanCore : String);
+    action submitReview(codeQuality: Integer, cleanCore: Integer, reasonNotCleanCore: String);
   }
 
   entity SoftwareTeam             as projection on core.SoftwareTeam;
 
   extend SoftwareTeam with actions {
-    action requestAccess(username : String);
-    action addMember(username : String);
-    action removeMember(username : String);
+    action requestAccess(username: String);
+    action addMember(username: String);
+    action removeMember(username: String);
   }
 
   entity SoftwareTeamUser         as projection on core.SoftwareTeamUser;
   entity Technology               as projection on core.Technology;
 
   extend Technology with actions {
-    action requestSunset(description : String);
-    action requestChange(description : String);
+    action requestSunset(description: String);
+    action requestChange(description: String);
   }
 
   entity TechnologyReplacement    as projection on core.TechnologyReplacement;
@@ -89,6 +93,9 @@ service RadarService {
   entity SoftwareStatus           as projection on core.SoftwareStatus;
 
   entity SoftwareTechnology       as projection on core.SoftwareTechnology;
+
+  entity Tags                     as projection on core.Tag;
+
   /*** FUNCTION IMPORTS ***/
   function getActiveUser() returns types.ActiveUser;
 
@@ -98,9 +105,7 @@ service RadarService {
           version.status.code =      5
       and version.releaseDate is not null
       and version.releaseDate =      (
-        select max(
-          sv.releaseDate
-        ) from SolutionVersion as sv
+        select max(sv.releaseDate) from SolutionVersion as sv
         inner join SoftwareStatus as status
           on sv.status = status
         where

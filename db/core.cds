@@ -114,6 +114,11 @@ entity BusinessCaseRating : sap.common.CodeList {
       descr : String;
 }
 
+entity Tag : sap.common.CodeList {
+  key code  : UUID;
+      descr : String;
+}
+
 // Entities
 entity User : managed {
   key username      : String;
@@ -172,11 +177,18 @@ entity SoftwareSolution : cuid, managed {
                           on hybridToLinks.solution = $self;
   hybridFromLinks     : Association to many SolutionHybrid
                           on hybridFromLinks.hybridSolution = $self;
+  solutionTags        : Association to many Entity2Tags
+                          on solutionTags.externalCode = $self.ID;
 }
 
 entity SolutionHybrid {
   key solution       : Association to SoftwareSolution;
   key hybridSolution : Association to SoftwareSolution;
+}
+
+entity Entity2Tags {
+  key externalCode : UUID;
+  key tag          : Association to Tag;
 }
 
 entity SolutionReview : cuid, managed {

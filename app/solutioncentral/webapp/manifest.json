@@ -81,9 +81,19 @@
 						},
 						"solutionHybridGroup": {
 							"submit": "API"
+						},
+						"solutionTags": {
+							"submit": "API"
+						},
+						"tagsGroup": {
+							"submit": "API"
 						}
 					}
 				}
+			},
+			"activeUserModel": {
+				"type": "sap.ui.model.json.JSONModel",
+				"preload": false
 			},
 			"solutionTableConfig": {
 				"type": "sap.ui.model.json.JSONModel",
