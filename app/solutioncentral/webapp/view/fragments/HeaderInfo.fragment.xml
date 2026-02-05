@@ -20,11 +20,6 @@
 				parameters: {
 					$$updateGroupId: 'tagsGroup'
 				},
-				filters: [{
-					path: 'type',
-					operator: 'EQ',
-					value1: 'Solution'
-				}],
 				templateShareable: true
 		}">
 				<layoutData>

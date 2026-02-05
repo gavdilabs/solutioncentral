@@ -32,13 +32,6 @@ type deploymentTypes        : String enum {
   Cloud
 }
 
-type tagTypes               : String enum {
-  Solution;
-  BusinessCase;
-  Version;
-  Review;
-}
-
 // CodeLists
 entity SoftwareStatus : sap.common.CodeList {
   key code             : Integer @assert.range: [
@@ -124,8 +117,6 @@ entity BusinessCaseRating : sap.common.CodeList {
 entity Tag : sap.common.CodeList {
   key code  : UUID;
       descr : String;
-      type  : tagTypes;
-
 }
 
 // Entities
@@ -186,8 +177,8 @@ entity SoftwareSolution : cuid, managed {
                           on hybridToLinks.solution = $self;
   hybridFromLinks     : Association to many SolutionHybrid
                           on hybridFromLinks.hybridSolution = $self;
-  solutionTags        : Association to many SolutionTags
-                          on solutionTags.solution = $self;
+  solutionTags        : Association to many Entity2Tags
+                          on solutionTags.externalCode = $self.ID;
 }
 
 entity SolutionHybrid {
@@ -195,9 +186,9 @@ entity SolutionHybrid {
   key hybridSolution : Association to SoftwareSolution;
 }
 
-entity SolutionTags {
-  key solution : Association to SoftwareSolution;
-  key tag      : Association to Tag;
+entity Entity2Tags {
+  key externalCode : UUID;
+  key tag          : Association to Tag;
 }
 
 entity SolutionReview : cuid, managed {

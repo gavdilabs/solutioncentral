@@ -1,4 +1,4 @@
-code,name,descr,type
-095664b1-7427-41d2-a801-d4c61dc53ec1,Org. Unit,Org. Unit description,Solution
-058c1d85-c581-4834-9c5f-38930ab6d840,Legacy,Legacy solution description,Solution
-877e391f-9e13-4cb0-8d0f-755e8deb6b06,Outdated,This version is outdated,Version
+code,name,descr
+095664b1-7427-41d2-a801-d4c61dc53ec1,Org. Unit,Org. Unit description
+058c1d85-c581-4834-9c5f-38930ab6d840,Legacy,Legacy solution description
+877e391f-9e13-4cb0-8d0f-755e8deb6b06,Outdated,This version is outdated

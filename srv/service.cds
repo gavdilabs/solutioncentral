@@ -10,7 +10,7 @@ service RadarService {
   entity User                     as projection on core.User;
   entity SoftwareSolution         as projection on core.SoftwareSolution;
   entity SolutionHybrid           as projection on core.SolutionHybrid;
-  entity SolutionTags             as projection on core.SolutionTags;
+  entity Entity2Tags              as projection on core.Entity2Tags;
 
   annotate SoftwareSolution with @odata.draft.enabled;
 

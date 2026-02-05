@@ -1039,9 +1039,9 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 		const solutionTags: string[] = [];
 		const model = this.getView().getModel() as ODataModel;
 		const filters: Filter[] = [];
-		filters.push(new Filter("solution_ID", FilterOperator.EQ, solutionId));
+		filters.push(new Filter("externalCode", FilterOperator.EQ, solutionId));
 
-		const list = model.bindList("/SolutionTags", null, null, filters, {
+		const list = model.bindList("/Entity2Tags", null, null, filters, {
 			$$updateGroupId: "solutionTags",
 		});
 		this.solutionTags = await list.requestContexts();
@@ -1069,12 +1069,12 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 			}
 		} else {
 			const model = this.getView().getModel() as ODataModel;
-			const binding = model.bindList("/SolutionTags", null, null, null, {
+			const binding = model.bindList("/Entity2Tags", null, null, null, {
 				$$updateGroupId: "solutionTagGroup",
 			});
 
 			const context = binding.create({
-				solution_ID: sourceId,
+				externalCode: sourceId,
 				tag_code: target,
 			});
 
@@ -1094,9 +1094,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 		) as MultiComboBox;
 		const itemBinding = multiBox.getBinding("items") as ODataListBinding;
 
-		const context = itemBinding.create({
-			type: "Solution",
-		}) as Context;
+		const context = itemBinding.create() as Context;
 
 		context.created().catch((e) => {
 			if (!(e as Record<string, unknown>).canceled) {
