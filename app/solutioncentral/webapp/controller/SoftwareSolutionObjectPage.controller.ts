@@ -104,6 +104,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 	private initialSolutionHybrids: SolutionHybrid[];
 	private hybridSolutions: Context[];
 	private solutionTags: Context[];
+	private createTagDialog: Dialog;
 
 	private readonly personalizationInstances = new Map<
 		string,
@@ -1085,5 +1086,64 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 
 			this.solutionTags.push(context);
 		}
+	}
+
+	public async onAddSolutionTag(): Promise<void> {
+		const multiBox = this.getView().byId(
+			"solutionTagsSelectionBox",
+		) as MultiComboBox;
+		const itemBinding = multiBox.getBinding("items") as ODataListBinding;
+
+		const context = itemBinding.create({
+			type: "Solution",
+		}) as Context;
+
+		context.created().catch((e) => {
+			if (!(e as Record<string, unknown>).canceled) {
+				throw e;
+			}
+		});
+
+		this.openCreateTagDialog(context);
+	}
+
+	private async openCreateTagDialog(context: Context): Promise<void> {
+		if (!this.createTagDialog) {
+			this.createTagDialog ??= (await Fragment.load({
+				id: "CreateTagDialog",
+				name: "com.gavdilabs.techtransmgt.solutioncentral.view.fragments.CreateTagDialog",
+				controller: this,
+			})) as Dialog;
+
+			this.createTagDialog.setBindingContext(context);
+			this.getView().addDependent(this.createTagDialog);
+		}
+
+		this.createTagDialog.setBindingContext(context);
+		this.createTagDialog.open();
+	}
+
+	public handleCreateTagCancel(event: Button$PressEvent): void {
+		const context = event.getSource().getBindingContext() as Context;
+		this.createTagDialog.close();
+		context.delete("$auto");
+	}
+
+	public async handleCreateTagConfirm() {
+		this.messageHandler.clearAllMessages();
+		const model = this.getView().getModel() as ODataModel;
+
+		if (
+			!this.validator.validate(this.createTagDialog, {
+				isDoConstraintsValidation: true,
+			}) ||
+			this.getOwnerComponent().hasErrorMessages()
+		) {
+			this.messageHandler.removeDuplicateMessagesByTarget();
+			return;
+		}
+
+		await model.submitBatch("tagsGroup");
+		this.createTagDialog.close();
 	}
 }

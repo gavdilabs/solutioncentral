@@ -17,6 +17,9 @@
 			showSecondaryValues="true"
 			items="{
 				path: '/Tags',
+				parameters: {
+					$$updateGroupId: 'tagsGroup'
+				},
 				filters: [{
 					path: 'type',
 					operator: 'EQ',

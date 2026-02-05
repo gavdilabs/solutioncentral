@@ -122,9 +122,10 @@ entity BusinessCaseRating : sap.common.CodeList {
 }
 
 entity Tag : sap.common.CodeList {
-  key code  : String;
+  key code  : UUID;
       descr : String;
       type  : tagTypes;
+
 }
 
 // Entities
