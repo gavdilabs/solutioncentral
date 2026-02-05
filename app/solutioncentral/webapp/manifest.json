@@ -88,6 +88,10 @@
 					}
 				}
 			},
+			"activeUserModel": {
+				"type": "sap.ui.model.json.JSONModel",
+				"preload": false
+			},
 			"solutionTableConfig": {
 				"type": "sap.ui.model.json.JSONModel",
 				"preload": false

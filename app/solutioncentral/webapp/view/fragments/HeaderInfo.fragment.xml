@@ -24,8 +24,16 @@
 				}],
 				templateShareable: true
 		}">
+				<layoutData>
+				<forms:ColumnElementData cellsSmall="{= ${activeUserModel>/roles/isMaintainer} || ${activeUserModel>/roles/isAdmin} ? 10 : 12}" cellsLarge="{= ${activeUserModel>/roles/isMaintainer} || ${activeUserModel>/roles/isAdmin} ? 10 : 12}" />
+				</layoutData>
 			<core:ListItem key="{code}" text="{name}" additionalText="{descr}"/>
 		</MultiComboBox>
+		<Button icon="sap-icon://add" visible="{= ${activeUserModel>/roles/isMaintainer} || ${activeUserModel>/roles/isAdmin}}" press=".onAddSolutionTag">
+				<layoutData>
+					<forms:ColumnElementData cellsSmall="2" cellsLarge="2" />
+				</layoutData>
+		</Button>
 
 		<Label text="{i18n>column.description}" />
 		<TextArea value="{description}" rows="4" />
