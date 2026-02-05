@@ -56,6 +56,12 @@
 					<m:Button text="{i18n>button.delete}" type="Transparent" press=".onDeleteSolutionPress"
 						visible="{= ${IsActiveEntity} &amp;&amp; !${HasDraftEntity}}" />
 				</actions>
+
+				<content>
+					<m:HBox items="{path: 'solutionTags', templateShareable: true}" class="sapUiSmallMarginBegin" alignItems="Center" visible="{= ${IsActiveEntity} ? true : false}" >
+						<m:GenericTag text="{tag/name}" class="sapUiTinyMarginEnd" status="" StatusIconHidden="true"/>
+					</m:HBox>
+				</content>
 			</ObjectPageDynamicHeaderTitle>
 		</headerTitle>
 		<headerContent>

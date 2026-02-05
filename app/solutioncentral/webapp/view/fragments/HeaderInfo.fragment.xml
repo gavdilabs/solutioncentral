@@ -12,6 +12,21 @@
 		<Label text="{i18n>column.name}" required="true" />
 		<Input id="softwareSolutionNameInput" value="{name}" change=".handleChangeEvent" required="true" />
 
+		<Label text="{i18n>column.tags}"/>
+		<MultiComboBox id="solutionTagsSelectionBox" selectionChange=".handleSolutionTagSelectionChange"
+			showSecondaryValues="true"
+			items="{
+				path: '/Tags',
+				filters: [{
+					path: 'type',
+					operator: 'EQ',
+					value1: 'Solution'
+				}],
+				templateShareable: true
+		}">
+			<core:ListItem key="{code}" text="{name}" additionalText="{descr}"/>
+		</MultiComboBox>
+
 		<Label text="{i18n>column.description}" />
 		<TextArea value="{description}" rows="4" />
 

@@ -1,3 +1,4 @@
 code,name,descr,type
-org_unit,Org. Unit,,Solution
-legacy,Legacy,,Solution
+org_unit,Org. Unit,Org. Unit description,Solution
+legacy,Legacy,Legacy solution description,Solution
+outdate,Outdated,This version is outdated,Version

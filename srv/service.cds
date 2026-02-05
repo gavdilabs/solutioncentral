@@ -10,6 +10,8 @@ service RadarService {
   entity User                     as projection on core.User;
   entity SoftwareSolution         as projection on core.SoftwareSolution;
   entity SolutionHybrid           as projection on core.SolutionHybrid;
+  entity SolutionTags             as projection on core.SolutionTags;
+
   annotate SoftwareSolution with @odata.draft.enabled;
 
   extend SoftwareSolution with actions {
@@ -93,6 +95,7 @@ service RadarService {
   entity SoftwareTechnology       as projection on core.SoftwareTechnology;
 
   entity Tags                     as projection on core.Tag;
+
   /*** FUNCTION IMPORTS ***/
   function getActiveUser() returns types.ActiveUser;
 

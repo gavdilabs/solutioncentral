@@ -81,6 +81,9 @@
 						},
 						"solutionHybridGroup": {
 							"submit": "API"
+						},
+						"solutionTags": {
+							"submit": "API"
 						}
 					}
 				}
