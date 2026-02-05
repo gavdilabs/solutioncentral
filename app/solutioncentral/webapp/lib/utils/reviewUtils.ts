@@ -261,10 +261,17 @@ export class ReviewUtils {
 		}
 
 		this.updateSelectedPropLevel(highestIndex, prop);
+	}
 
-		if (prop === ReviewModelProperties.CLEAN_CORE_LEVEL) {
-			this.setReasonNotCleanCoreRequired(highestIndex);
-		}
+	public onCleanCoreLevelChange(event: ListBase$SelectionChangeEvent): void {
+		const selectedItem = event.getParameter("listItem");
+		const level = selectedItem
+			.getBindingContext()
+			.getProperty("code") as number;
+		const reviewModel = this.view.getModel(REVIEW_MODEL_NAME) as JSONModel;
+
+		reviewModel.setProperty(ReviewModelProperties.CLEAN_CORE_LEVEL, level);
+		this.setReasonNotCleanCoreRequired(level);
 	}
 
 	private updateSelectedPropLevel(index: number, prop: ReviewModelProperties) {

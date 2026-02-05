@@ -70,7 +70,7 @@ entity SAPVersion : sap.common.CodeList {
 entity CleanCoreLevel : sap.common.CodeList {
   key code  : Integer @assert.range: [
         1,
-        5
+        4
       ];
       descr : String;
 }

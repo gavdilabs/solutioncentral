@@ -39,19 +39,19 @@
 					<core:Icon src="sap-icon://information" color="Marker"
 						press=".openInfoPopover($event, 'msg.infoPOCleanCoreLevel')" />
 					<ToolbarSpacer />
-					<RatingIndicator editable="false" value="{reviewModel>/cleanCoreLevel}" maxValue="5" />
+					<RatingIndicator editable="false" value="{reviewModel>/cleanCoreLevel}" maxValue="4" />
 				</Toolbar>
 				<List
-					mode="MultiSelect"
-					selectionChange=".onListSelectionChange($event, '/cleanCoreLevel')"
+					mode="SingleSelectLeft"
+					selectionChange=".onCleanCoreLevelChange"
 					items="{
 						path: '/CleanCoreLevel',
 						sorter: {
 						 path: 'code',
-						descending: false
+						descending: true
 						}
 					}">
-					<StandardListItem title="{code}. {descr}" />
+					<StandardListItem title="{name} - {descr}" />
 				</List>
 				<VBox class="sapUiTinyMargin sapUiSmallMarginTop">
 					<HBox>
