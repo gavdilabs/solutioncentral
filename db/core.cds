@@ -63,7 +63,7 @@ entity SAPVersion : sap.common.CodeList {
 entity CleanCoreLevel : sap.common.CodeList {
   key code  : Integer @assert.range: [
         1,
-        5
+        4
       ];
       descr : String;
 }
@@ -133,7 +133,7 @@ entity User : managed {
 entity SolutionVersion : cuid, managed {
   key solution     : Association to SoftwareSolution;
       status       : Association to SoftwareStatus  @mandatory  @assert.target;
-      version      : String(100) @mandatory;
+      version      : String(100)                    @mandatory;
       releaseNotes : LargeString;
       releaseDate  : Date default null;
       sapVersion   : Association to SAPVersion;
@@ -145,7 +145,7 @@ entity SolutionVersion : cuid, managed {
 
 @cds.search: {name}
 entity SoftwareSolution : cuid, managed {
-  name                : String @mandatory;
+  name                : String                       @mandatory;
   description         : String;
   solutionStatus      : Association to SoftwareStatus;
   platform            : Association to Platform;

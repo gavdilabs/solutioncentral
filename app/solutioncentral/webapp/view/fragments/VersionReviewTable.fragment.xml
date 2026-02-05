@@ -31,7 +31,7 @@
 					<Text text="{createdAt}" />
 					<RatingIndicator editable="false" maxValue="5"
 						value="{codeQualityRating_code}" iconSize="18px" />
-					<RatingIndicator editable="false" iconSize="18px" maxValue="5"
+					<RatingIndicator editable="false" iconSize="18px" maxValue="4"
 						value="{cleanCoreRating_code}" />
 					<Text text="{= ${reasonNoCleanCore} ? ${reasonNoCleanCore} : '–'}" />
 
