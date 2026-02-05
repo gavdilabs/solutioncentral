@@ -1,6 +1,5 @@
 code;name;descr
-1;;On-Stack - Modification, Enhancement, Interaction with Un-Released Objects
-2;;On-Stack - S/4HANA Ready, Secure, No Modifications, Enhancements or interactions with Un-Released Objects
-3;;Tier-2 Extension - Encapsulating S/4HANA Functionality, ABAP Cloud Ready
-4;;Fully Tier-1, but depending on Custom Fields/On-Stack Extensions
-5;;Only White-Listed APIs, Side-By-Side Extensions, Works on Full Standard
+1;Level D;Unclean Core from Disallowed Internal Objects, Modifications and Enhancements
+2;Level C;Conditional Clean Core with accessing Internal SAP Objects on Approve List
+3;Level B;Clean Core using only SAP APIs and Frameworks
+4;Level A;Clean Core On-Stack or Side-By-Side Extensions

@@ -23,7 +23,7 @@
 			value="{activeVersion/latestReview/codeQualityRating_code}" />
 
 		<Label text="{i18n>column.cleanCoreLevel}" />
-		<RatingIndicator editable="false" maxValue="5"
+		<RatingIndicator editable="false" maxValue="4"
 			value="{activeVersion/latestReview/cleanCoreRating_code}" />
 
 		<Label text="{i18n>column.reasonNotCleanCore}" />
