@@ -11,7 +11,7 @@ build-parameters:
         - npm ci
         - npx cds build --production
 modules:
-  # Service layer 
+  # Service layer
   - name: techtransition_mgt-srv
     type: nodejs
     path: gen/srv
@@ -29,8 +29,9 @@ modules:
       - name: techtransition_mgt-postgres
       - name: techtransition_mgt-destination
       - name: techtransition_mgt-cloud-logging
+      - name: techtransition_mgt-autoscaler
 
-  # Database deployer 
+  # Database deployer
   - name: techtransition_mgt-postgres-deployer
     type: nodejs
     path: gen/pg
@@ -44,7 +45,7 @@ modules:
     requires:
       - name: techtransition_mgt-postgres
 
-  # Approuter 
+  # Approuter
   - name: techtransition_mgt-router
     type: approuter.nodejs
     path: app/router
@@ -62,11 +63,73 @@ modules:
       - name: techtransition_mgt-auth
       - name: techtransition_mgt-destination
       - name: techtransition_mgt-cloud-logging
+      - name: techtransition_mgt-html5-repo-rt
+      - name: techtransition_mgt-autoscaler
     provides:
       - name: app-api
         properties:
           app-protocol: ${protocol}
           app-uri: ${default-uri}
+
+  # HTML5 App: Solution Central
+  - name: techtransition_mgt-solutioncentral
+    type: html5
+    path: app/solutioncentral
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm ci
+        - npm run build
+      supported-platforms: []
+
+  # HTML5 App: Technology Radar
+  - name: techtransition_mgt-techradar
+    type: html5
+    path: app/techradar
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm ci
+        - npm run build
+      supported-platforms: []
+
+  # HTML5 App: Config
+  - name: techtransition_mgt-config
+    type: html5
+    path: app/config
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm ci
+        - npm run build
+      supported-platforms: []
+
+  # HTML5 Content Deployer
+  - name: techtransition_mgt-app-content
+    type: com.sap.application.content
+    path: .
+    requires:
+      - name: techtransition_mgt-html5-repo-host
+        parameters:
+          content-target: true
+    build-parameters:
+      build-result: resources
+      requires:
+        - name: techtransition_mgt-solutioncentral
+          artifacts:
+            - com.gavdilabs.techtransmgt.solutioncentral.zip
+          target-path: resources/
+        - name: techtransition_mgt-techradar
+          artifacts:
+            - com.gavdilabs.techradar.zip
+          target-path: resources/
+        - name: techtransition_mgt-config
+          artifacts:
+            - com.gavdilabs.config.zip
+          target-path: resources/
 
 resources:
   - name: techtransition_mgt-auth
@@ -129,3 +192,46 @@ resources:
       config:
         ingest_otlp:
           enabled: true
+  - name: techtransition_mgt-html5-repo-host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-host
+  - name: techtransition_mgt-html5-repo-rt
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-runtime
+  - name: techtransition_mgt-autoscaler
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: autoscaler
+      service-plan: standard
+      config:
+        instance_min_count: 1
+        instance_max_count: 3
+        scaling_rules:
+          - metric_type: cpu
+            threshold: 75
+            operator: ">="
+            adjustment: "+1"
+            breach_duration_secs: 60
+            cool_down_secs: 120
+          - metric_type: cpu
+            threshold: 30
+            operator: "<"
+            adjustment: "-1"
+            breach_duration_secs: 120
+            cool_down_secs: 120
+          - metric_type: memoryutil
+            threshold: 80
+            operator: ">="
+            adjustment: "+1"
+            breach_duration_secs: 60
+            cool_down_secs: 120
+          - metric_type: memoryutil
+            threshold: 40
+            operator: "<"
+            adjustment: "-1"
+            breach_duration_secs: 120
+            cool_down_secs: 120
