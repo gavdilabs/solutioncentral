@@ -56,3 +56,4 @@ Thumbs.db
 .env 
 gen/
 mta_archives/
+*.zip
