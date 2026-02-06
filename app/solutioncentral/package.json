@@ -24,7 +24,7 @@
 	"devDependencies": {
 		"@learnin/ui5-validator": "1.0.0",
 		"@sapui5/types": "1.136.1",
-		"@ui5/cli": "^4.0.8",
+		"@ui5/cli": "^4.0.43",
 		"@ui5/linter": "^1.0.2",
 		"babel-plugin-istanbul": "^7.0.0",
 		"eslint": "^9.12.0",
@@ -41,5 +41,9 @@
 		"dependencies": [
 			"@learnin/ui5-validator"
 		]
+	},
+	"dependencies": {
+		"@wdio/spec-reporter": "9.23.3",
+		"wdio-ui5-service": "3.0.8"
 	}
 }
