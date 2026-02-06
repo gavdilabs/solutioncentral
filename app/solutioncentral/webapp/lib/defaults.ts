@@ -63,6 +63,14 @@ export const DefaultSolutionTableConfig = {
 			groupable: true,
 		},
 		{
+			path: "riskLevel/code",
+			key: "column.riskLevel",
+			label: "column.riskLevel",
+			selected: true,
+			sortable: true,
+			groupable: true,
+		},
+		{
 			path: "description",
 			key: "column.description",
 			label: "column.description",
@@ -189,6 +197,14 @@ export const SoftwareSolutionExportColumns = new Map<string, SpreadsheetColumn>(
 				property: "businessCriticality/code",
 				type: EdmType.String,
 				label: "sheet.solutionCriticality",
+			},
+		],
+		[
+			"riskLevel/code",
+			{
+				property: "riskLevel/code",
+				type: EdmType.String,
+				label: "sheet.riskLevel",
 			},
 		],
 		[

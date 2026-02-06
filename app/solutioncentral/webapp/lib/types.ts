@@ -9,6 +9,7 @@ export interface SolutionTableConfig {
 export interface SoftwareSolutionFilters {
 	platforms?: string[];
 	businessCriticalityLevels?: string[];
+	riskLevels?: string[];
 	cleanCoreLevels?: string[];
 	codeQualityLevels?: string[];
 	costCenter?: string;

@@ -69,6 +69,22 @@
 								</fb:control>
 							</fb:FilterGroupItem>
 
+							<!-- RiskLevel field -->
+							<fb:FilterGroupItem name="Risk Level" groupName="riskLevel"
+								label="{i18n>column.riskLevel}" visibleInFilterBar="false">
+								<fb:control>
+									<MultiComboBox
+										name="{i18n>column.riskLevel}"
+										selectedKeys="{solutionTableConfig>/filters/riskLevels}"
+										items="{
+										path: '/RiskLevel',
+										templateShareable: true
+									}">
+										<core:Item key="{code}" text="{name}" />
+									</MultiComboBox>
+								</fb:control>
+							</fb:FilterGroupItem>
+
 							<!-- Clean Core field -->
 							<fb:FilterGroupItem name="Clean Core" groupName="cleanCore"
 								label="{i18n>column.cleanCoreLevel}" visibleInFilterBar="false">
@@ -210,6 +226,10 @@
 						demandPopin="false">
 						<Text text="{i18n>column.businessCriticality}" />
 					</Column>
+					<Column app:p13nKey="column.riskLevel" headerMenu="menu" minScreenWidth="Tablet"
+						demandPopin="false">
+						<Text text="{i18n>column.riskLevel}" />
+					</Column>
 					<!-- Columns not visible by default -->
 					<Column app:p13nKey="column.description" visible="false" minScreenWidth="Tablet"
 						demandPopin="true">
@@ -293,6 +313,19 @@
 							}"
 								text="{
 								path: 'businessCriticality/code',
+								formatter: 'formatter.formatBusinessCriticalityLevelText'
+							}" />
+							<ObjectStatus tooltip="{riskLevel/descr}"
+								icon="{
+								path: 'riskLevel/code',
+								formatter: 'formatter.formatBusinessCriticalityLevelIcon'
+							}"
+								state="{
+								path: 'riskLevel/code',
+								formatter: 'formatter.formatBusinessCriticalityLevelState'
+							}"
+								text="{
+								path: 'riskLevel/code',
 								formatter: 'formatter.formatBusinessCriticalityLevelText'
 							}" />
 

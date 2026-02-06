@@ -84,6 +84,9 @@ service RadarService {
   entity BusinessCriticalityLevel as projection on core.BusinessCriticalityLevel;
 
   @readonly
+  entity RiskLevel                as projection on core.RiskLevel;
+
+  @readonly
   entity BusinessCaseRating       as projection on core.BusinessCaseRating;
 
   @readonly

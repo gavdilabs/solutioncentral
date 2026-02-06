@@ -1,0 +1,5 @@
+code;name;descr;sortOrder
+High;High;External Exposure, Critical Data Access;0
+Medium;Medium;External Exposure, No Critical Data Access;1
+Low;Low;No Exposure, Internal Access Only;2
+
