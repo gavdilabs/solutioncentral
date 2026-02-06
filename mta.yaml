@@ -1,5 +1,5 @@
 _schema-version: 3.3.0
-ID: techtransition_mgt
+ID: solutioncentral
 version: 0.9.0
 description: "Solution Central"
 parameters:
@@ -8,31 +8,28 @@ build-parameters:
   before-all:
     - builder: custom
       commands:
-        - npm ci
-        - npx cds build --production
+        - npx cds-tsx build --production
 modules:
   # Service layer
-  - name: techtransition_mgt-srv
+  - name: solutioncentral-srv
     type: nodejs
     path: gen/srv
     parameters:
       instances: 1
       buildpack: nodejs_buildpack
-    build-parameters:
-      builder: npm-ci
     provides:
       - name: srv-api # required by consumers of CAP services (e.g. approuter)
         properties:
           srv-url: ${default-url}
     requires:
-      - name: techtransition_mgt-auth
-      - name: techtransition_mgt-postgres
-      - name: techtransition_mgt-destination
-      - name: techtransition_mgt-cloud-logging
-      - name: techtransition_mgt-autoscaler
+      - name: solutioncentral-auth
+      - name: solutioncentral-postgres
+      - name: solutioncentral-destination
+      - name: solutioncentral-cloud-logging
+      - name: solutioncentral-autoscaler
 
   # Database deployer
-  - name: techtransition_mgt-postgres-deployer
+  - name: solutioncentral-postgres-deployer
     type: nodejs
     path: gen/pg
     parameters:
@@ -43,10 +40,10 @@ modules:
         - name: deploy-to-postgresql
           command: npm start
     requires:
-      - name: techtransition_mgt-postgres
+      - name: solutioncentral-postgres
 
   # Approuter
-  - name: techtransition_mgt-router
+  - name: solutioncentral-router
     type: approuter.nodejs
     path: app/router
     parameters:
@@ -60,11 +57,11 @@ modules:
           name: srv-api # must be used in xs-app.json as well
           url: ~{srv-url}
           forwardAuthToken: true
-      - name: techtransition_mgt-auth
-      - name: techtransition_mgt-destination
-      - name: techtransition_mgt-cloud-logging
-      - name: techtransition_mgt-html5-repo-rt
-      - name: techtransition_mgt-autoscaler
+      - name: solutioncentral-auth
+      - name: solutioncentral-destination
+      - name: solutioncentral-cloud-logging
+      - name: solutioncentral-html5-repo-rt
+      - name: solutioncentral-autoscaler
     provides:
       - name: app-api
         properties:
@@ -72,74 +69,71 @@ modules:
           app-uri: ${default-uri}
 
   # HTML5 App: Solution Central
-  - name: techtransition_mgt-solutioncentral
+  - name: solutioncentral-solutioncentral
     type: html5
     path: app/solutioncentral
     build-parameters:
       build-result: dist
       builder: custom
       commands:
-        - npm ci
         - npm run build
       supported-platforms: []
 
   # HTML5 App: Technology Radar
-  - name: techtransition_mgt-techradar
+  - name: solutioncentral-techradar
     type: html5
     path: app/techradar
     build-parameters:
       build-result: dist
       builder: custom
       commands:
-        - npm ci
         - npm run build
       supported-platforms: []
 
   # HTML5 App: Config
-  - name: techtransition_mgt-config
+  - name: solutioncentral-config
     type: html5
     path: app/config
     build-parameters:
       build-result: dist
       builder: custom
       commands:
-        - npm ci
         - npm run build
       supported-platforms: []
 
   # HTML5 Content Deployer
-  - name: techtransition_mgt-app-content
+  - name: solutioncentral-app-content
     type: com.sap.application.content
     path: .
     requires:
-      - name: techtransition_mgt-html5-repo-host
+      - name: solutioncentral-html5-repo-host
         parameters:
           content-target: true
     build-parameters:
       build-result: resources
       requires:
-        - name: techtransition_mgt-solutioncentral
+        - name: solutioncentral-solutioncentral
           artifacts:
             - com.gavdilabs.techtransmgt.solutioncentral.zip
           target-path: resources/
-        - name: techtransition_mgt-techradar
+        - name: solutioncentral-techradar
           artifacts:
             - com.gavdilabs.techradar.zip
           target-path: resources/
-        - name: techtransition_mgt-config
+        - name: solutioncentral-config
           artifacts:
             - com.gavdilabs.config.zip
           target-path: resources/
 
 resources:
-  - name: techtransition_mgt-auth
+  - name: solutioncentral-auth
     type: org.cloudfoundry.managed-service
     parameters:
       service: xsuaa
       service-plan: application
       path: ./xs-security.json
       config:
-        xsappname: techtransition_mgt-${org}-${space}
+        xsappname: solutioncentral-${org}-${space}
         tenant-mode: dedicated
         oauth2-configuration:
           credential-types:
@@ -148,43 +142,43 @@ resources:
           redirect-uris:
             - https://*~{app-api/app-uri}/**
         role-collections:
-          - name: 'View (techtransition_mgt ${org}-${space})'
+          - name: 'View (solutioncentral ${org}-${space})'
             description: 'generated'
             role-template-references:
               - '$XSAPPNAME.View'
-          - name: 'Developer (techtransition_mgt ${org}-${space})'
+          - name: 'Developer (solutioncentral ${org}-${space})'
             description: 'generated'
             role-template-references:
               - '$XSAPPNAME.Developer'
-          - name: 'Reviewer (techtransition_mgt ${org}-${space})'
+          - name: 'Reviewer (solutioncentral ${org}-${space})'
             description: 'generated'
             role-template-references:
               - '$XSAPPNAME.Reviewer'
-          - name: 'Maintainer (techtransition_mgt ${org}-${space})'
+          - name: 'Maintainer (solutioncentral ${org}-${space})'
             description: 'generated'
             role-template-references:
               - '$XSAPPNAME.Maintainer'
-          - name: 'Admin (techtransition_mgt ${org}-${space})'
+          - name: 'Admin (solutioncentral ${org}-${space})'
             description: 'generated'
             role-template-references:
               - '$XSAPPNAME.Admin'
-          - name: 'Approver (techtransition_mgt ${org}-${space})'
+          - name: 'Approver (solutioncentral ${org}-${space})'
             description: 'generated'
             role-template-references:
               - '$XSAPPNAME.Approver'
     requires:
       - name: app-api
-  - name: techtransition_mgt-postgres
+  - name: solutioncentral-postgres
     type: org.cloudfoundry.managed-service
     parameters:
       service: postgresql-db
       service-plan: development
-  - name: techtransition_mgt-destination
+  - name: solutioncentral-destination
     type: org.cloudfoundry.managed-service
     parameters:
       service: destination
       service-plan: lite
-  - name: techtransition_mgt-cloud-logging
+  - name: solutioncentral-cloud-logging
     type: org.cloudfoundry.managed-service
     parameters:
       service: cloud-logging
@@ -192,17 +186,17 @@ resources:
       config:
         ingest_otlp:
           enabled: true
-  - name: techtransition_mgt-html5-repo-host
+  - name: solutioncentral-html5-repo-host
     type: org.cloudfoundry.managed-service
     parameters:
       service: html5-apps-repo
       service-plan: app-host
-  - name: techtransition_mgt-html5-repo-rt
+  - name: solutioncentral-html5-repo-rt
     type: org.cloudfoundry.managed-service
     parameters:
       service: html5-apps-repo
       service-plan: app-runtime
-  - name: techtransition_mgt-autoscaler
+  - name: solutioncentral-autoscaler
     type: org.cloudfoundry.managed-service
     parameters:
       service: autoscaler
