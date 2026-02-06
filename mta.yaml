@@ -1,33 +1,37 @@
-ID: solution-central
-_schema-version: 3.2.0
-version: 1.0.0
-description: "Technology Management Solution"
+_schema-version: 3.3.0
+ID: techtransition_mgt
+version: 0.9.0
+description: "Solution Central"
 parameters:
   enable-parallel-deployments: true
-
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm ci
+        - npx cds build --production
 modules:
-  # Service Module + Postgres deployer
-  - name: solution-central-srv
+  # Service layer 
+  - name: techtransition_mgt-srv
     type: nodejs
-    path: ./gen/srv
+    path: gen/srv
     parameters:
-      disk-quota: 320M
-      memory: 512M
-      routes:
-        - route: ${protocol}://solution-central-service.${default-domain}
-    properties:
-      EXIT: 1
+      instances: 1
+      buildpack: nodejs_buildpack
+    build-parameters:
+      builder: npm-ci
     provides:
-      - name: solution-central-api #Name for other apps consumption
+      - name: srv-api # required by consumers of CAP services (e.g. approuter)
         properties:
-          url: ${protocol}://soltion-central-service.${default-domain}
+          srv-url: ${default-url}
     requires:
-      - name: solution-central-postgresql
-      - name: solution-central-autoscaler
-      - name: solution-central-destination-srv
-      - name: solution-central-xsuaa-srv
+      - name: techtransition_mgt-auth
+      - name: techtransition_mgt-postgres
+      - name: techtransition_mgt-destination
+      - name: techtransition_mgt-cloud-logging
 
-  - name: solution-central-postgres-deployer
+  # Database deployer 
+  - name: techtransition_mgt-postgres-deployer
     type: nodejs
     path: gen/pg
     parameters:
@@ -38,174 +42,90 @@ modules:
         - name: deploy-to-postgresql
           command: npm start
     requires:
-      - name: solution-central-postgresql
+      - name: techtransition_mgt-postgres
 
-  # Solution approuter, can be replaced with FLP if desired
-  - name: solution-central-router
+  # Approuter 
+  - name: techtransition_mgt-router
     type: approuter.nodejs
+    path: app/router
     parameters:
+      keep-existing-routes: true
       disk-quota: 256M
       memory: 256M
-      routes:
-        - route: ${protocol}://solution-central.${default-domain}
     requires:
-      - name: solution-central-autoscaler
-      - name: solution-central-destination-srv
-      - name: solution-central-xsuaa-srv
-      - name: solution-central-html-repo-runtime
-
-  # UI5 Applications - Resources + Deployers
-  - name: solution-central-app-src
-    type: html5
-    path: app/solutioncentral
-    build-parameters:
-      build-result: dist
-      builder: custom
-      commands:
-        - npm run build
-      supported-platforms: []
-
-  - name: solution-central-app-deployer
-    type: com.sap.html5.application-content
-    path: app/solutioncentral/deployer
-    parameters:
-      memory: 380M
-    requires:
-      - name: solution-central-app-html5-repo-host
-        parameters:
-          content-target: true
-
-  - name: solution-central-radar-src
-    type: html5
-    path: app/techradar
-    build-parameters:
-      build-result: dist
-      builder: custom
-      commands:
-        - npm run build
-      supported-platforms: []
-
-  - name: solution-central-radar-deployer
-    type: com.sap.html5.application-content
-    path: app/techradar/deployer
-    parameters:
-      memory: 380M
-    requires:
-      - name: solution-central-radar-html5-repo-host
-        parameters:
-          content-target: true
-
-  - name: solution-central-admin-src
-    type: html5
-    path: app/config
-    build-parameters:
-      build-result: dist
-      builder: custom
-      commands:
-        - npm run build
-      supported-platforms: []
-
-  - name: solution-central-admin-deployer
-    type: com.sap.html5.application-content
-    path: app/config/deployer
-    parameters:
-      memory: 380M
-    requires:
-      - name: solution-central-admin-html5-repo-host
-        parameters:
-          content-target: true
-
-  # Configuration deployment modules
-  - name: solution-central-destination-content
-    type: com.sap.application.content
-    build-parameters:
-      no-source: true
-    requires:
-      - name: solution-central-api
-      - name: solution-central-xsuaa-srv
-        parameters:
-          service-key:
-          name: solution-central-xsuaa-key
-      - name: solution-central-destination-srv
-        parameters:
-          content-target: true
-    parameters:
-      content:
-        instance:
-          existing_destinations_policy: update
-          destinations:
-            - Name: SOLUTION-CENTRAL-API
-              Description: Principal propagation access to Solution Central API
-              URL: ~{solution-central-api/url}/odata/v4/radar/
-              Authentication: OAuth2UserTokenExchange
-              TokenServiceInstanceName: solution-central-xsuaa-srv
-              TokenServiceKeyName: solution-central-xsuaa-key
+      - name: srv-api
+        group: destinations
+        properties:
+          name: srv-api # must be used in xs-app.json as well
+          url: ~{srv-url}
+          forwardAuthToken: true
+      - name: techtransition_mgt-auth
+      - name: techtransition_mgt-destination
+      - name: techtransition_mgt-cloud-logging
+    provides:
+      - name: app-api
+        properties:
+          app-protocol: ${protocol}
+          app-uri: ${default-uri}
 
 resources:
-  - name: solution-central-autoscaler
+  - name: techtransition_mgt-auth
     type: org.cloudfoundry.managed-service
     parameters:
-      config-path: ./config/autoscaler.json
-      service: autoscaler
-      service-plan: standard
-
-  - name: solution-central-destination-srv
-    type: org.cloudfoundry.managed-service
-    parameters:
-      config:
-        HTML5Runtime_enabled: true
-        init_data:
-          instance:
-            destinations:
-              - Authentication: NoAuthentication
-                Name: ui5
-                ProxyType: Internet
-                Type: HTTP
-                URL: https://ui5.sap.com
-            existing_destinations_policy: update
-      service: destination
-      service-plan: lite
-
-  - name: solution-central-xsuaa-srv
-    type: org.cloudfoundry.managed-service
-    parameters:
-      config-path: ./config/xs-security.json
-      service-plan: application
       service: xsuaa
-      service-key:
-        name: solution-central-xsuaa-key
-
-  - name: solution-central-postgresql
+      service-plan: application
+      path: ./xs-security.json
+      config:
+        xsappname: techtransition_mgt-${org}-${space}
+        tenant-mode: dedicated
+        oauth2-configuration:
+          credential-types:
+            - "binding-secret"
+            - "x509"
+          redirect-uris:
+            - https://*~{app-api/app-uri}/**
+        role-collections:
+          - name: 'View (techtransition_mgt ${org}-${space})'
+            description: 'generated'
+            role-template-references:
+              - '$XSAPPNAME.View'
+          - name: 'Developer (techtransition_mgt ${org}-${space})'
+            description: 'generated'
+            role-template-references:
+              - '$XSAPPNAME.Developer'
+          - name: 'Reviewer (techtransition_mgt ${org}-${space})'
+            description: 'generated'
+            role-template-references:
+              - '$XSAPPNAME.Reviewer'
+          - name: 'Maintainer (techtransition_mgt ${org}-${space})'
+            description: 'generated'
+            role-template-references:
+              - '$XSAPPNAME.Maintainer'
+          - name: 'Admin (techtransition_mgt ${org}-${space})'
+            description: 'generated'
+            role-template-references:
+              - '$XSAPPNAME.Admin'
+          - name: 'Approver (techtransition_mgt ${org}-${space})'
+            description: 'generated'
+            role-template-references:
+              - '$XSAPPNAME.Approver'
+    requires:
+      - name: app-api
+  - name: techtransition_mgt-postgres
     type: org.cloudfoundry.managed-service
     parameters:
       service: postgresql-db
-      service-name: solution-central-postgresql
-      service-plan: free
-      service-tags:
-        - plain
-      skip-service-updates:
-        parameters: true
-
-  - name: solution-central-html-repo-runtime
+      service-plan: development
+  - name: techtransition_mgt-destination
     type: org.cloudfoundry.managed-service
     parameters:
-      service-plan: app-runtime
-      service: html5-apps-repo
-
-  - name: solution-central-app-html5-repo-host
+      service: destination
+      service-plan: lite
+  - name: techtransition_mgt-cloud-logging
     type: org.cloudfoundry.managed-service
     parameters:
-      service-plan: app-host
-      service: html5-apps-repo
-
-  - name: solution-central-radar-html5-repo-host
-    type: org.cloudfoundry.managed-service
-    parameters:
-      service-plan: app-host
-      service: html5-apps-repo
-
-  - name: solution-central-admin-html5-repo-host
-    type: org.cloudfoundry.managed-service
-    parameters:
-      service-plan: app-host
-      service: html5-apps-repo
+      service: cloud-logging
+      service-plan: dev
+      config:
+        ingest_otlp:
+          enabled: true

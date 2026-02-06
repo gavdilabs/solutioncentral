@@ -7,9 +7,15 @@
   "private": true,
   "dependencies": {
     "@cap-js/postgres": "^1.10.4",
+    "@cap-js/telemetry": ">=0",
     "@dxfrontier/cds-ts-dispatcher": "^3.2.6",
     "@gavdi/caplog": "^2.5.0",
+    "@grpc/grpc-js": "^1",
+    "@opentelemetry/exporter-metrics-otlp-grpc": "<0.200",
+    "@opentelemetry/exporter-trace-otlp-grpc": "<0.200",
+    "@opentelemetry/host-metrics": "<0.200",
     "@sap/cds": "^8.9.4",
+    "@sap/xssec": "^4",
     "express": "^4"
   },
   "devDependencies": {
@@ -44,7 +50,7 @@
     "lint": "eslint",
     "lint-staged": "lint-staged",
     "format": "prettier --check ./srv",
-    "format:ui": "prettier --check ./apps",
+    "format:ui": "prettier --check ./app",
     "generate:types": "npx @cap-js/cds-typer '*' --outputDirectory @cds-models",
     "generate:types:windows": "npx @cap-js/cds-typer * --outputDirectory @cds-models",
     "prepare": "husky",
@@ -69,6 +75,12 @@
         "kind": "rest",
         "credentials": {
           "destination": "BPA_API"
+        }
+      },
+      "[production]": {
+        "auth": "xsuaa",
+        "telemetry": {
+          "kind": "to-cloud-logging"
         }
       }
     },
@@ -119,5 +131,10 @@
   },
   "workspaces": [
     "app/*"
+  ],
+  "sapux": [
+    "app/config",
+    "app/solutioncentral",
+    "app/techradar"
   ]
 }

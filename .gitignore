@@ -52,3 +52,5 @@ Thumbs.db
 @dispatcher
 .npmrc
 @cds-models/
+*-env.json
+.env 

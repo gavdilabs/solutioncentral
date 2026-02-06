@@ -1,0 +1,79 @@
+{
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.View",
+      "description": "View"
+    },
+    {
+      "name": "$XSAPPNAME.Developer",
+      "description": "Developer"
+    },
+    {
+      "name": "$XSAPPNAME.Reviewer",
+      "description": "Reviewer"
+    },
+    {
+      "name": "$XSAPPNAME.Maintainer",
+      "description": "Maintainer"
+    },
+    {
+      "name": "$XSAPPNAME.Admin",
+      "description": "Admin"
+    },
+    {
+      "name": "$XSAPPNAME.Approver",
+      "description": "Approver"
+    }
+  ],
+  "attributes": [],
+  "role-templates": [
+    {
+      "name": "View",
+      "description": "generated",
+      "scope-references": [
+        "$XSAPPNAME.View"
+      ],
+      "attribute-references": []
+    },
+    {
+      "name": "Developer",
+      "description": "generated",
+      "scope-references": [
+        "$XSAPPNAME.Developer"
+      ],
+      "attribute-references": []
+    },
+    {
+      "name": "Reviewer",
+      "description": "generated",
+      "scope-references": [
+        "$XSAPPNAME.Reviewer"
+      ],
+      "attribute-references": []
+    },
+    {
+      "name": "Maintainer",
+      "description": "generated",
+      "scope-references": [
+        "$XSAPPNAME.Maintainer"
+      ],
+      "attribute-references": []
+    },
+    {
+      "name": "Admin",
+      "description": "generated",
+      "scope-references": [
+        "$XSAPPNAME.Admin"
+      ],
+      "attribute-references": []
+    },
+    {
+      "name": "Approver",
+      "description": "generated",
+      "scope-references": [
+        "$XSAPPNAME.Approver"
+      ],
+      "attribute-references": []
+    }
+  ]
+}
