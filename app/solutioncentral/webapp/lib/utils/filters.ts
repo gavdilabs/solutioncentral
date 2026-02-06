@@ -22,6 +22,7 @@ export class SoftwareSolutionFilterConstructor {
 			this.constructBusinessCriticalityFilter(
 				filters.businessCriticalityLevels,
 			),
+			this.constructRiskFilter(filters.riskLevels),
 		].filter((el) => el);
 
 		return result.length > 0
@@ -104,6 +105,20 @@ export class SoftwareSolutionFilterConstructor {
 
 		return new Filter({
 			filters: criticalityFilters,
+			and: false,
+		});
+	}
+
+	public static constructRiskFilter(
+		riskLevelKeys?: string[],
+	): Filter | undefined {
+		if (!riskLevelKeys || riskLevelKeys.length <= 0) return undefined;
+		const riskLevelFilters = riskLevelKeys.map(
+			(el) => new Filter("riskLevel_code", FilterOperator.EQ, el),
+		);
+
+		return new Filter({
+			filters: riskLevelFilters,
 			and: false,
 		});
 	}

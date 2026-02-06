@@ -32,6 +32,13 @@ type deploymentTypes        : String enum {
   Cloud
 }
 
+type riskLevel              : String enum {
+  High;
+  Medium;
+  Low;
+  None;
+}
+
 // CodeLists
 entity SoftwareStatus : sap.common.CodeList {
   key code             : Integer @assert.range: [
@@ -93,8 +100,15 @@ entity TechnologyGroup : sap.common.CodeList {
 }
 
 entity BusinessCriticalityLevel : sap.common.CodeList {
-  key code  : criticalityLevel;
-      descr : String;
+  key code      : criticalityLevel;
+      descr     : String;
+      sortOrder : Integer;
+}
+
+entity RiskLevel : sap.common.CodeList {
+  key code      : riskLevel;
+      descr     : String;
+      sortOrder : Integer;
 }
 
 entity Platform : sap.common.CodeList {
@@ -158,6 +172,7 @@ entity SoftwareSolution : cuid, managed {
   repository          : String;
   documentationUrl    : String;
   businessCriticality : Association to BusinessCriticalityLevel;
+  riskLevel           : Association to RiskLevel;
   cleanCoreRating     : Association to CleanCoreLevel;
   codeQualityRating   : Association to CodeQualityLevel;
   versions            : Association to many SolutionVersion

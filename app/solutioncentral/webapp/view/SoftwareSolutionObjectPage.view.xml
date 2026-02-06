@@ -91,12 +91,29 @@
 						<m:Title text="{i18n>label.businessCriticality}" class="sapUiSmallMarginBottom" />
 						<m:ObjectStatus
 							text="{= ${businessCriticality_code} ? ${businessCriticality/name} : '–'}"
+							tooltip="{businessCriticality/descr}"
 							icon="{
 								path: 'businessCriticality/code',
 								formatter: 'formatter.formatBusinessCriticalityLevelIcon'
 							}"
 							state="{
 								path: 'businessCriticality/code',
+								formatter: 'formatter.formatBusinessCriticalityLevelState'
+							}"
+							class="sapMObjectStatusLarge" />
+					</m:VBox>
+
+					<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+						<m:Title text="{i18n>label.riskLevel}" class="sapUiSmallMarginBottom" />
+						<m:ObjectStatus
+							text="{= ${riskLevel_code} ? ${riskLevel/name} : '–'}"
+							tooltip="{riskLevel/descr}"
+							icon="{
+								path: 'riskLevel_code',
+								formatter: 'formatter.formatBusinessCriticalityLevelIcon'
+							}"
+							state="{
+								path: 'riskLevel_code',
 								formatter: 'formatter.formatBusinessCriticalityLevelState'
 							}"
 							class="sapMObjectStatusLarge" />

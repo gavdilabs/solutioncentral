@@ -1,5 +1,5 @@
-code;name;descr
-Very_High;Very High;Critical Business Operations will stop within hours
-High;High;Critical Business Operations will stop within days
-Medium;Medium;Critical Business Operations will be affected to some degree
-Low;Low;Non-Critical Business Operations will be affected to some degree
+code;name;descr;sortOrder
+Very_High;Very High;Critical Business Operations will stop within hours;0
+High;High;Critical Business Operations will stop within days;1
+Medium;Medium;Critical Business Operations will be affected to some degree;2
+Low;Low;Non-Critical Business Operations will be affected to some degree;3
