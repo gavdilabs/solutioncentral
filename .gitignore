@@ -54,3 +54,5 @@ Thumbs.db
 @cds-models/
 *-env.json
 .env 
+gen/
+mta_archives/
