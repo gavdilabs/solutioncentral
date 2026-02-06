@@ -36,6 +36,7 @@ type riskLevel              : String enum {
   High;
   Medium;
   Low;
+  None;
 }
 
 // CodeLists
