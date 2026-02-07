@@ -95,7 +95,7 @@ modules:
     type: html5
     path: app/config
     build-parameters:
-      build-result: dist
+      build-result: dist 
       builder: custom
       commands:
         - npm run build
@@ -114,15 +114,15 @@ modules:
       requires:
         - name: solutioncentral-solutioncentral
           artifacts:
-            - com.gavdilabs.techtransmgt.solutioncentral.zip
+            - solutioncentral.zip
           target-path: resources/
         - name: solutioncentral-techradar
           artifacts:
-            - com.gavdilabs.techradar.zip
+            - techradar.zip
           target-path: resources/
         - name: solutioncentral-config
           artifacts:
-            - com.gavdilabs.config.zip
+            - config.zip
           target-path: resources/
 
 resources:

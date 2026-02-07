@@ -40,6 +40,7 @@
 		"typescript-eslint": "^8.8.1",
 		"ui5-middleware-livereload": "3.1.1",
 		"ui5-middleware-simpleproxy": "3.3.1",
+		"ui5-task-zipper": "^3.5.1",
 		"ui5-test-runner": "^5.4.3",
 		"ui5-tooling-transpile": "^3.5.0",
 		"wdio-ui5-service": "^3.0.8"
