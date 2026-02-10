@@ -11,7 +11,7 @@
 		mode="None"
 		growing="true"
 		backgroundDesign="Transparent"
-		items="{path: 'activeVersion/technologies', parameters: { $expand: 'softwareVersion'}}">
+		items="{path: '/SoftwareTechnology', suspended: true, parameters: { $expand: 'softwareVersion'}}">
 		<dependents>
 			<plugins:ColumnResizer />
 			<columnmenu:Menu id="activeTechnologiesQuickMenu"

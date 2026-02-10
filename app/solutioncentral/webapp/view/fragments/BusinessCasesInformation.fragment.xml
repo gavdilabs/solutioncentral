@@ -23,7 +23,7 @@
 					<Label text="{i18n>label.description}:" />
 					<ExpandableText class="sapUiTinyMarginBottom" text="{description}"
 						overflowMode="InPlace" />
-					<HBox justifyContent="Begin" alignItems="Center">
+					<HBox justifyContent="Start" alignItems="Center">
 						<Label text="Provided value:" class="sapUiSmallMarginEnd" />
 						<RatingIndicator editable="false" iconSize="18px" maxValue="5" value="{rating_code}" />
 					</HBox>

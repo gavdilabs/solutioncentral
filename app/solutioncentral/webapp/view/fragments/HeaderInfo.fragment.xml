@@ -55,13 +55,13 @@
 		</MultiComboBox>
 
 		<Label text="{i18n>column.businessCriticality}" />
-		<ComboBox showSecondaryValues="true" forceSelection="false" required="false" selectedKey="{businessCriticality_code}"
+		<ComboBox showSecondaryValues="true" required="false" selectedKey="{businessCriticality_code}"
 			items="{path: '/BusinessCriticalityLevel', sorter: [{ path: 'sortOrder', descending: false }]}">
 			<core:ListItem key="{code}" text="{name}" additionalText="{descr}"/>
 		</ComboBox>
 
 		<Label text="{i18n>column.riskLevel}" />
-		<ComboBox showSecondaryValues="true" forceSelection="false" required="false" selectedKey="{riskLevel_code}"
+		<ComboBox showSecondaryValues="true" required="false" selectedKey="{riskLevel_code}"
 			items="{path: '/RiskLevel', sorter: [{ path: 'sortOrder', descending: false }]}">
 			<core:ListItem key="{code}" text="{name}" additionalText="{descr}"/>
 		</ComboBox>

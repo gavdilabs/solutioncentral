@@ -96,9 +96,9 @@ export default {
 		if (!object) return 0;
 
 		if (table && table === TableKeys.ACTIVE_TECHNOLOGIES_TABLE_ID) {
-			return (object.technologies as Record<string, unknown>[]).length;
+			return (object.technologies as Record<string, unknown>[])?.length;
 		}
 
-		return object.length as number;
+		return object?.length as number;
 	},
 };
