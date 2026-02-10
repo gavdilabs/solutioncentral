@@ -14,8 +14,12 @@ modules:
   - name: solutioncentral-srv
     type: nodejs
     path: gen/srv
+    properties:
+      npm_config_ignore_scripts: true
     parameters:
       instances: 1
+      memory: 384M
+      disk-quota: 512M
       buildpack: nodejs_buildpack
     provides:
       - name: srv-api # required by consumers of CAP services (e.g. approuter)
@@ -34,6 +38,7 @@ modules:
     path: gen/pg
     parameters:
       buildpack: nodejs_buildpack
+      memory: 512M
       no-route: true
       no-start: true
       tasks:
@@ -172,12 +177,23 @@ resources:
     type: org.cloudfoundry.managed-service
     parameters:
       service: postgresql-db
-      service-plan: development
+      service-plan: free 
   - name: solutioncentral-destination
     type: org.cloudfoundry.managed-service
     parameters:
       service: destination
       service-plan: lite
+      config:
+        HTML5Runtime_enabled: true
+        init_data:
+          instance:
+            existing_destinations_policy: update
+            destinations:
+              - Authentication: NoAuthentication
+                Name: UI5
+                ProxyType: Internet
+                Type: HTTP
+                URL: https://ui5.sap.com
   - name: solutioncentral-cloud-logging
     type: org.cloudfoundry.managed-service
     parameters:

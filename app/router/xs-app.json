@@ -2,15 +2,60 @@
   "authenticationMethod": "route",
   "routes": [
     {
+      "source": "^/resources/(.*)$",
+      "target": "/resources/$1",
+      "destination": "UI5",
+      "authenticationType": "none"
+    },
+    {
+      "source": "^/solutioncentral/resources/(.*)$",
+      "target": "/resources/$1",
+      "destination": "UI5",
+      "authenticationType": "none"
+    },
+    {
+      "source": "^/solutioncentral/RadarService/(.*)$",
+      "target": "/odata/v4/radar/$1",
+      "destination": "srv-api",
+      "csrfProtection": true,
+      "authenticationType": "xsuaa"
+    },
+    {
       "source": "^/solutioncentral/(.*)$",
       "target": "/comgavdilabstechtransmgtsolutioncentral/$1",
       "service": "html5-apps-repo-rt",
       "authenticationType": "xsuaa"
     },
     {
+      "source": "^/techradar/resources/(.*)$",
+      "target": "/resources/$1",
+      "destination": "UI5",
+      "authenticationType": "none"
+    },
+    {
+      "source": "^/techradar/RadarService/(.*)$",
+      "target": "/odata/v4/radar/$1",
+      "destination": "srv-api",
+      "csrfProtection": true,
+      "authenticationType": "xsuaa"
+    },
+    {
       "source": "^/techradar/(.*)$",
       "target": "/comgavdilabstechradar/$1",
       "service": "html5-apps-repo-rt",
+      "authenticationType": "xsuaa"
+    },
+    {
+      "source": "^/config/resources/(.*)$",
+      "target": "/resources/$1",
+      "destination": "UI5",
+      "authenticationType": "none"
+    },
+    {
+      "source": "^/config/RadarService/(.*)$",
+      "target": "/odata/v4/radar/$1",
+      "destination": "srv-api",
+      "csrfProtection": true,
       "authenticationType": "xsuaa"
     },
     {
