@@ -13,9 +13,3 @@ jobs:
   tests:
      uses: git@github.com:gavdilabs/solutioncentral/.github/workflows/test.yaml@main
      secrets: inherit
-  deploy-cf:
-    needs: [tests]
-    uses: git@github.com:gavdilabs/solutioncentral/.github/workflows/cf.yaml@main
-    secrets: inherit
-    with:
-      environment: Production
