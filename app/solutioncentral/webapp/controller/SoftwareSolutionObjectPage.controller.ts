@@ -199,6 +199,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 						);
 
 						this.filterVersionsTable();
+						this.filterActiveTechnologiesTable();
 						this.filterBusinessCasesList();
 						const companyConfig =
 							await this.getOwnerComponent().getCompanyConfiguration();
@@ -227,6 +228,28 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 			"solution_ID",
 			FilterOperator.EQ,
 			this.getView().getBindingContext().getProperty("ID"),
+		);
+
+		binding.filter(filter);
+		if (binding.isSuspended()) {
+			binding.resume();
+		} else binding.refresh();
+	}
+
+	private filterActiveTechnologiesTable() {
+		const table = this.getView().byId(
+			TableKeys.ACTIVE_TECHNOLOGIES_TABLE_ID,
+		) as Table;
+		const binding = table.getBinding("items") as ODataListBinding;
+
+		const activeVersion_ID = this.getView()
+			.getBindingContext()
+			.getProperty("activeVersion/ID");
+
+		const filter = new Filter(
+			"softwareVersion_ID",
+			FilterOperator.EQ,
+			activeVersion_ID,
 		);
 
 		binding.filter(filter);
