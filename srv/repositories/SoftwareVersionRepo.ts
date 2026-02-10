@@ -67,7 +67,7 @@ export default class SolutionVersionRepo {
         status_code: 5,
       })
       .columns((el: any) => {
-        el.ID, el.releaseDate;
+        (el.ID, el.releaseDate);
       })
       .orderBy("releaseDate desc")
       .limit(1);

@@ -52,3 +52,8 @@ Thumbs.db
 @dispatcher
 .npmrc
 @cds-models/
+*-env.json
+.env 
+gen/
+mta_archives/
+*.zip
