@@ -193,7 +193,7 @@ resources:
                 Name: UI5
                 ProxyType: Internet
                 Type: HTTP
-                URL: https://ui5.sap.com
+                URL: https://ui5.sap.com/1.136.0
   - name: solutioncentral-cloud-logging
     type: org.cloudfoundry.managed-service
     parameters:
