@@ -70,10 +70,3 @@
 
 <!-- Screenshots, links, or other relevant information -->
 
----
-
-**For complex changes, consider using specific templates:**
-- [🚀 Feature Template](.github/PULL_REQUEST_TEMPLATE/feature.md)
-- [🐛 Bug Fix Template](.github/PULL_REQUEST_TEMPLATE/bug.md)
-- [🚨 Hotfix Template](.github/PULL_REQUEST_TEMPLATE/hotfix.md)
-- [🔧 Chore Template](.github/PULL_REQUEST_TEMPLATE/chore.md)
