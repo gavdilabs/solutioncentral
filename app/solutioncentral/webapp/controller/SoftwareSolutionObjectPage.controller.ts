@@ -880,7 +880,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 		}
 	}
 
-	public async onHybridTagPress(event: GenericTag$PressEvent): Promise<void> {
+	public async onHybridTagPress(event: Event): Promise<void> {
 		const tag = event.getSource();
 		const context = this.getView().getBindingContext();
 

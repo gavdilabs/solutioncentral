@@ -1,6 +1,6 @@
 <mvc:View
 	xmlns:html="http://www.w3.org/1999/xhtml"
-	controllerName="com.gavdilabs.techtransmgt.solutioncentral.controller.softwareSolutionObjectPage"
+	controllerName="com.gavdilabs.techtransmgt.solutioncentral.controller.SoftwareSolutionObjectPage"
 	xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.uxap"
 	xmlns:webc="@ui5/webcomponents/dist"
 	core:require="{
