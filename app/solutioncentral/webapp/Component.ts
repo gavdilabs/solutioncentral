@@ -6,9 +6,17 @@ import { CompanyConfiguration } from "./lib/types";
 import Messaging from "sap/ui/core/Messaging";
 import Message from "sap/ui/core/message/Message";
 import MessageType from "sap/ui/core/message/MessageType";
-import MessageModel from "sap/ui/model/message/MessageModel";
 import ODataContextBinding from "sap/ui/model/odata/v4/ODataContextBinding";
 import JSONModel from "sap/ui/model/json/JSONModel";
+import Dialog from "sap/m/Dialog";
+import IllustratedMessage from "sap/m/IllustratedMessage";
+import IllustrationPool from "sap/m/IllustrationPool";
+import Button from "sap/m/Button";
+import { ButtonType } from "sap/m/library";
+import ResourceModel from "sap/ui/model/resource/ResourceModel";
+
+const TIMEOUT_WARNING_TIME: number = 780000; //Milliseconds : 13 minutes
+const TIMEOUT_TIME: number = 900000; // 15 minutes
 
 /**
  * @namespace com.gavdilabs.techtransmgt.solutioncentral
@@ -20,12 +28,9 @@ export default class Component extends UIComponent {
 	};
 
 	private contentDensityClass: string;
-
-	/**
-	 * Variable for storing breadcrumb navigation backwards
-	 * Used when creating breadcrumbs for objectpage
-	 */
-	private breadcrumbNavBack: boolean = false;
+	private warningTimer: number;
+	private timeoutTimer: number;
+	private timeoutDialog: Dialog;
 
 	public init(): void {
 		// call the base component's init function
@@ -36,7 +41,19 @@ export default class Component extends UIComponent {
 
 		// create the views based on the url/hash
 		this.getRouter().initialize();
-		this.loadLoggedUsed();
+		void this.loadLoggedUsed();
+
+		const tntSetConfig = {
+			setFamily: "tnt",
+			setURI: sap.ui.require.toUrl("sap/tnt/themes/base/illustrations"),
+		};
+
+		// register tnt illustration set
+		IllustrationPool.registerIllustrationSet(tntSetConfig, false, undefined);
+
+		void this.resetTimers();
+		document.onkeydown = this.resetTimers.bind(this);
+		document.onmousemove = this.resetTimers.bind(this);
 	}
 
 	/**
@@ -94,12 +111,15 @@ export default class Component extends UIComponent {
 	}
 
 	public async loadLoggedUsed() {
-		let activeUserCtx = this.getModel().bindContext(
+		const activeUserCtx = this.getModel().bindContext(
 			"/getActiveUser(...)",
 		) as ODataContextBinding;
 		await activeUserCtx.invoke().then(
 			async () => {
-				const activeUser = await activeUserCtx.requestObject();
+				const activeUser = (await activeUserCtx.requestObject()) as Record<
+					string,
+					unknown
+				>;
 
 				const loggedUserModel = this.getModel("activeUserModel") as JSONModel;
 				loggedUserModel.setData(activeUser);
@@ -109,5 +129,62 @@ export default class Component extends UIComponent {
 				//TODO: add proper error handling
 			},
 		);
+	}
+
+	private async resetTimers() {
+		clearTimeout(this.warningTimer);
+		clearTimeout(this.timeoutTimer);
+
+		const model = this.getModel("i18n") as ResourceModel;
+		const i18n = await model.getResourceBundle();
+
+		this.warningTimer = setTimeout(() => {
+			this.timeoutDialog = new Dialog({
+				title: i18n.getText("timeout.title"),
+				contentWidth: "20rem",
+				content: new IllustratedMessage({
+					title: i18n.getText("timeout.warningTitle"),
+					illustrationType: "tnt-SessionExpiring",
+					description: i18n.getText("timeout.warningDesc"),
+				}),
+				beginButton: new Button({
+					type: ButtonType.Emphasized,
+					text: i18n.getText("timeout.warningConfirm"),
+					press: () => this.timeoutDialog.close(),
+				}),
+				afterClose: () => this.timeoutDialog.destroy(),
+			});
+			this.timeoutDialog.open();
+		}, TIMEOUT_WARNING_TIME);
+
+		this.timeoutTimer = setTimeout(() => {
+			if (this.timeoutDialog) {
+				if (this.timeoutDialog.isOpen()) this.timeoutDialog.close();
+				this.timeoutDialog.destroy();
+			}
+
+			const dialog = new Dialog({
+				title: i18n.getText("timeout.title"),
+				contentWidth: "20rem",
+				content: new IllustratedMessage({
+					title: i18n.getText("timeout.timedOutTitle"),
+					illustrationType: "tnt-SessionExpired",
+					description: i18n.getText("timeout.timedOutDesc"),
+				}),
+				beginButton: new Button({
+					type: ButtonType.Emphasized,
+					text: i18n.getText("timeout.timedOutConfirm"),
+					press: () => {
+						dialog.close();
+						window.location.reload();
+					},
+				}),
+				escapeHandler: () => {
+					dialog.close();
+					window.location.reload();
+				},
+			});
+			dialog.open();
+		}, TIMEOUT_TIME);
 	}
 }
