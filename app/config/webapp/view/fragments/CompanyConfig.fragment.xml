@@ -35,11 +35,12 @@
 					items="{
 						path: '/CleanCoreLevel',
 						sorter: [{
-							path: 'name'
+							path: 'code',
+							descending: true
 						}],
 						templateShareable:true }" >
 					<items>
-						<c:Item text="{descr}" key="{code}"/>
+						<c:Item text="{name} - {descr}" key="{code}"/>
 					</items>
 				</Select>
 				<Label text="{i18n>lbl_ApprovalForNewSol}" />
