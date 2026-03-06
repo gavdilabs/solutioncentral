@@ -8,10 +8,8 @@ import IllustratedMessage from "sap/m/IllustratedMessage";
 import Button from "sap/m/Button";
 import { ButtonType } from "sap/m/library";
 
-const TIMEOUT_WARNING_TIME: number = 5000; //Milliseconds : 13 minutes
-const TIMEOUT_TIME: number = 10000; // 15 minutes
-// const TIMEOUT_WARNING_TIME: number = 780000; //Milliseconds : 13 minutes
-// const TIMEOUT_TIME: number = 900000; // 15 minutes
+const TIMEOUT_WARNING_TIME: number = 780000; //Milliseconds : 13 minutes
+const TIMEOUT_TIME: number = 900000; // 15 minutes
 /**
  * @namespace com.gavdilabs.techradar
  */

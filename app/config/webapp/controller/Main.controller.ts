@@ -1,9 +1,6 @@
 import MessageBox from "sap/m/MessageBox";
-//import Action from "sap/m/MessageBox";
 import BaseController from "./BaseController";
-import List from "sap/m/List";
 import ODataListBinding from "sap/ui/model/odata/v4/ODataListBinding";
-import OverflowToolbar from "sap/m/OverflowToolbar";
 import ODataModel from "sap/ui/model/odata/v4/ODataModel";
 import Table from "sap/m/Table";
 import Dialog from "sap/m/Dialog";
@@ -25,30 +22,15 @@ export default class Main extends BaseController {
 	private _userDialog: Dialog;
 	private _teamDialog: Dialog;
 
-	public onInit(): void {
-		
-	}
-	
-	public onCompanyConfigurationListUpdateFinished() {
-		const oList = this.getView().byId("idCompanyConfigurationList") as List;
-		const oBinding = oList.getBinding("items") as ODataListBinding;
-		if(oBinding) {
-			const oContext = oBinding.getHeaderContext();
-			(this.getView().byId("idListOverflowToolbar") as OverflowToolbar).setBindingContext(oContext);
-		}
-	}
-
 	public async onButtonAddUserPress() {
-		//const oModel = this.getView().getModel() as ODataModel;
-		//const oContext = oModel.bindList("/User", undefined, undefined, undefined, { $$updateGroupId: 'userUpdateGroup' }).create();
 		const oTable = this.getView().byId("idUserTable") as Table;
-		const oContext = (oTable.getBinding("items") as ODataListBinding).create();		
+		const oContext = (oTable.getBinding("items") as ODataListBinding).create();
 		await this.openUserDialog(oContext);
 	}
 
 	public async onIconEditUserPress(oEvent: Icon$PressEvent) {
 		const oContext = oEvent.getSource().getBindingContext() as Context;
-		await this.openUserDialog(oContext);	
+		await this.openUserDialog(oContext);
 	}
 
 	public onIconDeleteUserPress(oEvent: Icon$PressEvent) {
@@ -57,28 +39,28 @@ export default class Main extends BaseController {
 			emphasizedAction: MessageBox.Action.OK,
 			onClose: async (sAction: string ) => {
 				if(sAction === 'OK') {
-					const oContext = oEvent.getSource().getBindingContext() as Context;					
+					const oContext = oEvent.getSource().getBindingContext() as Context;
 					await oContext.delete('$auto').then( () => {
 						MessageBox.success(this.getText("msgUserSaved"));
 					})
-					.catch(() => {						
+					.catch(() => {
 						MessageBox.error(this.getText("msgUserSaveError"));
-					});		
-				} 
+					});
+				}
 			}
-		});		
+		});
 	}
 
 	private async openUserDialog(oContext: Context) {
 		if (!this._userDialog) {
 			this._userDialog ??= (await Fragment.load({id: "UserDialog", name: "com.gavdilabs.config.view.fragments.UserDialog", controller: this })) as Dialog;
 			this.getView().addDependent(this._userDialog);
-		}		
+		}
 
 		this._userDialog.setBindingContext(oContext);
-		this._userDialog.open();	
+		this._userDialog.open();
 	}
-	
+
 	public async onSaveButtonUserPress() {
 		const aControls = this.getView().getControlsByFieldGroupId("UserFormGroup");
 		if(this.validateInput(aControls)) {
@@ -86,24 +68,24 @@ export default class Main extends BaseController {
 			this._userDialog.setBusy(true);
 			try {
 				await oModel.submitBatch("userUpdateGroup");
-				MessageBox.success(this.getText("msgUserSaved"));				
+				MessageBox.success(this.getText("msgUserSaved"));
 				this._userDialog.close();
 			} catch (catchError) {
 				console.error(catchError);
 				MessageBox.error(this.getText("msgUserSaveError"));
 			}
-			this._userDialog.setBusy(false);			
+			this._userDialog.setBusy(false);
 		}
 	}
-	
+
 	public onCancelButtonUserPress() {
 		const oModel = this.getView().getModel() as ODataModel;
 		oModel.resetChanges("userUpdateGroup");
-		this._userDialog.close();	
+		this._userDialog.close();
 	}
-	
-	public onAssignTeamButtonPress() {		
-		const oTable = Fragment.byId("UserDialog","idSoftwareTeamsTable") as Table; 
+
+	public onAssignTeamButtonPress() {
+		const oTable = Fragment.byId("UserDialog","idSoftwareTeamsTable") as Table;
 		(oTable.getBinding("items") as ODataListBinding).create();
 	}
 
@@ -115,10 +97,10 @@ export default class Main extends BaseController {
 
 	public async onIconEditTeamPress(oEvent: Icon$PressEvent) {
 		const oContext = oEvent.getSource().getBindingContext() as Context;
-		await this.openTeamDialog(oContext);	
+		await this.openTeamDialog(oContext);
 	}
 
-	public onIconDeleteTeamPress(oEvent: Icon$PressEvent) {		
+	public onIconDeleteTeamPress(oEvent: Icon$PressEvent) {
 		MessageBox.confirm(this.getText('msgDeleteTeam'), {
 			actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
 			emphasizedAction: MessageBox.Action.OK,
@@ -128,29 +110,29 @@ export default class Main extends BaseController {
 					await oContext.delete('$auto').then( () => {
 						MessageBox.success(this.getText("msgUserSaved"));
 					})
-					.catch(() => {						
+					.catch(() => {
 						MessageBox.error(this.getText("msgUserSaveError"));
-					});				
-				} 
+					});
+				}
 			}
-		});		
+		});
 	}
 
 	private async openTeamDialog(oContext: Context) {
 		if (!this._teamDialog) {
 			this._teamDialog ??= (await Fragment.load({id: "TeamDialog", name: "com.gavdilabs.config.view.fragments.TeamDialog", controller: this })) as Dialog;
 			this.getView().addDependent(this._teamDialog);
-		}		
+		}
 
 		this._teamDialog.setBindingContext(oContext);
-		this._teamDialog.open();	
+		this._teamDialog.open();
 	}
 
 	public onCancelButtonTeamPress() {
 		const oModel = this.getView().getModel() as ODataModel;
 		oModel.resetChanges("userUpdateGroup");
-		this._teamDialog.close();	
-	}	
+		this._teamDialog.close();
+	}
 
 	public async onSaveButtonTeamPress() {
 		const aControls = this.getView().getControlsByFieldGroupId("TeamFormGroup");
@@ -167,13 +149,8 @@ export default class Main extends BaseController {
 			}
 			this._teamDialog.setBusy(false);
 		}
-	}	
-
-	public onButtonAddConfigPress() {
-		const oList = this.getView().byId("idCompanyConfigurationList") as List;
-		(oList.getBinding("items") as ODataListBinding).create();
 	}
-	
+
 	public async onSaveConfigButtonPress() {
 		const aControls = this.getView().getControlsByFieldGroupId("CompanyFormGroup");
 		if(this.validateInput(aControls)) {
@@ -190,10 +167,10 @@ export default class Main extends BaseController {
 		}
 	}
 
-	private validateInput(aControls: Control[]): boolean {		
+	private validateInput(aControls: Control[]): boolean {
 		let bValid: boolean = true;
 
-		aControls.forEach((oControl) => {		
+		aControls.forEach((oControl) => {
 			if (oControl instanceof Input || oControl instanceof DatePicker) {
 				if ( oControl.getRequired() && oControl.getVisible() && !oControl.getValue() ) {
 					oControl.setValueState("Error");
@@ -216,7 +193,7 @@ export default class Main extends BaseController {
 					oControl.setValueState("None");
 				}
 			}
-		});		
+		});
 		return bValid;
 	}
 }
