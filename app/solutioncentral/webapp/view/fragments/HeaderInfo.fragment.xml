@@ -23,11 +23,11 @@
 				templateShareable: true
 		}">
 				<layoutData>
-				<forms:ColumnElementData cellsSmall="{= ${activeUserModel>/roles/isMaintainer} || ${activeUserModel>/roles/isAdmin} ? 10 : 12}" cellsLarge="{= ${activeUserModel>/roles/isMaintainer} || ${activeUserModel>/roles/isAdmin} ? 10 : 12}" />
+				<forms:ColumnElementData cellsSmall="{= ${activeUserModel>/roles/isMaintainer} || ${activeUserModel>/roles/isAdmin} ? 10 : 12}" cellsLarge="{= ${activeUserModel>/roles/isMaintainer} || ${activeUserModel>/roles/isAdmin} ? 6 : 8}" />
 				</layoutData>
 			<core:ListItem key="{code}" text="{name}" additionalText="{descr}"/>
 		</MultiComboBox>
-		<Button icon="sap-icon://add" visible="{= ${activeUserModel>/roles/isMaintainer} || ${activeUserModel>/roles/isAdmin}}" press=".onAddSolutionTag">
+		<Button icon="sap-icon://add" width="3rem" visible="{= ${activeUserModel>/roles/isMaintainer} || ${activeUserModel>/roles/isAdmin}}" press=".onAddSolutionTag">
 				<layoutData>
 					<forms:ColumnElementData cellsSmall="2" cellsLarge="2" />
 				</layoutData>
@@ -42,7 +42,7 @@
 		</Select>
 
 		<Label text="{i18n>column.platform}" />
-		<Select selectedKey="{platform_code}" forceSelection="false" items="{/Platform}">
+		<Select selectedKey="{platform_code}" forceSelection="false" items="{/Platform}" change=".onSolutionPlatformChange">
 			<core:ListItem key="{code}" text="{name}" />
 		</Select>
 

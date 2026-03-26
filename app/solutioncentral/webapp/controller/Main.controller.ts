@@ -2,9 +2,15 @@ import { ListItemBase$PressEvent } from "sap/m/ListItemBase";
 import BaseController from "./BaseController";
 import Button, { Button$PressEvent } from "sap/m/Button";
 import JSONModel from "sap/ui/model/json/JSONModel";
-import { CustomModels } from "../lib/constants";
+import {
+	ADT_NODES_MODEL_NAME,
+	CustomModels,
+	STR_LINE_BREAK_WITH_GAP,
+} from "../lib/constants";
 import { DefaultSolutionTableConfig } from "../lib/defaults";
 import {
+	ADTImportType,
+	ADTNodeType,
 	CustomControlType,
 	SolutionCatalogueTableEntry,
 	SolutionTableConfig,
@@ -31,12 +37,16 @@ import { discardDraft, draftActivate } from "../lib/utils/draftUtils";
 import ODataModel from "sap/ui/model/odata/v4/ODataModel";
 import { MessagingUtils } from "../lib/utils/messagingUtils";
 import Event from "sap/ui/base/Event";
+import { SearchField$SearchEvent } from "sap/m/SearchField";
+import Filter from "sap/ui/model/Filter";
+import FilterOperator from "sap/ui/model/FilterOperator";
 
 /**
  * @namespace com.gavdilabs.techtransmgt.solutioncentral.controller
  */
 export default class Main extends BaseController {
 	private readonly TABLE_ID = "solutionCatalogueTable";
+	private _adtImportDialog: Dialog;
 
 	private tableConfigModel: JSONModel | undefined;
 	private softwareSolutionPersonalization: SoftwareSolutionPersonalization;
@@ -55,11 +65,7 @@ export default class Main extends BaseController {
 		this.messageHandler = new MessagingUtils(this.getView());
 		this.messageHandler.clearAllMessages();
 		const table = this.getView().byId("solutionCatalogueTable") as Table;
-		if (table.getBinding("items").isSuspended()) {
-			table.getBinding("items").resume();
-		} else {
-			table.getBinding("items").refresh();
-		}
+		this.refreshSolutionsTable();
 
 		if (this.softwareSolutionPersonalization) return;
 
@@ -77,6 +83,15 @@ export default class Main extends BaseController {
 			.catch((e) => {
 				console.error("Failed to configure personalization engine", e);
 			});
+	}
+
+	private refreshSolutionsTable() {
+		const table = this.getView().byId("solutionCatalogueTable") as Table;
+		if (table.getBinding("items").isSuspended()) {
+			table.getBinding("items").resume();
+		} else {
+			table.getBinding("items").refresh();
+		}
 	}
 
 	public beforeOpenColumnMenu(event: MenuBase$BeforeOpenEvent) {
@@ -295,5 +310,151 @@ export default class Main extends BaseController {
 
 	public handleChangeEvent(event: Event) {
 		this.messageHandler.handleChangeEvent(event.getSource<CustomControlType>());
+	}
+
+	public onADTImportPress() {
+		void this.openADTFetchingWizard();
+	}
+
+	private async openADTFetchingWizard() {
+		if (!this._adtImportDialog) {
+			this._adtImportDialog ??= (await Fragment.load({
+				id: "ADTWizardDialog",
+				name: "com.gavdilabs.techtransmgt.solutioncentral.view.fragments.ADTImportDialog",
+				controller: this,
+			})) as Dialog;
+			this._adtImportDialog.addStyleClass(
+				this.getOwnerComponent().getContentDensityClass(),
+			);
+			this.getView().addDependent(this._adtImportDialog);
+		}
+		this._adtImportDialog.open();
+	}
+
+	public onCancelSolutionImport() {
+		this.closeADTImportDialog();
+	}
+
+	private closeADTImportDialog() {
+		this._adtImportDialog.close();
+		this._adtImportDialog.destroy();
+		this._adtImportDialog = null;
+	}
+
+	public async onFetchADTPress(event: Button$PressEvent) {
+		this._adtImportDialog.setBusy(true);
+		await this.getOwnerComponent().refreshADTNodesModel();
+		event.getSource().setVisible(false);
+		this._adtImportDialog.setBusy(false);
+	}
+
+	public async onImportSolutionsPress(): Promise<void> {
+		this._adtImportDialog.setBusy(true);
+
+		const table = Fragment.byId("ADTWizardDialog", "idADTNodesTable") as Table;
+		const selectedItems = table.getSelectedItems();
+
+		if (selectedItems.length === 0) {
+			MessageBox.information("No packages has been selected");
+			this._adtImportDialog.setBusy(false);
+			return;
+		}
+
+		const packages: ADTImportType[] = [];
+		selectedItems.forEach((item) => {
+			const object = item
+				.getBindingContext(ADT_NODES_MODEL_NAME)
+				?.getObject() as ADTNodeType;
+			packages.push({
+				techName: object.TechName,
+				name: object.ObjectName,
+				description: object.Description,
+			});
+		});
+
+		await this.getOwnerComponent()
+			.importPackagesFromADT(packages)
+			.then(() => {
+				MessageBox.success(
+					`Import of selected Packages as Solutions completed. ${STR_LINE_BREAK_WITH_GAP} NOTE: Each Solution has been created with a bare structure, and will require further information manually added for each.`,
+					{
+						contentWidth: "25rem",
+					},
+				);
+			})
+			.catch(() => {
+				MessageBox.error(
+					"Failed to handle request to import selected Packages into Solution Central",
+				);
+			})
+			.finally(() => {
+				this._adtImportDialog.setBusy(false);
+				this.closeADTImportDialog();
+				this.refreshSolutionsTable();
+			});
+	}
+
+	public onADTNodesTableSearch(event: SearchField$SearchEvent) {
+		const table = Fragment.byId("ADTWizardDialog", "idADTNodesTable") as Table;
+		const binding = table.getBinding("items") as ODataListBinding;
+		const props: string[] = ["TechName", "Description"];
+
+		const searchValue = event.getParameter("query");
+		if (!searchValue || searchValue === "") {
+			binding.filter(null);
+			return;
+		}
+
+		const filters: Filter[] = [];
+		props.forEach((prop) => {
+			filters.push(
+				new Filter({
+					path: prop,
+					operator: FilterOperator.Contains,
+					value1: searchValue,
+					caseSensitive: false,
+				}),
+			);
+		});
+
+		const searchFilters = new Filter({
+			filters: filters,
+			and: false,
+		});
+
+		binding.filter(searchFilters);
+	}
+
+	public onADTNodeSelectionChange(event: ListBase$SelectionChangeEvent) {
+		const items = event.getParameter("listItems");
+		const selected = event.getParameter("selected");
+
+		items.forEach((item) => {
+			const bindingContext = item.getBindingContext(ADT_NODES_MODEL_NAME);
+			const path = bindingContext.getPath();
+
+			(bindingContext.getModel() as JSONModel).setProperty(
+				path + "/selected",
+				selected,
+			);
+		});
+	}
+
+	public onShowSelectedADT() {
+		const table = Fragment.byId("ADTWizardDialog", "idADTNodesTable") as Table;
+		const binding = table.getBinding("items") as ODataListBinding;
+
+		const filter = new Filter({
+			path: "selected",
+			operator: FilterOperator.EQ,
+			value1: true,
+		});
+		binding.filter(filter);
+	}
+
+	public onShowAllADT() {
+		const table = Fragment.byId("ADTWizardDialog", "idADTNodesTable") as Table;
+		const binding = table.getBinding("items") as ODataListBinding;
+		binding.filter([]);
 	}
 }

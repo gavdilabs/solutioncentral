@@ -1,0 +1,24 @@
+meta {
+  name: Create Tag
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{HOST}}/Tags
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "Legacy",
+    "descr": "",
+    "status": "Information"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

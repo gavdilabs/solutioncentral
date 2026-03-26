@@ -1,11 +1,7 @@
 import Filter from "sap/ui/model/Filter";
 import { SoftwareSolutionFilters } from "../types";
 import FilterOperator from "sap/ui/model/FilterOperator";
-import {
-	SearchField$ChangeEvent,
-	SearchField$LiveChangeEvent,
-	SearchField$SearchEvent,
-} from "sap/m/SearchField";
+import { SearchField$SearchEvent } from "sap/m/SearchField";
 import Table from "sap/m/Table";
 import ODataListBinding from "sap/ui/model/odata/v4/ODataListBinding";
 

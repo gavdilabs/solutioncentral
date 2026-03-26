@@ -2,7 +2,7 @@ import UIComponent from "sap/ui/core/UIComponent";
 import models from "./model/models";
 import Device from "sap/ui/Device";
 import ODataModel from "sap/ui/model/odata/v4/ODataModel";
-import { CompanyConfiguration } from "./lib/types";
+import { ADTImportType, CompanyConfiguration } from "./lib/types";
 import Messaging from "sap/ui/core/Messaging";
 import Message from "sap/ui/core/message/Message";
 import MessageType from "sap/ui/core/message/MessageType";
@@ -14,6 +14,7 @@ import IllustrationPool from "sap/m/IllustrationPool";
 import Button from "sap/m/Button";
 import { ButtonType } from "sap/m/library";
 import ResourceModel from "sap/ui/model/resource/ResourceModel";
+import { ADT_NODES_MODEL_NAME } from "./lib/constants";
 
 const TIMEOUT_WARNING_TIME: number = 780000; //Milliseconds : 13 minutes
 const TIMEOUT_TIME: number = 900000; // 15 minutes
@@ -42,6 +43,7 @@ export default class Component extends UIComponent {
 		// create the views based on the url/hash
 		this.getRouter().initialize();
 		void this.loadLoggedUsed();
+		void this.loadCompanyConfig();
 
 		const tntSetConfig = {
 			setFamily: "tnt",
@@ -131,6 +133,13 @@ export default class Component extends UIComponent {
 		);
 	}
 
+	private async loadCompanyConfig() {
+		const config = await this.getCompanyConfiguration();
+		const appConfigModel = this.getModel("appConfig") as JSONModel;
+
+		appConfigModel?.setProperty("/companyConfiguration", config);
+	}
+
 	private async resetTimers() {
 		clearTimeout(this.warningTimer);
 		clearTimeout(this.timeoutTimer);
@@ -186,5 +195,40 @@ export default class Component extends UIComponent {
 			});
 			dialog.open();
 		}, TIMEOUT_TIME);
+	}
+
+	public async fetchPackagesFromADT() {
+		const context = this.getModel().bindContext(
+			"/fetchSolutionsFromSAPBackend(...)",
+		) as ODataContextBinding;
+
+		return await context.invoke().then(async () => {
+			return (await context.requestObject()) as Record<string, unknown>;
+		});
+	}
+
+	public async importPackagesFromADT(packages: ADTImportType[]) {
+		const context = this.getModel().bindContext(
+			"/importSolutionsFromADT(...)",
+		) as ODataContextBinding;
+		context.setParameter("packages", packages);
+		return await context.invoke().then(async () => {
+			return (await context.requestObject()) as Record<string, unknown>;
+		});
+	}
+
+	public async refreshADTNodesModel() {
+		const result = await this.fetchPackagesFromADT();
+		const resObject = {
+			count: (result?.nodes as Record<string, unknown>[]).length,
+			nodes: (result?.nodes as Record<string, unknown>[]).map((node) => ({
+				...node,
+				selected: false,
+			})),
+		};
+
+		const jsonModel = new JSONModel(resObject);
+		jsonModel.setSizeLimit(5000);
+		this.setModel(jsonModel, ADT_NODES_MODEL_NAME);
 	}
 }

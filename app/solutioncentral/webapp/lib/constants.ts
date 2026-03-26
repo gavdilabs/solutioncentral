@@ -19,3 +19,8 @@ export enum TableKeys {
 	VERSIONS_TABLE_ID = "versionsTable",
 	DEPDENDENT_SOLUTIONS_TABLE_ID = "dependentSolutionsTable",
 }
+
+export const STR_LINE_BREAK = "\r\n";
+export const STR_LINE_BREAK_WITH_GAP = "\r\n\r\n";
+
+export const ADT_NODES_MODEL_NAME = "ADTNodesModel";

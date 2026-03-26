@@ -39,6 +39,14 @@ type riskLevel              : String enum {
   None;
 }
 
+type SAPValueStates         : String enum {
+  Error;
+  Information;
+  None;
+  Success;
+  Warning;
+}
+
 // CodeLists
 entity SoftwareStatus : sap.common.CodeList {
   key code             : Integer @assert.range: [
@@ -129,8 +137,9 @@ entity BusinessCaseRating : sap.common.CodeList {
 }
 
 entity Tag : sap.common.CodeList {
-  key code  : UUID;
-      descr : String;
+  key code   : UUID;
+      descr  : String;
+      status : SAPValueStates;
 }
 
 // Entities
@@ -283,4 +292,5 @@ entity CompanyConfiguration : cuid, managed {
   approvalFlow                       : Association to ApprovalFlow;
   allowDeprecationWithoutReplacement : Boolean;
   bpaEnabled                         : Boolean;
+  adtEnabled                         : Boolean;
 }

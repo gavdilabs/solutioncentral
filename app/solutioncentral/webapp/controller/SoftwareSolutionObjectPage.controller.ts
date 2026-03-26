@@ -48,7 +48,12 @@ import { SearchField$SearchEvent } from "sap/m/SearchField";
 import { searchTableColumns } from "../lib/utils/filters";
 import Menu from "sap/m/table/columnmenu/Menu";
 import ODataListBinding from "sap/ui/model/odata/v2/ODataListBinding";
-import { CustomModels, PageKeys, TableKeys } from "../lib/constants";
+import {
+	ADT_NODES_MODEL_NAME,
+	CustomModels,
+	PageKeys,
+	TableKeys,
+} from "../lib/constants";
 import { BreadcrumbsHandler } from "../lib/utils/breadcrumbsUtils";
 import FilterOperator from "sap/ui/model/FilterOperator";
 import Filter from "sap/ui/model/Filter";
@@ -61,6 +66,7 @@ import Sorter from "sap/ui/model/Sorter";
 import MultiComboBox, {
 	MultiComboBox$SelectionChangeEvent,
 } from "sap/m/MultiComboBox";
+import ComboBox from "sap/m/ComboBox";
 
 export enum DraftSwitchIndex {
 	DRAFT = 0,
@@ -101,7 +107,6 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 	private _addHybridSolDialog: SelectDialog;
 
 	private defaultSearchColumns: JSONModel | undefined;
-	private initialSolutionHybrids: SolutionHybrid[];
 	private hybridSolutions: Context[];
 	private solutionTags: Context[];
 	private createTagDialog: Dialog;
@@ -147,6 +152,10 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 		this.getRouter()
 			.getRoute(PageKeys.SOFTWARE_SOLUTION_OBJECT_PAGE)
 			.attachPatternMatched(this.onPatternMatched.bind(this), this);
+
+		if (!this.getOwnerComponent().getModel(ADT_NODES_MODEL_NAME)) {
+			void this.getOwnerComponent().refreshADTNodesModel();
+		}
 	}
 
 	private onPatternMatched(event: Route$PatternMatchedEvent): void {
@@ -244,7 +253,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 
 		const activeVersion_ID = this.getView()
 			.getBindingContext()
-			.getProperty("activeVersion/ID");
+			.getProperty("activeVersion/ID") as string;
 
 		const filter = new Filter(
 			"softwareVersion_ID",
@@ -486,7 +495,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 					true,
 				);
 			})
-			.catch((e: Error) => {
+			.catch(() => {
 				const btn = this.getView().byId("objectPageMessagingBtn") as Button;
 				this.messageHandler.handleMessageViewOpen(btn);
 			});
@@ -806,7 +815,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 		this.businessCaseDialog.open();
 	}
 
-	public async onCreateNewBusinessCase(event: ListItemBase$DetailPressEvent) {
+	public async onCreateNewBusinessCase() {
 		const businessCaseList = this.getView().byId(
 			"idBusinessCasesList",
 		) as GridList;
@@ -880,8 +889,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 		}
 	}
 
-	public async onHybridTagPress(event: Event): Promise<void> {
-		const tag = event.getSource();
+	public async onHybridTagPress(): Promise<void> {
 		const context = this.getView().getBindingContext();
 
 		if (!this._hybridSolutionsDialog) {
@@ -1111,7 +1119,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 		}
 	}
 
-	public async onAddSolutionTag(): Promise<void> {
+	public onAddSolutionTag() {
 		const multiBox = this.getView().byId(
 			"solutionTagsSelectionBox",
 		) as MultiComboBox;
@@ -1125,7 +1133,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 			}
 		});
 
-		this.openCreateTagDialog(context);
+		void this.openCreateTagDialog(context);
 	}
 
 	private async openCreateTagDialog(context: Context): Promise<void> {
@@ -1147,7 +1155,7 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 	public handleCreateTagCancel(event: Button$PressEvent): void {
 		const context = event.getSource().getBindingContext() as Context;
 		this.createTagDialog.close();
-		context.delete("$auto");
+		void context.delete("$auto");
 	}
 
 	public async handleCreateTagConfirm() {
@@ -1166,5 +1174,17 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 
 		await model.submitBatch("tagsGroup");
 		this.createTagDialog.close();
+	}
+
+	public async onRefreshADTNodesModel() {
+		const select = this.getView().byId("idABAPPackageSelect") as ComboBox;
+		select.setBusy(true);
+		await this.getOwnerComponent().refreshADTNodesModel();
+		select.setBusy(false);
+	}
+
+	public onSolutionPlatformChange() {
+		const context = this.getView().getBindingContext() as Context;
+		void context.setProperty("packageNamespace", null);
 	}
 }

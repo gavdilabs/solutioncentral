@@ -94,4 +94,18 @@ export default class SoftwareSolutionRepo {
       ? new Set<string>(emails.filter((e) => e !== undefined && e !== null))
       : undefined;
   }
+
+  public async checkSolutionExistenceByProps(
+    props: Partial<SoftwareSolution>,
+  ): Promise<boolean> {
+    const query = SELECT.from(SoftwareSolution.name).where(props).columns("ID");
+    const res: SoftwareSolution[] = await cds.run(query);
+    return res.length > 0;
+  }
+
+  public async insertSoftwareSolutionRecord(data: Partial<SoftwareSolution>) {
+    const query = INSERT.into(SoftwareSolution.name).entries([data]);
+    this.logger.debug("Inserting new Software Solution Record", query);
+    await cds.run(query);
+  }
 }

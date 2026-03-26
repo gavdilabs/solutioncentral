@@ -16,3 +16,15 @@ define type UserRoles {
   isApprover   : Boolean;
   isDeveloper  : Boolean;
 }
+
+define type ADTNodeReturn {
+  ObjectType : String;
+  ObjectName : String;
+  TechName   : String;
+}
+
+define type ADTImportType {
+  techName    : String;
+  name        : String;
+  description : String;
+}

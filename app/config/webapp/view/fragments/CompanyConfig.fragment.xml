@@ -19,17 +19,13 @@
 			singleContainerFullSize="false" >
 			<f:content>
 				<Label text="{i18n>lbl_SAPVersion}" required="true"/>
-				<Select selectedKey="{currentSAPVersion_code}" forceSelection="false" required="true"
-					items="{
-						path: '/SAPVersion',
-						sorter: [{
-							path: 'name'
-						}],
-						templateShareable:true }" >
-					<items>
-						<c:Item text="{name}" key="{code}"/>
-					</items>
-				</Select>
+				<ComboBox selectedKey="{currentSAPVersion_code}" required="true"
+					showSecondaryValues="true"
+					filterSecondaryValues="true"
+					templateShareable="false"
+					items="{ path: '/SAPVersion', parameters: { $select: 'deployment'}, sorter: [{ path: 'deployment', group: true, descending: false}, {path: 'code', descending: true}]}">
+					<c:ListItem key="{code}" additionalText="{descr}" text="{code}"/>
+				</ComboBox>
 				<Label text="{i18n>lbl_CleanCoreLevel}" />
 				<Select selectedKey="{expectedMinimalCleanCoreValue_code}" forceSelection="false" required="true"
 					items="{
@@ -61,6 +57,9 @@
 
 				<Label text="{i18n>lbl_BPAEnabled}" />
 				<CheckBox selected="{bpaEnabled}"/>
+
+				<Label text="{i18n>lbl_ADTEnabled}"/>
+				<CheckBox selected="{adtEnabled}"/>
 			</f:content>
 		</f:SimpleForm>
 	</VBox>

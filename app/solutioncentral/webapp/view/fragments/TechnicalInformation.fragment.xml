@@ -1,7 +1,11 @@
 <core:FragmentDefinition
 	xmlns="sap.m"
 	xmlns:forms="sap.ui.layout.form"
-	xmlns:core="sap.ui.core">
+	xmlns:layout="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	core:require="{
+		formatter: 'com/gavdilabs/techtransmgt/solutioncentral/model/formatter'
+	}">
 
 	<!-- Displaying active version -->
 	<forms:SimpleForm visible="{IsActiveEntity}"
@@ -9,7 +13,7 @@
 		columnsL="3"
 		columnsXL="4"
 		editable="false" layout="ColumnLayout">
-		<Label text="{i18n>column.packageNamespace}" />
+		<Label text="{= ${path: 'platform_code', targetType: 'any'} === 'CAP' ? ${i18n>column.packageNamespace} : ${i18n>column.package}}"/>
 		<Text text="{= ${packageNamespace} ? ${packageNamespace} : '–'}" />
 
 		<Label text="{i18n>column.repository}" />
@@ -31,8 +35,26 @@
 		columnsL="3"
 		columnsXL="4"
 		editable="false" layout="ColumnLayout">
-		<Label text="{i18n>column.packageNamespace}" />
-		<Input value="{packageNamespace}" />
+
+		<Label text="{= ${path: 'platform_code', targetType: 'any'} === 'CAP' ? ${i18n>column.packageNamespace} : ${i18n>column.package}}"/>
+		<!-- Input field when platform = CAP -->
+		<Input value="{packageNamespace}" visible="{= ${path: 'platform_code', targetType: 'any'} === 'CAP' || ${appConfig>/companyConfiguration/adtEnabled} === false}">
+			<layoutData>
+				<forms:ColumnElementData cellsSmall="12" cellsLarge="12" />
+			</layoutData>
+	 </Input>
+		<!-- Select field when platform is ABAP related -->
+		<ComboBox id="idABAPPackageSelect" visible="{= ${appConfig>/companyConfiguration/adtEnabled} === true &amp;&amp; ${path: 'platform_code', targetType: 'any'} !== 'CAP'}" selectedKey="{packageNamespace}" showClearIcon="true" busyIndicatorDelay="0" items="{path: 'ADTNodesModel>/nodes'}" showSecondaryValues="true" filterSecondaryValues="true">
+			<layoutData>
+				<forms:ColumnElementData cellsSmall="10" cellsLarge="6" />
+			</layoutData>
+			<core:ListItem key="{ADTNodesModel>TechName}" text="{ADTNodesModel>ObjectName}" additionalText="{ADTNodesModel>Description}"/>
+		</ComboBox>
+		<Button icon="sap-icon://refresh" width="3rem" press=".onRefreshADTNodesModel" visible="{= ${appConfig>/companyConfiguration/adtEnabled} === true &amp;&amp; ${path: 'platform_code', targetType: 'any'} !== 'CAP'}">
+				<layoutData>
+					<forms:ColumnElementData cellsSmall="2" cellsLarge="2" />
+				</layoutData>
+		</Button>
 
 		<Label text="{i18n>column.repository}" />
 		<Input value="{repository}" />

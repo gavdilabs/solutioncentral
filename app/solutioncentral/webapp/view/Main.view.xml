@@ -167,6 +167,7 @@
 							formatter: '.formatTableTitle'
 						}" />
 						<ToolbarSpacer />
+						<Button tooltip="{i18n>default.importADT}" text="{i18n>button.importADT}" visible="{appConfig>/companyConfiguration/adtEnabled}" press=".onADTImportPress"/>
 						<Button tooltip="{i18n>default.create}" text="{i18n>default.create}"
 							press=".onPressCreate" />
 						<Button tooltip="{i18n>default.delete}"
@@ -317,17 +318,14 @@
 							}" />
 							<ObjectStatus tooltip="{riskLevel/descr}"
 								icon="{
-								path: 'riskLevel/code',
+								path: 'riskLevel_code',
 								formatter: 'formatter.formatBusinessCriticalityLevelIcon'
 							}"
 								state="{
-								path: 'riskLevel/code',
+								path: 'riskLevel_code',
 								formatter: 'formatter.formatBusinessCriticalityLevelState'
 							}"
-								text="{
-								path: 'riskLevel/code',
-								formatter: 'formatter.formatBusinessCriticalityLevelText'
-							}" />
+							text="{= ${riskLevel_code} ? ${riskLevel/name} : '–'}"/>
 
 							<!-- Columns not visible by default -->
 							<Text text="{description}" />

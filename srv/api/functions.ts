@@ -2,7 +2,10 @@ import type {
   ActionRequest,
   ActionReturn,
 } from "@dxfrontier/cds-ts-dispatcher";
-import { getActiveUser } from "#cds-models/RadarService";
+import {
+  fetchSolutionsFromSAPBackend,
+  getActiveUser,
+} from "#cds-models/RadarService";
 import {
   Inject,
   OnFunction,
@@ -11,6 +14,7 @@ import {
 } from "@dxfrontier/cds-ts-dispatcher";
 import { Logger, LoggerFactory } from "@gavdi/caplog";
 import UserService from "../services/UserService";
+import ADTPluginService from "../services/ADTPluginService";
 
 @UnboundActions()
 export default class FunctionImportHandler {
@@ -18,6 +22,9 @@ export default class FunctionImportHandler {
 
   @Inject(UserService)
   private readonly userService: UserService;
+
+  @Inject(ADTPluginService)
+  private readonly adtPluginService: ADTPluginService;
 
   constructor() {
     this.logger = LoggerFactory.createLogger("function-import-handler");
@@ -40,6 +47,19 @@ export default class FunctionImportHandler {
       }
 
       return activeUser;
+    } catch (e) {
+      this.logger.error("Unexpected error occured in service", e);
+      req.error(500, "Unexpected Error Occured");
+      return;
+    }
+  }
+
+  @OnFunction(fetchSolutionsFromSAPBackend)
+  public async onFetchSolutionFromSAPBackend(
+    @Req() req: ActionRequest<typeof fetchSolutionsFromSAPBackend>,
+  ): ActionReturn<typeof fetchSolutionsFromSAPBackend> {
+    try {
+      return await this.adtPluginService.fetch();
     } catch (e) {
       this.logger.error("Unexpected error occured in service", e);
       req.error(500, "Unexpected Error Occured");

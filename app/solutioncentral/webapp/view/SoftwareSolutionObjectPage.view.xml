@@ -59,7 +59,7 @@
 
 				<content>
 					<m:HBox items="{path: 'solutionTags', templateShareable: true}" class="sapUiSmallMarginBegin" alignItems="Center" visible="{= ${IsActiveEntity} ? true : false}" >
-						<m:GenericTag text="{tag/name}" class="sapUiTinyMarginEnd"/>
+						<m:GenericTag text="{tag/name}" status="{tag/status}" design="StatusIconHidden" class="sapUiTinyMarginEnd"/>
 					</m:HBox>
 				</content>
 			</ObjectPageDynamicHeaderTitle>

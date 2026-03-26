@@ -2,6 +2,8 @@ using {
   com.gavdilabs.techtransmgt.core,
   com.gavdilabs.techtransmgt.types
 } from '../db';
+using from '@pxmsoft/cap-adt';
+using {pxm.plugin.adt.ADTService.ADTNodeStructure as ADTNodeStructure} from '@pxmsoft/cap-adt';
 
 @requires: 'authenticated-user'
 service RadarService {
@@ -100,7 +102,9 @@ service RadarService {
   entity Tags                     as projection on core.Tag;
 
   /*** FUNCTION IMPORTS ***/
-  function getActiveUser() returns types.ActiveUser;
+  function getActiveUser()                returns types.ActiveUser;
+  function fetchSolutionsFromSAPBackend() returns ADTNodeStructure;
+  action   importSolutionsFromADT(packages: array of types.ADTImportType);
 
   view ActiveSolutionVersion as
     select from SolutionVersion as version

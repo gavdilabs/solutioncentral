@@ -16,7 +16,8 @@
     "@opentelemetry/host-metrics": "<0.200",
     "@sap/cds": "^9.7.1",
     "@sap/xssec": "^4",
-    "express": "^4"
+    "express": "^4",
+    "@pxmsoft/cap-adt": "*"
   },
   "devDependencies": {
     "@cap-js/cds-typer": "^0.38.0",

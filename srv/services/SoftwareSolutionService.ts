@@ -251,4 +251,17 @@ export default class SoftwareSolutionService {
 
     return await this.solutionReviewRepo.createReview(reviewData);
   }
+
+  public async handleImportSoftwareSolutionLogic(
+    data: Partial<SoftwareSolution>,
+  ): Promise<void> {
+    const exists =
+      await this.softwareSolutionRepo.checkSolutionExistenceByProps({
+        name: data.name,
+      });
+
+    if (!exists) {
+      return await this.softwareSolutionRepo.insertSoftwareSolutionRecord(data);
+    }
+  }
 }

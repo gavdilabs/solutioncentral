@@ -17,3 +17,8 @@ export enum DefaultApprovalFlows {
   APPROVAL = 1,
   BPA_APPROVAL = 2,
 }
+
+export enum ADTImportStatusCodes {
+  SUCCESS = 0,
+  FAILED = 1,
+}

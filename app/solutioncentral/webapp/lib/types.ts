@@ -63,3 +63,31 @@ export interface CompanyConfiguration {
 	allowDeprecationWithoutReplacement: boolean;
 	bpaEnabled: boolean;
 }
+
+export interface ADTNodeType {
+	ObjectType: string;
+	ObjectName: string;
+	TechName: string;
+	ObjectURI: string;
+	ObjectVITURI: string;
+	Expandable: boolean;
+	Visibility?: number;
+	NodeID?: string;
+	Description?: string;
+	DescriptionType?: string;
+	IsAbstract?: boolean;
+	IsConstant?: boolean;
+	IsConstructor?: boolean;
+	IsEventHandler?: boolean;
+	IsFinal?: boolean;
+	IsForTesting?: boolean;
+	IsReadOnly?: boolean;
+	IsRedefinition?: boolean;
+	IsStatic?: boolean;
+}
+
+export interface ADTImportType {
+	techName: string;
+	name: string;
+	description: string;
+}

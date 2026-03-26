@@ -16,6 +16,17 @@
 
 				<Label text="{i18n>tag.description}" />
 				<TextArea value="{descr}" rows="4" required="false" />
+
+				<Label text="{i18n>tag.status}" required="true"/>
+				<Select required="true" forceSelection="false" selectedKey="{status}">
+					<items>
+						<core:Item key="None" text="None" />
+						<core:Item key="Information" text="Information" />
+						<core:Item key="Success" text="Positive" />
+						<core:Item key="Warning" text="Critical" />
+						<core:Item key="Error" text="Negative" />
+					</items>
+				</Select>
 			</forms:SimpleForm>
 		</content>
 		<footer>

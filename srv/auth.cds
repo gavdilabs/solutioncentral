@@ -1,4 +1,8 @@
 using {RadarService} from './service';
+using {pxm.plugin.adt.ADTService as ADTService} from '@pxmsoft/cap-adt';
+
+/* Annotate ADT Plugin Service with system user access only */
+/*annotate ADTService with @(requires: 'system-user');*/
 
 annotate RadarService.User with @restrict: [
   {
@@ -393,3 +397,10 @@ annotate RadarService.Tags with @(restrict: [
     ]
   }
 ]);
+
+annotate RadarService.fetchSolutionsFromSAPBackend with @restrict: [{to: ['Admin']}];
+
+annotate RadarService.importSolutionsFromADT with @restrict: [{to: [
+  'Admin',
+  'Maintainer'
+]}];
