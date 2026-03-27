@@ -24,7 +24,7 @@
 					filterSecondaryValues="true"
 					templateShareable="false"
 					items="{ path: '/SAPVersion', parameters: { $select: 'deployment'}, sorter: [{ path: 'deployment', group: true, descending: false}, {path: 'code', descending: true}]}">
-					<c:ListItem key="{code}" additionalText="{descr}" text="{code}"/>
+					<c:ListItem key="{code}" additionalText="{code}" text="{descr}"/>
 				</ComboBox>
 				<Label text="{i18n>lbl_CleanCoreLevel}" />
 				<Select selectedKey="{expectedMinimalCleanCoreValue_code}" forceSelection="false" required="true"

@@ -8,31 +8,31 @@
 
 	<Dialog showHeader="true" resizable="true" verticalScrolling="true" draggable="true" title="Import Packages" contentWidth="80rem" contentHeight="40rem" busyIndicatorDelay="0">
 		<content>
-			<MessageStrip showIcon="true" class="sapUiTinyMargin" type="Information" text="Select packages to import into Solution Central. This will create a base Solution in based on fetched information. Some information need to manually be added/updated afterwards."/>
+			<MessageStrip showIcon="true" class="sapUiTinyMargin" type="Information" text="{i18n>msg.infoADTImport}"/>
 			<Table id="idADTNodesTable" mode="MultiSelect"
 				autoPopinMode="true"
 				selectionChange=".onADTNodeSelectionChange"
 				sticky="ColumnHeaders,HeaderToolbar" items="{ADTNodesModel>/nodes}">
 				<headerToolbar>
 					<OverflowToolbar>
-						<Title text="ADT Nodes ({ADTNodesModel>/count})"/>
+						<Title text="{i18n>title.adtPackages} ({ADTNodesModel>/count})"/>
 						<ToolbarSpacer/>
-						<Button text="Show Selected" press=".onShowSelectedADT"/>
-						<Button text="Show All" press=".onShowAllADT"/>
-						<SearchField width="20rem" search=".onADTNodesTableSearch"/>
+						<Button text="{i18n>button.viewSelected}" press=".onShowSelectedADT"/>
+						<Button text="{i18n>button.viewAll}" press=".onShowAllADT"/>
+						<SearchField width="20rem" search=".onADTNodesTableSearch" placeholder="{i18n>ph.adtSearchField}"/>
 					</OverflowToolbar>
 				</headerToolbar>
 				<noData>
 					<HBox justifyContent="Center">
-						<Button text="Start fetching" class="sapUiSmallMargin" icon="sap-icon://download" press=".onFetchADTPress"/>
+						<Button text="{i18n>button.fetchPackages}" class="sapUiSmallMargin" icon="sap-icon://download" press=".onFetchADTPress"/>
 					</HBox>
 				</noData>
 				<columns>
 					<Column importance="High">
-						<Text text="Name"/>
+						<Text text="{i18n>column.adtName}"/>
 					</Column>
 					<Column importance="Low">
-						<Text text="Description"/>
+						<Text text="{i18n>column.adtDesc}"/>
 					</Column>
 				</columns>
 				<items>

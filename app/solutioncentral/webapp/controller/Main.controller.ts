@@ -41,6 +41,11 @@ import { SearchField$SearchEvent } from "sap/m/SearchField";
 import Filter from "sap/ui/model/Filter";
 import FilterOperator from "sap/ui/model/FilterOperator";
 
+type FilterResult = {
+	operator: FilterOperator;
+	value: string;
+};
+
 /**
  * @namespace com.gavdilabs.techtransmgt.solutioncentral.controller
  */
@@ -349,13 +354,16 @@ export default class Main extends BaseController {
 	}
 
 	public async onImportSolutionsPress(): Promise<void> {
+		const resourceBundle = await this.getResourceBundle();
 		this._adtImportDialog.setBusy(true);
 
 		const table = Fragment.byId("ADTWizardDialog", "idADTNodesTable") as Table;
 		const selectedItems = table.getSelectedItems();
 
 		if (selectedItems.length === 0) {
-			MessageBox.information("No packages has been selected");
+			MessageBox.information(
+				resourceBundle.getText("msg.noADTPackageSelected"),
+			);
 			this._adtImportDialog.setBusy(false);
 			return;
 		}
@@ -375,17 +383,12 @@ export default class Main extends BaseController {
 		await this.getOwnerComponent()
 			.importPackagesFromADT(packages)
 			.then(() => {
-				MessageBox.success(
-					`Import of selected Packages as Solutions completed. ${STR_LINE_BREAK_WITH_GAP} NOTE: Each Solution has been created with a bare structure, and will require further information manually added for each.`,
-					{
-						contentWidth: "25rem",
-					},
-				);
+				MessageBox.success(resourceBundle.getText("msg.importADTSuccess"), {
+					contentWidth: "25rem",
+				});
 			})
 			.catch(() => {
-				MessageBox.error(
-					"Failed to handle request to import selected Packages into Solution Central",
-				);
+				MessageBox.error(resourceBundle.getText("msg.importADTFailed"));
 			})
 			.finally(() => {
 				this._adtImportDialog.setBusy(false);
@@ -394,24 +397,50 @@ export default class Main extends BaseController {
 			});
 	}
 
+	private getFilterOperatorFromWildcard(input: string): FilterResult {
+		const cleanValue = input.replace(/\*/g, "");
+		const startsWithWildcard = input.startsWith("*");
+		const endsWithWildcard = input.endsWith("*");
+
+		if (!startsWithWildcard && endsWithWildcard) {
+			return {
+				operator: FilterOperator.StartsWith,
+				value: cleanValue,
+			};
+		}
+
+		if (startsWithWildcard && !endsWithWildcard) {
+			return {
+				operator: FilterOperator.EndsWith,
+				value: cleanValue,
+			};
+		}
+
+		return {
+			operator: FilterOperator.Contains,
+			value: cleanValue,
+		};
+	}
+
 	public onADTNodesTableSearch(event: SearchField$SearchEvent) {
 		const table = Fragment.byId("ADTWizardDialog", "idADTNodesTable") as Table;
 		const binding = table.getBinding("items") as ODataListBinding;
-		const props: string[] = ["TechName", "Description"];
+		const props: string[] = ["TechName"];
 
-		const searchValue = event.getParameter("query");
-		if (!searchValue || searchValue === "") {
+		const searchQuery = event.getParameter("query");
+		if (!searchQuery || searchQuery === "") {
 			binding.filter(null);
 			return;
 		}
 
+		const filterResult = this.getFilterOperatorFromWildcard(searchQuery);
 		const filters: Filter[] = [];
 		props.forEach((prop) => {
 			filters.push(
 				new Filter({
 					path: prop,
-					operator: FilterOperator.Contains,
-					value1: searchValue,
+					operator: filterResult.operator,
+					value1: filterResult.value,
 					caseSensitive: false,
 				}),
 			);
