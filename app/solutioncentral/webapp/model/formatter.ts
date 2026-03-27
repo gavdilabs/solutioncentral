@@ -89,16 +89,8 @@ export default {
 		}
 	},
 
-	formatTableCount: (
-		object: Record<string, unknown>,
-		table?: TableKeys,
-	): number => {
+	formatTableCount: (object: Record<string, unknown>): number => {
 		if (!object) return 0;
-
-		if (table && table === TableKeys.ACTIVE_TECHNOLOGIES_TABLE_ID) {
-			return (object.technologies as Record<string, unknown>[])?.length;
-		}
-
 		return object?.length as number;
 	},
 };

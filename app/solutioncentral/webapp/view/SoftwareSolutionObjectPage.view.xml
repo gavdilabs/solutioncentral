@@ -207,7 +207,7 @@
 			<ObjectPageSection title="{i18n>title.activeTechnologies}">
 				<subSections>
 					<ObjectPageSubSection showTitle="true"
-						title="{i18n>table.activeTechnologies} ({ parts: [{path: 'activeVersion', targetType: 'any'}, {value: 'activeTechnologiesTable'}], formatter: 'formatter.formatTableCount' })">
+						title="{i18n>table.activeTechnologies} ({appConfig>/solutionActiveTechnologiesCount})">
 						<actions>
 							<m:SearchField width="15rem"
 								search=".onSearchFieldChange($event, 'activeTechnologiesTable', 'softwareVersion_solution_ID')" />

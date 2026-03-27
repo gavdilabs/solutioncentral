@@ -167,7 +167,7 @@
 							formatter: '.formatTableTitle'
 						}" />
 						<ToolbarSpacer />
-						<Button tooltip="{i18n>default.importADT}" text="{i18n>button.importADT}" visible="{appConfig>/companyConfiguration/adtEnabled}" press=".onADTImportPress"/>
+						<Button tooltip="{i18n>button.importPackages}" text="{i18n>button.importPackages}" visible="{= ${appConfig>/companyConfiguration/adtEnabled} === true}" press=".onADTImportPress"/>
 						<Button tooltip="{i18n>default.create}" text="{i18n>default.create}"
 							press=".onPressCreate" />
 						<Button tooltip="{i18n>default.delete}"
@@ -288,9 +288,9 @@
 								<Link class="sapUiTinyMarginTop" text="Draft" visible="{HasDraftEntity}" />
 							</VBox>
 							<Text text="{platform/name}" />
-							<RatingIndicator maxValue="4"
+							<RatingIndicator maxValue="4" iconSize="18px"
 								value="{activeVersion/latestReview/cleanCoreRating_code}" editable="false" />
-							<RatingIndicator maxValue="5"
+							<RatingIndicator maxValue="5" iconSize="18px"
 								value="{activeVersion/latestReview/codeQualityRating_code}" editable="false" />
 							<ObjectStatus text="{solutionStatus/descr}"
 								state="{

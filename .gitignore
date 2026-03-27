@@ -57,3 +57,4 @@ Thumbs.db
 gen/
 mta_archives/
 *.zip
+.cdsrc-private.json

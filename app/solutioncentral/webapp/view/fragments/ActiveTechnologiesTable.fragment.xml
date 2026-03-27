@@ -11,6 +11,7 @@
 		mode="None"
 		growing="true"
 		backgroundDesign="Transparent"
+		updateFinished=".onActiveTechnologiesUpdateFinished"
 		items="{path: '/SoftwareTechnology', suspended: true, parameters: { $expand: 'softwareVersion'}}">
 		<dependents>
 			<plugins:ColumnResizer />

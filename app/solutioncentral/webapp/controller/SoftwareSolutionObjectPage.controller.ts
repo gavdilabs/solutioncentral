@@ -20,6 +20,7 @@ import {
 	ListBase$ItemPressEvent,
 	ListBase$ItemPressEventParameters,
 	ListBase$SelectionChangeEvent,
+	ListBase$UpdateFinishedEvent,
 } from "sap/m/ListBase";
 import StandardListItem from "sap/m/StandardListItem";
 import MessageBox from "sap/m/MessageBox";
@@ -1186,5 +1187,15 @@ export default class SoftwareSolutionObjectPage extends BaseController {
 	public onSolutionPlatformChange() {
 		const context = this.getView().getBindingContext() as Context;
 		void context.setProperty("packageNamespace", null);
+	}
+
+	public onActiveTechnologiesUpdateFinished(
+		event: ListBase$UpdateFinishedEvent,
+	) {
+		const appConfig = this.getView().getModel("appConfig") as JSONModel;
+		appConfig.setProperty(
+			"/solutionActiveTechnologiesCount",
+			event.getParameter("total"),
+		);
 	}
 }
