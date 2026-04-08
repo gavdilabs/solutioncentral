@@ -2,11 +2,7 @@ import { ListItemBase$PressEvent } from "sap/m/ListItemBase";
 import BaseController from "./BaseController";
 import Button, { Button$PressEvent } from "sap/m/Button";
 import JSONModel from "sap/ui/model/json/JSONModel";
-import {
-	ADT_NODES_MODEL_NAME,
-	CustomModels,
-	STR_LINE_BREAK_WITH_GAP,
-} from "../lib/constants";
+import { ADT_NODES_MODEL_NAME, CustomModels } from "../lib/constants";
 import { DefaultSolutionTableConfig } from "../lib/defaults";
 import {
 	ADTImportType,
@@ -25,12 +21,14 @@ import MessageBox from "sap/m/MessageBox";
 import Spreadsheet from "sap/ui/export/Spreadsheet";
 import { getSoftwareSolutionColumnConfig } from "../lib/utils/export";
 import Engine from "sap/m/p13n/Engine";
-import { SoftwareSolutionPersonalization } from "../lib/utils/personalization";
+import {
+	CustomState,
+	SoftwareSolutionPersonalization,
+} from "../lib/utils/personalization";
 import { QuickSort$ChangeEvent } from "sap/m/table/columnmenu/QuickSort";
 import { QuickGroup$ChangeEvent } from "sap/m/table/columnmenu/QuickGroup";
 import { MenuBase$BeforeOpenEvent } from "sap/m/table/columnmenu/MenuBase";
 import Menu from "sap/m/table/columnmenu/Menu";
-import { SelectionState } from "sap/m/p13n/SelectionController";
 import Dialog from "sap/m/Dialog";
 import Fragment from "sap/ui/core/Fragment";
 import { discardDraft, draftActivate } from "../lib/utils/draftUtils";
@@ -213,10 +211,10 @@ export default class Main extends BaseController {
 		const resourceBundle = await this.getResourceBundle();
 		const table = this.getView().byId(this.TABLE_ID) as Table;
 		const binding = table.getBinding("items") as ODataListBinding;
-		const state = await Engine.getInstance().retrieveState(table);
-		const selectedColumnP13nKeys = new Set(
-			(state.controller.Columns as Array<SelectionState>).map((el) => el.key),
-		);
+		const state = (await Engine.getInstance().retrieveState(
+			table,
+		)) as CustomState;
+		const selectedColumnP13nKeys = new Set(state.Columns.map((el) => el.key));
 		const configColumns = this.tableConfigModel.getProperty(
 			"/items",
 		) as Array<ViewSettingsDialogItem>;
@@ -348,53 +346,75 @@ export default class Main extends BaseController {
 
 	public async onFetchADTPress(event: Button$PressEvent) {
 		this._adtImportDialog.setBusy(true);
-		await this.getOwnerComponent().refreshADTNodesModel();
-		event.getSource().setVisible(false);
-		this._adtImportDialog.setBusy(false);
+		try {
+			await this.getOwnerComponent().refreshADTNodesModel();
+			event.getSource().setVisible(false);
+			this._adtImportDialog.setBusy(false);
+		} catch (e) {
+			MessageBox.error(
+				`Failed to fetch data from backend. ${(e as Record<string, string>).message}`,
+			);
+			this._adtImportDialog.setBusy(false);
+		}
 	}
 
 	public async onImportSolutionsPress(): Promise<void> {
 		const resourceBundle = await this.getResourceBundle();
-		this._adtImportDialog.setBusy(true);
 
-		const table = Fragment.byId("ADTWizardDialog", "idADTNodesTable") as Table;
-		const selectedItems = table.getSelectedItems();
+		MessageBox.information(resourceBundle.getText("msg.importingADTInfo"), {
+			actions: [MessageBox.Action.CANCEL, MessageBox.Action.OK],
+			emphasizedAction: MessageBox.Action.OK,
+			contentWidth: "25rem",
+			onClose: async (action: string) => {
+				if (action == (MessageBox.Action.OK as string)) {
+					this._adtImportDialog.setBusy(true);
+					const table = Fragment.byId(
+						"ADTWizardDialog",
+						"idADTNodesTable",
+					) as Table;
+					const selectedItems = table.getSelectedItems();
 
-		if (selectedItems.length === 0) {
-			MessageBox.information(
-				resourceBundle.getText("msg.noADTPackageSelected"),
-			);
-			this._adtImportDialog.setBusy(false);
-			return;
-		}
+					if (selectedItems.length === 0) {
+						MessageBox.information(
+							resourceBundle.getText("msg.noADTPackageSelected"),
+						);
+						this._adtImportDialog.setBusy(false);
+						return;
+					}
 
-		const packages: ADTImportType[] = [];
-		selectedItems.forEach((item) => {
-			const object = item
-				.getBindingContext(ADT_NODES_MODEL_NAME)
-				?.getObject() as ADTNodeType;
-			packages.push({
-				techName: object.TechName,
-				name: object.ObjectName,
-				description: object.Description,
-			});
+					const packages: ADTImportType[] = [];
+					selectedItems.forEach((item) => {
+						const object = item
+							.getBindingContext(ADT_NODES_MODEL_NAME)
+							?.getObject() as ADTNodeType;
+						packages.push({
+							techName: object.TechName,
+							name: object.ObjectName,
+							description: object.Description,
+						});
+					});
+
+					await this.getOwnerComponent()
+						.importPackagesFromADT(packages)
+						.then(() => {
+							MessageBox.success(
+								resourceBundle.getText("msg.importADTSuccess"),
+								{
+									contentWidth: "25rem",
+								},
+							);
+						})
+						.catch(() => {
+							MessageBox.error(resourceBundle.getText("msg.importADTFailed"));
+						})
+						.finally(() => {
+							this._adtImportDialog.setBusy(false);
+							this.closeADTImportDialog();
+							this.refreshSolutionsTable();
+						});
+				}
+			},
 		});
-
-		await this.getOwnerComponent()
-			.importPackagesFromADT(packages)
-			.then(() => {
-				MessageBox.success(resourceBundle.getText("msg.importADTSuccess"), {
-					contentWidth: "25rem",
-				});
-			})
-			.catch(() => {
-				MessageBox.error(resourceBundle.getText("msg.importADTFailed"));
-			})
-			.finally(() => {
-				this._adtImportDialog.setBusy(false);
-				this.closeADTImportDialog();
-				this.refreshSolutionsTable();
-			});
 	}
 
 	private getFilterOperatorFromWildcard(input: string): FilterResult {

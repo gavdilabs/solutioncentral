@@ -202,9 +202,14 @@ export default class Component extends UIComponent {
 			"/fetchSolutionsFromSAPBackend(...)",
 		) as ODataContextBinding;
 
-		return await context.invoke().then(async () => {
-			return (await context.requestObject()) as Record<string, unknown>;
-		});
+		return await context
+			.invoke()
+			.then(async () => {
+				return (await context.requestObject()) as Record<string, unknown>;
+			})
+			.catch((e) => {
+				throw e;
+			});
 	}
 
 	public async importPackagesFromADT(packages: ADTImportType[]) {
@@ -218,7 +223,10 @@ export default class Component extends UIComponent {
 	}
 
 	public async refreshADTNodesModel() {
-		const result = await this.fetchPackagesFromADT();
+		const result = await this.fetchPackagesFromADT().catch((e) => {
+			throw e;
+		});
+
 		const resObject = {
 			count: (result?.nodes as Record<string, unknown>[]).length,
 			nodes: (result?.nodes as Record<string, unknown>[]).map((node) => ({

@@ -31,6 +31,7 @@ export default class ADTPluginService {
     try {
       return await this.client.getNodeContents(objectType, objectName);
     } catch (e) {
+      this.logger.error("Service failed during fetching", e);
       throw new Error("Failed to run external service query", e);
     }
   }
