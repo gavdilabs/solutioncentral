@@ -4,7 +4,6 @@
     "module": "nodenext",
     "outDir": "./gen/srv",
     "rootDir": ".",
-    "baseUrl": "./",
     "moduleResolution": "nodenext",
     "skipLibCheck": true,
     "preserveConstEnums": true,

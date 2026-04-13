@@ -14,7 +14,7 @@ export default class UserRepo {
   public async getUserByKey(key: string): Promise<User | undefined> {
     return await cds
       .run(SELECT.one.from(User.name, { username: key }))
-      .catch((e) => {
+      .catch((e): void => {
         this.logger.error("Failed to find entry", e);
         return undefined;
       });

@@ -40,7 +40,7 @@ export default class ActionImportHandler {
       }
 
       const packages = req.data.packages;
-      const promises = [];
+      const promises: unknown[] = [];
       packages.forEach((p) => {
         const entry: SoftwareSolution = {
           solutionStatus_code: DefaultSoftwareStatus.RELEASED,
